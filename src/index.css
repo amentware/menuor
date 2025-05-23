@@ -1,0 +1,293 @@
+
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Lato:wght@300;400;700&family=Montserrat:wght@400;500;600;700&family=Merriweather:wght@400;700&family=Roboto:wght@300;400;500;700&family=Roboto+Slab:wght@400;500;600;700&family=Open+Sans:wght@400;600&family=Source+Sans+Pro:wght@400;600&family=Nunito:wght@400;600;700&family=Oswald:wght@400;500;600&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    /* Base shadcn/ui color scheme */
+    --background: 0 0% 100%;
+    --foreground: 222.2 84% 4.9%;
+
+    --card: 0 0% 100%;
+    --card-foreground: 222.2 84% 4.9%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 222.2 84% 4.9%;
+
+    --primary: 349 73% 35%;
+    --primary-foreground: 210 40% 98%;
+
+    --secondary: 60 56% 91%;
+    --secondary-foreground: 222.2 47.4% 11.2%;
+
+    --muted: 210 40% 96.1%;
+    --muted-foreground: 215.4 16.3% 46.9%;
+
+    --accent: 43 65% 53%;
+    --accent-foreground: 222.2 47.4% 11.2%;
+
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 210 40% 98%;
+
+    --border: 214.3 31.8% 91.4%;
+    --input: 214.3 31.8% 91.4%;
+    --ring: 222.2 84% 4.9%;
+
+    --radius: 0.5rem;
+
+    --sidebar-background: 0 0% 98%;
+    --sidebar-foreground: 240 5.3% 26.1%;
+    --sidebar-primary: 240 5.9% 10%;
+    --sidebar-primary-foreground: 0 0% 98%;
+    --sidebar-accent: 240 4.8% 95.9%;
+    --sidebar-accent-foreground: 240 5.9% 10%;
+    --sidebar-border: 220 13% 91%;
+    --sidebar-ring: 217.2 91.2% 59.8%;
+
+    /* Theme variables */
+    --primary: var(--primary, 349 73% 35%);
+    --secondary: var(--secondary, 60 56% 91%);
+    --accent: var(--accent, 43 65% 53%);
+    --background-color: var(--background-color, 0 0% 100%);
+    --text-color: var(--text-color, 222.2 84% 4.9%);
+    --heading-color: var(--heading-color, 349 73% 35%);
+    --heading-font: var(--heading-font, 'Playfair Display');
+    --body-font: var(--body-font, 'Lato');
+    --border-radius: var(--border-radius, 0.5rem);
+  }
+
+  .dark {
+    --background: 222.2 84% 4.9%;
+    --foreground: 210 40% 98%;
+
+    --card: 222.2 84% 4.9%;
+    --card-foreground: 210 40% 98%;
+
+    --popover: 222.2 84% 4.9%;
+    --popover-foreground: 210 40% 98%;
+
+    --primary: 349 73% 35%;
+    --primary-foreground: 210 40% 98%;
+
+    --secondary: 60 56% 91%;
+    --secondary-foreground: 222.2 47.4% 11.2%;
+
+    --muted: 217.2 32.6% 17.5%;
+    --muted-foreground: 215 20.2% 65.1%;
+
+    --accent: 43 65% 53%;
+    --accent-foreground: 210 40% 98%;
+
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 210 40% 98%;
+
+    --border: 217.2 32.6% 17.5%;
+    --input: 217.2 32.6% 17.5%;
+    --ring: 212.7 26.8% 83.9%;
+    
+    --sidebar-background: 240 5.9% 10%;
+    --sidebar-foreground: 240 4.8% 95.9%;
+    --sidebar-primary: 224.3 76.3% 48%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 240 3.7% 15.9%;
+    --sidebar-accent-foreground: 240 4.8% 95.9%;
+    --sidebar-border: 240 3.7% 15.9%;
+    --sidebar-ring: 217.2 91.2% 59.8%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  html, body {
+    @apply min-h-screen;
+    background-image: linear-gradient(to bottom right, rgba(255, 255, 255, 0.4), rgba(255, 255, 255, 0.1)), url('data:image/svg+xml;charset=utf-8,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100"><path d="M0 0 100 0 100 100 0 100z" fill="%23f0f4f8" fill-opacity=".1"/></svg>');
+    background-size: cover;
+    background-attachment: fixed;
+  }
+
+  body {
+    @apply text-foreground;
+    font-family: var(--body-font, 'Lato'), sans-serif;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    font-family: var(--heading-font, 'Playfair Display'), serif;
+  }
+}
+
+@layer components {
+  /* Glassmorphism base styles */
+  .glass {
+    @apply bg-white/20 backdrop-blur-md border border-white/30 shadow-lg;
+  }
+
+  .glass-card {
+    @apply glass rounded-xl;
+  }
+
+  .glass-hover {
+    @apply transition duration-300 hover:bg-white/30 hover:shadow-xl;
+  }
+
+  /* Component overrides for glassmorphism */
+  .menu-item-card {
+    @apply glass-card p-6;
+  }
+
+  .restaurant-card {
+    @apply glass-card p-6 hover:shadow-xl transition-all duration-300;
+  }
+
+  .section-header {
+    @apply border-b border-white/30 pb-2 mb-4 text-primary;
+  }
+
+  .page-container {
+    @apply max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8;
+  }
+
+  .dashboard-container {
+    @apply grid grid-cols-1 md:grid-cols-3 gap-6;
+  }
+
+  .dashboard-panel {
+    @apply glass-card p-6;
+  }
+
+  .menu-section {
+    @apply glass-card p-6 mb-6 relative border-l-4 border-primary/50;
+  }
+
+  /* Button overrides */
+  .btn-glass {
+    @apply glass px-4 py-2 rounded-lg transition-all duration-300 hover:bg-white/30 active:scale-95;
+  }
+
+  .btn-glass-primary {
+    @apply btn-glass bg-primary/20 text-primary-foreground border-primary/30 hover:bg-primary/30;
+  }
+
+  /* Form input overrides */
+  .input-glass {
+    @apply glass border-white/30 focus:border-white/50 focus:bg-white/30 focus:ring-1 focus:ring-white/50;
+  }
+
+  /* Theme-based utility classes */
+  .theme-primary-bg {
+    background-color: hsl(var(--primary) / 0.2);
+    backdrop-filter: blur(8px);
+  }
+
+  .theme-primary-text {
+    color: hsl(var(--primary));
+  }
+
+  .theme-secondary-bg {
+    background-color: hsl(var(--secondary) / 0.2);
+    backdrop-filter: blur(8px);
+  }
+
+  .theme-accent-bg {
+    background-color: hsl(var(--accent) / 0.2);
+    backdrop-filter: blur(8px);
+  }
+
+  .theme-gradient {
+    background: linear-gradient(to right, 
+      hsla(var(--primary), 0.7), 
+      hsla(var(--accent), 0.7)
+    );
+    backdrop-filter: blur(8px);
+  }
+
+  /* Navigation glassmorphism */
+  .nav-glass {
+    @apply glass sticky top-0 z-50 px-4 py-2;
+  }
+
+  /* Glass table */
+  .glass-table {
+    @apply w-full border-collapse;
+  }
+
+  .glass-table th {
+    @apply glass text-left p-3 border-b border-white/20;
+  }
+
+  .glass-table td {
+    @apply p-3 border-b border-white/10;
+  }
+
+  .glass-table tr {
+    @apply hover:bg-white/10 transition-colors;
+  }
+
+  /* Dialog/Modal glassmorphism */
+  .glass-dialog {
+    @apply glass-card p-0 overflow-hidden;
+  }
+
+  .glass-dialog-header {
+    @apply p-4 border-b border-white/20 bg-white/10;
+  }
+
+  .glass-dialog-content {
+    @apply p-4;
+  }
+
+  .glass-dialog-footer {
+    @apply p-4 border-t border-white/20 bg-white/10 flex justify-end gap-2;
+  }
+}
+
+/* Further overrides for specific shadcn components */
+.card {
+  @apply glass-card overflow-hidden;
+}
+
+.input, .textarea, .select {
+  @apply input-glass;
+}
+
+.button {
+  @apply btn-glass;
+}
+
+.button-primary {
+  @apply btn-glass-primary;
+}
+
+.dropdown-content {
+  @apply glass-card mt-1 py-1;
+}
+
+.modal, .dialog {
+  @apply glass-dialog;
+}
+
+.sidebar {
+  @apply glass border-r border-white/20;
+}
+
+.popover {
+  @apply glass-card;
+}
+
+/* Make background colors more transparent */
+.bg-background {
+  @apply bg-white/20 backdrop-blur-md;
+}
+
+.bg-card {
+  @apply bg-white/20 backdrop-blur-md;
+}
+
+.bg-white {
+  @apply bg-white/80 backdrop-blur-md;
+}
