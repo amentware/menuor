@@ -386,17 +386,33 @@ const MenuBuilder = () => {
     }
 
     const sectionIndex = menuSections.findIndex(section => section.id === currentSectionId);
-    if (sectionIndex === -1) return;
+    if (sectionIndex === -1) {
+      toast({
+        title: "Error",
+        description: "Could not find the section to add the item to.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    // Handle price - make it optional
+    let price = undefined;
+    if (itemPrice) {
+      const parsedPrice = parseFloat(itemPrice);
+      if (!isNaN(parsedPrice)) {
+        price = parsedPrice;
+      }
+    }
 
     const newItem = {
       id: currentItem?.id || uuidv4(),
-      name: itemName,
-      description: itemDescription,
-      price: itemPrice ? parseFloat(itemPrice) : undefined,
-      imageUrl: itemImageUrl || undefined,
+      name: itemName.trim(),
+      description: itemDescription.trim(),
+      price,
+      ...(itemImageUrl.trim() ? { imageUrl: itemImageUrl.trim() } : {}),
       isDisabled: itemIsDisabled,
       outOfStock: itemOutOfStock,
-      priceVariations: priceVariations.length > 0 ? priceVariations : undefined
+      ...(priceVariations.length > 0 ? { priceVariations } : {})
     };
 
     const updatedSections = [...menuSections];
@@ -409,7 +425,8 @@ const MenuBuilder = () => {
       );
     } else {
       // Add new item
-      section.items = [...(section.items || []), newItem];
+      section.items = section.items || [];
+      section.items = [...section.items, newItem];
     }
     
     updatedSections[sectionIndex] = section;
@@ -650,7 +667,7 @@ const MenuBuilder = () => {
               </div>
               <h3 className="text-xl font-semibold text-gray-900 mb-2">Start Building Your Menu</h3>
               <p className="text-gray-600 mb-6">Create sections to organize your menu items.</p>
-              <Button onClick={openAddSectionDialog} className="bg-black">
+              <Button onClick={openAddSectionDialog} className="bg-black hover:bg-gray-50 hover:text-black">
                 <Plus className="h-4 w-4 mr-2" />
                 Add First Section
               </Button>
