@@ -395,13 +395,28 @@ const MenuBuilder = () => {
       return;
     }
 
-    // Handle price - make it optional
+    // Price validation
     let price = undefined;
     if (itemPrice) {
       const parsedPrice = parseFloat(itemPrice);
       if (!isNaN(parsedPrice)) {
         price = parsedPrice;
       }
+    }
+
+    // If no variations, price is required
+    if (!priceVariations.length && !price) {
+      toast({
+        title: "Price required",
+        description: "Please enter a price or add price variations.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    // If variations exist, price should be undefined
+    if (priceVariations.length > 0) {
+      price = undefined;
     }
 
     const newItem = {
