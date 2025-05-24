@@ -385,15 +385,6 @@ const MenuBuilder = () => {
       return;
     }
 
-    if (!itemPrice && (!priceVariations || priceVariations.length === 0)) {
-      toast({
-        title: "Price required",
-        description: "Please enter either a base price or price variations.",
-        variant: "destructive",
-      });
-      return;
-    }
-
     const sectionIndex = menuSections.findIndex(section => section.id === currentSectionId);
     if (sectionIndex === -1) return;
 
@@ -607,10 +598,19 @@ const MenuBuilder = () => {
           <Button
             onClick={handleSaveMenu}
             disabled={!menuChanged || saving}
-            className="bg-black text-white hover:bg-gray-800 flex items-center gap-2"
+            className={`bg-black text-white ${saving ? '' : 'hover:bg-gray-50 hover:text-black'}`}
           >
-            <Save className="h-4 w-4" />
-            {saving ? 'Saving...' : 'Save Changes'}
+            {saving ? (
+              <>
+                <RefreshCcw className="h-4 w-4 mr-2" />
+                Saving...
+              </>
+            ) : (
+              <>
+                <Save className="h-4 w-4 mr-2" />
+                Save Changes
+              </>
+            )}
           </Button>
         </div>
       </div>
