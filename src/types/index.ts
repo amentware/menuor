@@ -1,7 +1,10 @@
-
 export type PriceVariation = {
   name: string;  // e.g., "Quarter", "Half", "Full"
   price: number;
+};
+
+export type SectionVariation = {
+  name: string;  // e.g., "Quarter", "Half", "Full"
 };
 
 export type MenuItem = {
@@ -20,6 +23,7 @@ export type MenuSection = {
   name: string;
   items: MenuItem[];
   isDisabled?: boolean;
+  variations?: SectionVariation[]; // Section level variations (name only)
 };
 
 export type Restaurant = {

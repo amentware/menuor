@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import { db, doc, getDoc, updateDoc } from "../lib/firebase";

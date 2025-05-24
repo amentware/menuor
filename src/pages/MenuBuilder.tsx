@@ -6,6 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Switch } from "@/components/ui/switch";
+import { Badge } from "@/components/ui/badge";
 import { 
   Dialog, 
   DialogContent, 
@@ -29,7 +30,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { MenuSection, MenuItem, PriceVariation } from "@/types";
-import { Plus, Trash2, MoveVertical, Save, Edit, RefreshCcw, AlertCircle, XCircle, MoreVertical, Sparkles } from "lucide-react";
+import { Plus, Trash2, MoveVertical, Save, Edit, RefreshCcw, AlertCircle, XCircle, MoreVertical, Sparkles, ChevronDown, ChevronUp } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { v4 as uuidv4 } from "uuid";
 import { 
@@ -50,6 +51,7 @@ import {
 } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 import { useIsMobile } from "@/hooks/use-mobile";
+import { SortableMenuSection } from "@/components/menu-builder/SortableMenuSection";
 
 // Component for a draggable menu item
 const SortableMenuItem = ({ 
@@ -164,176 +166,6 @@ const SortableMenuItem = ({
   );
 };
 
-// Component for a draggable menu section
-const SortableMenuSection = ({ 
-  section,
-  onEdit,
-  onDelete,
-  onAddItem,
-  onEditItem,
-  onDeleteItem,
-  onStatusChange,
-  onToggleSectionDisabled,
-  onItemsReorder,
-  currencySymbol
-}: { 
-  section: MenuSection;
-  onEdit: (section: MenuSection) => void;
-  onDelete: (id: string) => void;
-  onAddItem: (sectionId: string) => void;
-  onEditItem: (sectionId: string, item: MenuItem) => void;
-  onDeleteItem: (sectionId: string, itemId: string) => void;
-  onStatusChange: (sectionId: string, itemId: string, status: 'active' | 'disabled' | 'outOfStock') => void;
-  onToggleSectionDisabled: (sectionId: string, disabled: boolean) => void;
-  onItemsReorder: (sectionId: string, items: MenuItem[]) => void;
-  currencySymbol: string;
-}) => {
-  const {
-    attributes,
-    listeners,
-    setNodeRef,
-    transform,
-    transition
-  } = useSortable({ id: section.id });
-  
-  const style = {
-    transform: CSS.Transform.toString(transform),
-    transition,
-  };
-
-  const isMobile = useIsMobile();
-
-  const sensors = useSensors(
-    useSensor(PointerSensor),
-    useSensor(KeyboardSensor, {
-      coordinateGetter: sortableKeyboardCoordinates,
-    })
-  );
-
-  const handleDragEnd = (event: DragEndEvent) => {
-    const { active, over } = event;
-    
-    if (over && active.id !== over.id) {
-      const oldIndex = section.items.findIndex(item => item.id === active.id);
-      const newIndex = section.items.findIndex(item => item.id === over.id);
-      
-      const newItems = arrayMove(section.items, oldIndex, newIndex);
-      onItemsReorder(section.id, newItems);
-    }
-  };
-
-  return (
-    <Card
-      ref={setNodeRef}
-      style={style}
-      className={`bg-gradient-to-br from-white via-blue-50/30 to-indigo-50/30 border-2 shadow-lg hover:shadow-xl transition-all duration-300 rounded-3xl ${section.isDisabled ? 'border-gray-300 opacity-75' : 'border-blue-200'}`}
-    >
-      <CardHeader className="pb-6">
-        <div className={`flex ${isMobile ? 'flex-col gap-4' : 'justify-between items-center'}`}>
-          <div className="flex items-center gap-4">
-            <div {...listeners} className="cursor-move p-3 rounded-2xl hover:bg-white/80 transition-colors">
-              <MoveVertical className="h-6 w-6 text-gray-400" />
-            </div>
-            <div>
-              <h3 className="text-2xl font-bold text-gray-900 flex items-center gap-3">
-                {section.name}
-                {section.isDisabled && (
-                  <span className="text-xs px-3 py-1 bg-gray-100 text-gray-600 rounded-full font-medium">Section Disabled</span>
-                )}
-              </h3>
-              <p className="text-sm text-gray-500 mt-1">{section.items.length} items</p>
-            </div>
-          </div>
-          
-          <div className="flex flex-wrap gap-3 items-center">
-            <div className="flex items-center gap-3 bg-white rounded-full px-4 py-2 border border-gray-200 shadow-sm">
-              <Label htmlFor={`section-disabled-${section.id}`} className="text-sm font-medium">Disabled</Label>
-              <Switch 
-                id={`section-disabled-${section.id}`} 
-                checked={section.isDisabled || false}
-                onCheckedChange={(checked) => onToggleSectionDisabled(section.id, checked)}
-              />
-            </div>
-            
-            <Button 
-              variant="outline" 
-              size="sm"
-              onClick={() => onEdit(section)}
-              className="rounded-full px-4 py-2 border-gray-200 hover:bg-gray-50"
-            >
-              <Edit className="h-4 w-4 mr-2" />
-              Edit
-            </Button>
-            <Button 
-              variant="outline" 
-              size="sm"
-              onClick={() => onAddItem(section.id)}
-              className="rounded-full px-4 py-2 bg-blue-50 border-blue-200 text-blue-700 hover:bg-blue-100"
-            >
-              <Plus className="h-4 w-4 mr-2" />
-              Add Item
-            </Button>
-            <Button 
-              variant="outline" 
-              size="sm"
-              onClick={() => onDelete(section.id)}
-              className="rounded-full px-4 py-2 border-red-200 text-red-600 hover:bg-red-50"
-            >
-              <Trash2 className="h-4 w-4 mr-1" />
-              Delete
-            </Button>
-          </div>
-        </div>
-      </CardHeader>
-      
-      <CardContent className="px-8 pb-8">
-        <DndContext
-          sensors={sensors}
-          collisionDetection={closestCenter}
-          onDragEnd={handleDragEnd}
-        >
-          <SortableContext
-            items={section.items.map(item => item.id)}
-            strategy={verticalListSortingStrategy}
-          >
-            <div className="space-y-3">
-              {section.items.length > 0 ? (
-                section.items.map(item => (
-                  <SortableMenuItem
-                    key={item.id}
-                    item={item}
-                    onEdit={(item) => onEditItem(section.id, item)}
-                    onDelete={(itemId) => onDeleteItem(section.id, itemId)}
-                    onStatusChange={(itemId, status) => onStatusChange(section.id, itemId, status)}
-                    currencySymbol={currencySymbol}
-                  />
-                ))
-              ) : (
-                <div className="text-center py-16 border-2 border-dashed border-gray-200 rounded-2xl bg-white/60">
-                  <div className="flex flex-col items-center">
-                    <div className="w-16 h-16 bg-blue-100 rounded-2xl flex items-center justify-center mb-4">
-                      <Plus className="h-8 w-8 text-blue-600" />
-                    </div>
-                    <p className="text-gray-600 mb-4 font-medium">No items in this section</p>
-                    <Button 
-                      variant="outline" 
-                      className="bg-blue-50 border-blue-200 text-blue-700 hover:bg-blue-100 rounded-full px-6"
-                      onClick={() => onAddItem(section.id)}
-                    >
-                      <Plus className="h-4 w-4 mr-2" />
-                      Add First Item
-                    </Button>
-                  </div>
-                </div>
-              )}
-            </div>
-          </SortableContext>
-        </DndContext>
-      </CardContent>
-    </Card>
-  );
-};
-
 // Main MenuBuilder component
 const MenuBuilder = () => {
   const [restaurant, setRestaurant] = useState<any>(null);
@@ -342,6 +174,8 @@ const MenuBuilder = () => {
   const [saving, setSaving] = useState(false);
   const [menuChanged, setMenuChanged] = useState(false);
   const [currencySymbol, setCurrencySymbol] = useState("₹");
+  const [expandedSections, setExpandedSections] = useState<Record<string, boolean>>({});
+  const [allExpanded, setAllExpanded] = useState(true);
   
   // Dialog states
   const [sectionDialogOpen, setSectionDialogOpen] = useState(false);
@@ -379,21 +213,28 @@ const MenuBuilder = () => {
     fetchRestaurantData();
   }, [currentUser]);
 
+  useEffect(() => {
+    const newExpandedSections: Record<string, boolean> = {};
+    menuSections.forEach(section => {
+      newExpandedSections[section.id] = expandedSections[section.id] ?? true;
+    });
+    setExpandedSections(newExpandedSections);
+  }, [menuSections]);
+
   const fetchRestaurantData = async () => {
-    if (!currentUser) return;
+    if (!currentUser) {
+      setLoading(false);
+      return;
+    }
     
     try {
       const restaurantDoc = await getDoc(doc(db, 'restaurants', currentUser.uid));
       
       if (restaurantDoc.exists()) {
         const data = restaurantDoc.data();
-        setRestaurant({ id: restaurantDoc.id, ...data });
+        setRestaurant(data);
         setMenuSections(data.menuSections || []);
-        
-        // Set currency symbol from restaurant data
-        if (data.theme && data.theme.currencySymbol) {
-          setCurrencySymbol(data.theme.currencySymbol);
-        }
+        setCurrencySymbol(data.currencySymbol || "₹");
       } else {
         toast({
           title: "Restaurant not found",
@@ -404,8 +245,8 @@ const MenuBuilder = () => {
     } catch (error) {
       console.error("Error fetching restaurant data:", error);
       toast({
-        title: "Error loading menu data",
-        description: "Please try again later.",
+        title: "Error loading data",
+        description: "Could not load your restaurant information.",
         variant: "destructive",
       });
     } finally {
@@ -417,23 +258,22 @@ const MenuBuilder = () => {
     if (!currentUser) return;
     
     setSaving(true);
-    
     try {
       await updateDoc(doc(db, 'restaurants', currentUser.uid), {
-        menuSections
-      });
-      
-      toast({
-        title: "Menu saved successfully",
-        description: "Your menu changes have been published.",
+        menuSections,
+        lastUpdated: new Date().toISOString()
       });
       
       setMenuChanged(false);
+      toast({
+        title: "Menu saved",
+        description: "Your menu has been updated successfully.",
+      });
     } catch (error) {
       console.error("Error saving menu:", error);
       toast({
         title: "Error saving menu",
-        description: "Please try again later.",
+        description: "Could not save your menu changes. Please try again.",
         variant: "destructive",
       });
     } finally {
@@ -441,10 +281,9 @@ const MenuBuilder = () => {
     }
   };
 
-  // Section handlers
   const openAddSectionDialog = () => {
-    setSectionName("");
     setCurrentSection(null);
+    setSectionName("");
     setSectionDialogOpen(true);
   };
 
@@ -510,7 +349,6 @@ const MenuBuilder = () => {
     }
   };
 
-  // Item handlers
   const openAddItemDialog = (sectionId: string) => {
     setCurrentSectionId(sectionId);
     setCurrentItem(null);
@@ -528,8 +366,8 @@ const MenuBuilder = () => {
     setCurrentSectionId(sectionId);
     setCurrentItem(item);
     setItemName(item.name);
-    setItemDescription(item.description);
-    setItemPrice(item.price ? item.price.toString() : "");
+    setItemDescription(item.description || "");
+    setItemPrice(item.price?.toString() || "");
     setItemImageUrl(item.imageUrl || "");
     setItemIsDisabled(item.isDisabled || false);
     setItemOutOfStock(item.outOfStock || false);
@@ -547,79 +385,52 @@ const MenuBuilder = () => {
       return;
     }
 
-    // If no price variations, price is required
-    let price = parseFloat(itemPrice);
-    if (priceVariations.length === 0 && (isNaN(price) || price < 0)) {
+    if (!itemPrice && (!priceVariations || priceVariations.length === 0)) {
       toast({
-        title: "Valid price required",
-        description: "Please enter a valid price or add price variations.",
+        title: "Price required",
+        description: "Please enter either a base price or price variations.",
         variant: "destructive",
       });
       return;
     }
 
-    // If price variations exist, price is not used
-    if (priceVariations.length > 0) {
-      price = 0;
-    }
-
     const sectionIndex = menuSections.findIndex(section => section.id === currentSectionId);
     if (sectionIndex === -1) return;
 
+    const newItem = {
+      id: currentItem?.id || uuidv4(),
+      name: itemName,
+      description: itemDescription,
+      price: itemPrice ? parseFloat(itemPrice) : undefined,
+      imageUrl: itemImageUrl || undefined,
+      isDisabled: itemIsDisabled,
+      outOfStock: itemOutOfStock,
+      priceVariations: priceVariations.length > 0 ? priceVariations : undefined
+    };
+
     const updatedSections = [...menuSections];
     const section = { ...updatedSections[sectionIndex] };
-
-    const imageUrl = itemImageUrl.trim() || "";
-
+    
     if (currentItem) {
       // Edit existing item
-      const updatedItems = section.items.map(item =>
-        item.id === currentItem.id
-          ? {
-              ...item,
-              name: itemName,
-              description: itemDescription,
-              price: priceVariations.length > 0 ? 0 : price,
-              imageUrl,
-              isDisabled: itemIsDisabled,
-              outOfStock: itemOutOfStock,
-              priceVariations: priceVariations.length > 0 ? [...priceVariations] : undefined
-            }
-          : item
+      section.items = section.items.map(item =>
+        item.id === currentItem.id ? newItem : item
       );
-      
-      section.items = updatedItems;
-      updatedSections[sectionIndex] = section;
-      
-      toast({
-        title: "Item updated",
-        description: `"${itemName}" has been updated.`,
-      });
     } else {
       // Add new item
-      const newItem: MenuItem = {
-        id: uuidv4(),
-        name: itemName,
-        description: itemDescription,
-        price: priceVariations.length > 0 ? 0 : price,
-        imageUrl,
-        isDisabled: itemIsDisabled,
-        outOfStock: itemOutOfStock,
-        priceVariations: priceVariations.length > 0 ? [...priceVariations] : undefined
-      };
-      
-      section.items = [...section.items, newItem];
-      updatedSections[sectionIndex] = section;
-      
-      toast({
-        title: "Item added",
-        description: `"${itemName}" has been added to the menu.`,
-      });
+      section.items = [...(section.items || []), newItem];
     }
     
+    updatedSections[sectionIndex] = section;
     setMenuSections(updatedSections);
-    setItemDialogOpen(false);
     setMenuChanged(true);
+    
+    toast({
+      title: currentItem ? "Item updated" : "Item added",
+      description: `"${itemName}" has been ${currentItem ? 'updated' : 'added to your menu'}.`,
+    });
+    
+    setItemDialogOpen(false);
   };
 
   const handleDeleteItem = (sectionId: string, itemId: string) => {
@@ -683,7 +494,7 @@ const MenuBuilder = () => {
     setMenuChanged(true);
     
     toast({
-      title: isDisabled ? "Section disabled" : "Section enabled",
+      title: isDisabled ? "Section hidden" : "Section visible",
       description: `The section has been ${isDisabled ? 'hidden from' : 'shown on'} the menu.`,
     });
   };
@@ -706,7 +517,18 @@ const MenuBuilder = () => {
   };
 
   const handleRemoveVariation = (index: number) => {
-    setPriceVariations(priceVariations.filter((_, i) => i !== index));
+    // Don't allow removing the last variation if we're using variations (and no base price)
+    const shouldPreventRemoval = priceVariations.length === 1 && !itemPrice;
+    
+    if (!shouldPreventRemoval) {
+      setPriceVariations(priceVariations.filter((_, i) => i !== index));
+    } else {
+      toast({
+        title: "Cannot remove all variations",
+        description: "You must have at least one price option. Add a base price or keep at least one variation.",
+        variant: "destructive",
+      });
+    }
   };
 
   const handleItemsReorder = (sectionId: string, items: MenuItem[]) => {
@@ -735,85 +557,110 @@ const MenuBuilder = () => {
     }
   };
 
+  const handleToggleExpand = (sectionId: string) => {
+    setExpandedSections(prev => ({
+      ...prev,
+      [sectionId]: !prev[sectionId]
+    }));
+  };
+
+  const handleToggleAllSections = () => {
+    const newExpandedState = !allExpanded;
+    setAllExpanded(newExpandedState);
+    
+    const newExpandedSections: Record<string, boolean> = {};
+    menuSections.forEach(section => {
+      newExpandedSections[section.id] = newExpandedState;
+    });
+    setExpandedSections(newExpandedSections);
+  };
+
   if (loading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-blue-50/50 to-indigo-50/50 flex items-center justify-center p-4">
-        <div className="flex flex-col items-center bg-white rounded-3xl p-12 shadow-lg border border-gray-100">
-          <div className="w-16 h-16 bg-blue-100 rounded-2xl flex items-center justify-center mb-6">
-            <RefreshCcw className="h-8 w-8 animate-spin text-blue-600" />
-          </div>
-          <p className="text-xl font-semibold text-gray-700">Loading menu builder...</p>
-          <p className="text-sm text-gray-500 mt-2">Please wait while we prepare your workspace</p>
+      <div className="page-container flex items-center justify-center min-h-[60vh]">
+        <div className="flex flex-col items-center">
+          <RefreshCcw className="h-8 w-8 animate-spin text-black" />
+          <p className="mt-4 text-lg text-black">Loading your menu builder...</p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50/50 to-indigo-50/50">
-      <div className="max-w-7xl mx-auto px-6 sm:px-8 lg:px-10 py-12">
-        {/* Header */}
-        <div className="bg-white rounded-3xl shadow-lg border border-gray-100 p-8 mb-12">
-          <div className="flex flex-col md:flex-row md:items-center md:justify-between">
-            <div className="mb-6 md:mb-0">
-              <div className="flex items-center gap-4 mb-3">
-                <div className="w-14 h-14 bg-gradient-to-br from-blue-600 to-indigo-600 rounded-2xl flex items-center justify-center">
-                  <Sparkles className="h-7 w-7 text-white" />
-                </div>
-                <h1 className="text-4xl md:text-5xl font-bold text-gray-900">Menu Builder</h1>
-              </div>
-              <p className="text-lg text-gray-600">Create and manage your restaurant menu with style</p>
-            </div>
-            
-            <div className="flex flex-wrap gap-4">
-              <Button
-                variant="outline"
-                onClick={openAddSectionDialog}
-                className="flex items-center rounded-full px-6 py-3 border-gray-200 hover:bg-gray-50 hover:border-blue-300 transition-all duration-200"
-              >
-                <Plus className="h-5 w-5 mr-2" />
-                Add Section
-              </Button>
-              
-              <Button
-                onClick={handleSaveMenu}
-                disabled={saving || !menuChanged}
-                className="flex items-center rounded-full px-8 py-3 bg-gradient-to-r from-blue-600 to-indigo-600 text-white hover:from-blue-700 hover:to-indigo-700 shadow-lg hover:shadow-xl transition-all duration-200 disabled:opacity-50"
-              >
-                {saving ? (
-                  <>
-                    <RefreshCcw className="h-5 w-5 mr-2 animate-spin" />
-                    Saving...
-                  </>
-                ) : (
-                  <>
-                    <Save className="h-5 w-5 mr-2" />
-                    Save Menu
-                  </>
-                )}
-              </Button>
-            </div>
-          </div>
+    <div className="page-container">
+      <div className="flex items-center justify-between mb-8">
+        <div>
+          <h1 className="text-4xl font-bold font-display text-black">Menu Builder</h1>
+          <p className="text-gray-600 mt-2">
+            Organize your menu sections and items. Drag to reorder.
+          </p>
         </div>
+        <div className="flex items-center gap-3">
+          {menuChanged && (
+            <Card className="bg-amber-50 border-amber-200">
+              <CardContent className="py-3 px-4 flex items-center gap-2">
+                <AlertCircle className="h-4 w-4 text-amber-500" />
+                <p className="text-sm text-amber-700">You have unsaved changes</p>
+              </CardContent>
+            </Card>
+          )}
+          <Button
+            onClick={handleSaveMenu}
+            disabled={!menuChanged || saving}
+            className="bg-black text-white hover:bg-gray-800 flex items-center gap-2"
+          >
+            <Save className="h-4 w-4" />
+            {saving ? 'Saving...' : 'Save Changes'}
+          </Button>
+        </div>
+      </div>
 
-        {menuSections.length === 0 ? (
-          <div className="bg-white rounded-3xl border border-gray-100 p-20 text-center shadow-lg">
-            <div className="w-24 h-24 bg-gradient-to-br from-blue-100 to-indigo-100 rounded-3xl flex items-center justify-center mx-auto mb-8">
-              <Plus className="h-12 w-12 text-blue-600" />
+      {menuSections.length === 0 ? (
+        <Card className="bg-gradient-to-br from-blue-50/50 to-indigo-50/50 border-dashed border-2 border-blue-200">
+          <CardContent className="py-12">
+            <div className="text-center">
+              <div className="w-12 h-12 bg-blue-100 rounded-2xl flex items-center justify-center mx-auto mb-4">
+                <Sparkles className="h-6 w-6 text-blue-600" />
+              </div>
+              <h3 className="text-xl font-semibold text-gray-900 mb-2">Start Building Your Menu</h3>
+              <p className="text-gray-600 mb-6">Create sections to organize your menu items.</p>
+              <Button onClick={openAddSectionDialog} className="bg-blue-600 hover:bg-blue-700">
+                <Plus className="h-4 w-4 mr-2" />
+                Add First Section
+              </Button>
             </div>
-            <h3 className="text-3xl font-bold text-gray-900 mb-4">Your menu is empty</h3>
-            <p className="text-gray-600 mb-8 max-w-md mx-auto text-lg leading-relaxed">
-              Start by adding a section to your menu, then add items to each section to create your perfect dining experience.
-            </p>
+          </CardContent>
+        </Card>
+      ) : (
+        <>
+          <div className="flex justify-end gap-3 mb-6">
             <Button
-              onClick={openAddSectionDialog}
-              className="flex items-center rounded-full px-8 py-4 bg-gradient-to-r from-blue-600 to-indigo-600 text-white hover:from-blue-700 hover:to-indigo-700 shadow-lg hover:shadow-xl transition-all duration-200 text-lg"
+              variant="outline"
+              onClick={handleToggleAllSections}
+              className="flex items-center rounded-lg px-4 py-2 bg-white border-gray-200 hover:bg-gray-50 hover:text-black"
             >
-              <Plus className="h-5 w-5 mr-2" />
-              Add Your First Section
+              {allExpanded ? (
+                <>
+                  <ChevronUp className="h-4 w-4 mr-2" />
+                  Collapse All
+                </>
+              ) : (
+                <>
+                  <ChevronDown className="h-4 w-4 mr-2" />
+                  Expand All
+                </>
+              )}
+            </Button>
+            <Button 
+              onClick={openAddSectionDialog} 
+              variant="outline" 
+              className="flex items-center rounded-lg px-4 py-2 bg-white border-gray-200 hover:bg-gray-50 hover:text-black"
+            >
+              <Plus className="h-4 w-4 mr-2" />
+              Add Section
             </Button>
           </div>
-        ) : (
+
           <DndContext
             sensors={sensors}
             collisionDetection={closestCenter}
@@ -837,222 +684,169 @@ const MenuBuilder = () => {
                     onToggleSectionDisabled={handleToggleSectionDisabled}
                     onItemsReorder={handleItemsReorder}
                     currencySymbol={currencySymbol}
+                    isExpanded={expandedSections[section.id] ?? true}
+                    onToggleExpand={handleToggleExpand}
                   />
                 ))}
               </div>
             </SortableContext>
           </DndContext>
-        )}
+        </>
+      )}
 
-        {/* Section Dialog */}
-        <Dialog open={sectionDialogOpen} onOpenChange={setSectionDialogOpen}>
-          <DialogContent className={`bg-white rounded-3xl ${isMobile ? 'w-[90vw] max-w-none mx-auto' : ''}`}>
-            <DialogHeader>
-              <DialogTitle className="text-2xl">
-                {currentSection ? "Edit Section" : "Add Section"}
-              </DialogTitle>
-              <DialogDescription className="text-base">
-                {currentSection
-                  ? "Update the name of this menu section"
-                  : "Add a new section to organize your menu items"}
-              </DialogDescription>
-            </DialogHeader>
-            
-            <div className="grid gap-6 py-6">
-              <div className="space-y-3">
-                <label htmlFor="name" className="text-sm font-medium">
-                  Section Name
-                </label>
-                <Input
-                  id="name"
-                  value={sectionName}
-                  onChange={(e) => setSectionName(e.target.value)}
-                  placeholder="e.g., Appetizers, Main Course, Desserts"
-                  className="border-gray-300 rounded-xl h-12"
-                />
-              </div>
+      {/* Section Dialog */}
+      <Dialog open={sectionDialogOpen} onOpenChange={setSectionDialogOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>{currentSection ? 'Edit Section' : 'Add Section'}</DialogTitle>
+            <DialogDescription>
+              {currentSection ? 'Update the section details.' : 'Create a new section for your menu.'}
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-4 py-4">
+            <div className="space-y-2">
+              <Label htmlFor="name">Section Name</Label>
+              <Input
+                id="name"
+                value={sectionName}
+                onChange={(e) => setSectionName(e.target.value)}
+                placeholder="e.g., Appetizers, Main Course, Desserts"
+              />
             </div>
-            
-            <DialogFooter>
-              <Button variant="outline" onClick={() => setSectionDialogOpen(false)} className="border-gray-300 rounded-xl">
-                Cancel
-              </Button>
-              <Button 
-                onClick={handleSaveSection}
-                className="bg-gradient-to-r from-blue-600 to-indigo-600 text-white hover:from-blue-700 hover:to-indigo-700 rounded-xl"
-              >
-                {currentSection ? "Update Section" : "Add Section"}
-              </Button>
-            </DialogFooter>
-          </DialogContent>
-        </Dialog>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setSectionDialogOpen(false)} className="hover:bg-gray-50 hover:text-black">
+              Cancel
+            </Button>
+            <Button onClick={handleSaveSection} className="bg-black text-white hover:bg-gray-50 hover:text-black">
+              {currentSection ? 'Save Changes' : 'Add Section'}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
 
-        {/* Item Dialog */}
-        <Dialog open={itemDialogOpen} onOpenChange={setItemDialogOpen}>
-          <DialogContent className={`bg-white rounded-3xl ${isMobile ? 'w-[90vw] max-w-none mx-auto' : 'sm:max-w-[500px]'} max-h-[90vh] overflow-y-auto`}>
-            <DialogHeader>
-              <DialogTitle className="text-2xl">
-                {currentItem ? "Edit Menu Item" : "Add Menu Item"}
-              </DialogTitle>
-              <DialogDescription className="text-base">
-                {currentItem
-                  ? "Update details for this menu item"
-                  : "Add details for your new menu item"}
-              </DialogDescription>
-            </DialogHeader>
-            
-            <div className="grid gap-6 py-6">
-              <div className="space-y-3">
-                <label htmlFor="item-name" className="text-sm font-medium">
-                  Item Name
-                </label>
+      {/* Item Dialog */}
+      <Dialog open={itemDialogOpen} onOpenChange={setItemDialogOpen}>
+        <DialogContent className="max-w-2xl">
+          <DialogHeader>
+            <DialogTitle>{currentItem ? 'Edit Item' : 'Add Item'}</DialogTitle>
+            <DialogDescription>
+              {currentItem ? 'Update the item details.' : 'Add a new item to this section.'}
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-4 py-4">
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label htmlFor="itemName">Item Name</Label>
                 <Input
-                  id="item-name"
+                  id="itemName"
                   value={itemName}
                   onChange={(e) => setItemName(e.target.value)}
-                  placeholder="e.g., Caesar Salad"
-                  className="border-gray-300 rounded-xl h-12"
+                  placeholder="e.g., Margherita Pizza"
                 />
               </div>
-              
-              <div className={`space-y-3 ${priceVariations.length > 0 ? 'opacity-50' : ''}`}>
-                <label htmlFor="item-price" className="text-sm font-medium flex justify-between">
-                  <span>Base Price {priceVariations.length > 0 && "(Not used with variations)"}</span>
-                  {priceVariations.length > 0 && 
-                    <span className="text-xs text-gray-500">(Optional with variations)</span>
-                  }
-                </label>
-                <div className="flex items-center">
-                  <span className="mr-2 text-lg">{currencySymbol}</span>
-                  <Input
-                    id="item-price"
-                    value={itemPrice}
-                    onChange={(e) => setItemPrice(e.target.value)}
-                    placeholder="0.00"
-                    type="number"
-                    step="0.01"
-                    min="0"
-                    disabled={priceVariations.length > 0}
-                    className="border-gray-300 rounded-xl h-12"
-                  />
-                </div>
-              </div>
-              
-              <div className="space-y-4">
-                <div className="flex justify-between items-center">
-                  <label className="text-sm font-medium">Price Variations</label>
-                  <Button 
-                    type="button" 
-                    size="sm" 
-                    onClick={handleAddVariation}
-                    className="bg-blue-600 text-white hover:bg-blue-700 rounded-xl"
-                  >
-                    <Plus className="h-4 w-4 mr-1" /> Add Variation
-                  </Button>
-                </div>
-                
-                {priceVariations.map((variation, index) => (
-                  <div key={index} className={`${isMobile ? 'flex flex-col gap-3' : 'flex items-center space-x-3'}`}>
-                    <Input
-                      placeholder="Name (e.g., Quarter, Half)"
-                      value={variation.name}
-                      onChange={(e) => handleUpdateVariation(index, 'name', e.target.value)}
-                      className="flex-1 border-gray-300 rounded-xl h-12"
-                    />
-                    <div className="flex items-center">
-                      <span className="mr-2 text-lg">{currencySymbol}</span>
-                      <Input
-                        placeholder="Price"
-                        type="number"
-                        step="0.01"
-                        min="0"
-                        value={variation.price}
-                        onChange={(e) => handleUpdateVariation(index, 'price', e.target.value)}
-                        className={`border-gray-300 rounded-xl h-12 ${isMobile ? "flex-1" : "w-28"}`}
-                      />
-                    </div>
-                    <Button 
-                      type="button" 
-                      size="icon" 
-                      variant="ghost" 
-                      onClick={() => handleRemoveVariation(index)}
-                      className="text-red-500 hover:bg-red-50 rounded-xl"
-                    >
-                      <Trash2 className="h-4 w-4" />
-                    </Button>
-                  </div>
-                ))}
-                
-                {priceVariations.length > 0 && 
-                  <p className="text-xs text-gray-500">
-                    When using variations, the base price is optional and won't be displayed.
-                  </p>
-                }
-              </div>
-              
-              <div className="space-y-3">
-                <label htmlFor="item-description" className="text-sm font-medium">
-                  Description
-                </label>
-                <Textarea
-                  id="item-description"
-                  value={itemDescription}
-                  onChange={(e) => setItemDescription(e.target.value)}
-                  placeholder="Describe this item..."
-                  rows={3}
-                  className="border-gray-300 resize-none rounded-xl"
-                />
-              </div>
-              
-              <div className="space-y-3">
-                <label htmlFor="item-image" className="text-sm font-medium">
-                  Image URL (Optional)
-                </label>
+              <div className="space-y-2">
+                <Label htmlFor="itemPrice">Base Price ({currencySymbol})</Label>
                 <Input
-                  id="item-image"
-                  value={itemImageUrl}
-                  onChange={(e) => setItemImageUrl(e.target.value)}
-                  placeholder="https://example.com/image.jpg"
-                  className="border-gray-300 rounded-xl h-12"
+                  id="itemPrice"
+                  type="number"
+                  value={itemPrice}
+                  onChange={(e) => setItemPrice(e.target.value)}
+                  placeholder="0.00"
+                  step="0.01"
                 />
-                <p className="text-xs text-gray-500">
-                  Images are optional. For best results, use square images (1:1 aspect ratio)
-                </p>
-                
-                {itemImageUrl && (
-                  <div className="mt-3 border rounded-xl p-3">
-                    <p className="text-xs font-medium mb-2">Image Preview:</p>
-                    <div className="aspect-square w-24 h-24 overflow-hidden rounded-xl bg-gray-100">
-                      <img 
-                        src={itemImageUrl} 
-                        alt="Preview" 
-                        className="w-full h-full object-cover"
-                        onError={(e) => {
-                          e.currentTarget.src = "https://placehold.co/200x200?text=Invalid+Image";
-                        }} 
-                      />
-                    </div>
-                  </div>
-                )}
               </div>
             </div>
             
-            <DialogFooter className={isMobile ? "flex-col space-y-3" : ""}>
-              <Button variant="outline" onClick={() => setItemDialogOpen(false)} className="border-gray-300 rounded-xl">
-                Cancel
-              </Button>
-              <Button 
-                onClick={handleSaveItem}
-                className="bg-gradient-to-r from-blue-600 to-indigo-600 text-white hover:from-blue-700 hover:to-indigo-700 rounded-xl"
-              >
-                {currentItem ? "Update Item" : "Add Item"}
-              </Button>
-            </DialogFooter>
-          </DialogContent>
-        </Dialog>
-      </div>
+            <div className="space-y-2">
+              <Label htmlFor="itemDescription">Description</Label>
+              <Textarea
+                id="itemDescription"
+                value={itemDescription}
+                onChange={(e) => setItemDescription(e.target.value)}
+                placeholder="Describe your item..."
+              />
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="itemImageUrl">Image URL</Label>
+              <Input
+                id="itemImageUrl"
+                value={itemImageUrl}
+                onChange={(e) => setItemImageUrl(e.target.value)}
+                placeholder="https://..."
+              />
+            </div>
+
+            <div className="space-y-4">
+              <div className="flex items-center justify-between">
+                <Label>Price Variations</Label>
+                <Button type="button" variant="outline" size="sm" onClick={handleAddVariation}>
+                  <Plus className="h-4 w-4 mr-2" />
+                  Add Variation
+                </Button>
+              </div>
+              
+              {priceVariations.map((variation, index) => (
+                <div key={index} className="flex items-center gap-4">
+                  <Input
+                    value={variation.name}
+                    onChange={(e) => handleUpdateVariation(index, 'name', e.target.value)}
+                    placeholder="Size/Variation name"
+                    className="flex-1"
+                  />
+                  <Input
+                    type="number"
+                    value={variation.price}
+                    onChange={(e) => handleUpdateVariation(index, 'price', e.target.value)}
+                    placeholder="0.00"
+                    step="0.01"
+                    className="w-32"
+                  />
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => handleRemoveVariation(index)}
+                    className="px-3"
+                  >
+                    <XCircle className="h-4 w-4 text-red-500" />
+                  </Button>
+                </div>
+              ))}
+            </div>
+
+            <div className="flex flex-col gap-4 sm:flex-row sm:gap-6">
+              <div className="flex items-center space-x-2">
+                <Switch
+                  id="itemDisabled"
+                  checked={itemIsDisabled}
+                  onCheckedChange={setItemIsDisabled}
+                />
+                <Label htmlFor="itemDisabled">Disabled</Label>
+              </div>
+              <div className="flex items-center space-x-2">
+                <Switch
+                  id="itemOutOfStock"
+                  checked={itemOutOfStock}
+                  onCheckedChange={setItemOutOfStock}
+                />
+                <Label htmlFor="itemOutOfStock">Out of Stock</Label>
+              </div>
+            </div>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setItemDialogOpen(false)} className="hover:bg-gray-50 hover:text-black">
+              Cancel
+            </Button>
+            <Button onClick={handleSaveItem} className="bg-black text-white hover:bg-gray-50 hover:text-black">
+              {currentItem ? 'Save Changes' : 'Add Item'}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
-};
+}
 
 export default MenuBuilder;
