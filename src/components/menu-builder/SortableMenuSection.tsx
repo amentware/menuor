@@ -1,0 +1,208 @@
+import { MenuSection, MenuItem } from "@/types";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Switch } from "@/components/ui/switch";
+import { Edit, MoveVertical, Plus, Trash2, ChevronDown, ChevronUp } from "lucide-react";
+import { useSortable } from "@dnd-kit/sortable";
+import { CSS } from "@dnd-kit/utilities";
+import { SortableMenuItem } from "./SortableMenuItem";
+import {
+  DndContext,
+  closestCenter,
+  KeyboardSensor,
+  PointerSensor,
+  useSensor,
+  useSensors,
+  DragEndEvent
+} from '@dnd-kit/core';
+import {
+  SortableContext,
+  sortableKeyboardCoordinates,
+  verticalListSortingStrategy,
+  arrayMove
+} from '@dnd-kit/sortable';
+import type { CSSProperties } from 'react';
+import { useState } from 'react';
+
+interface SortableMenuSectionProps {
+  section: MenuSection;
+  onEdit: (section: MenuSection) => void;
+  onDelete: (id: string) => void;
+  onAddItem: (sectionId: string) => void;
+  onEditItem: (sectionId: string, item: MenuItem) => void;
+  onDeleteItem: (sectionId: string, itemId: string) => void;
+  onStatusChange: (sectionId: string, itemId: string, status: 'active' | 'disabled' | 'outOfStock') => void;
+  onToggleSectionDisabled: (sectionId: string, disabled: boolean) => void;
+  onItemsReorder: (sectionId: string, items: MenuItem[]) => void;
+  currencySymbol: string;
+}
+
+export const SortableMenuSection = ({
+  section,
+  onEdit,
+  onDelete,
+  onAddItem,
+  onEditItem,
+  onDeleteItem,
+  onStatusChange,
+  onToggleSectionDisabled,
+  onItemsReorder,
+  currencySymbol
+}: SortableMenuSectionProps) => {
+  const [isExpanded, setIsExpanded] = useState(true);
+
+  const {
+    attributes,
+    listeners,
+    setNodeRef,
+    transform,
+    transition,
+    isDragging
+  } = useSortable({ id: section.id });
+
+  // Fix the transform to only include translate, removing scale
+  const style: CSSProperties = {
+    transform: transform ? `translate3d(${transform.x}px, ${transform.y}px, 0)` : undefined,
+    transition,
+    zIndex: isDragging ? 1000 : 'auto',
+    position: isDragging ? 'relative' : undefined,
+  };
+
+  const sensors = useSensors(
+    useSensor(PointerSensor, {
+      activationConstraint: {
+        distance: 8,
+      },
+    }),
+    useSensor(KeyboardSensor, {
+      coordinateGetter: sortableKeyboardCoordinates,
+    })
+  );
+
+  const handleDragEnd = (event: DragEndEvent) => {
+    const { active, over } = event;
+    
+    if (over && active.id !== over.id) {
+      const oldIndex = section.items.findIndex(item => item.id === active.id);
+      const newIndex = section.items.findIndex(item => item.id === over.id);
+      
+      const newItems = arrayMove(section.items, oldIndex, newIndex);
+      onItemsReorder(section.id, newItems);
+    }
+  };
+
+  const toggleExpand = () => {
+    setIsExpanded(!isExpanded);
+  };
+
+  return (
+    <Card 
+      ref={setNodeRef}
+      style={style}
+      className={`mb-3 border-b border-gray-100 ${section.isDisabled ? 'opacity-60' : ''} ${isDragging ? 'shadow-2xl rotate-2' : ''} w-full overflow-hidden`}
+    >
+      <CardHeader className="flex flex-row items-center justify-between space-y-0 py-3 px-3 sticky top-0 bg-white z-10 border-b rounded-t-lg">
+        <div className="flex items-center gap-3">
+          <div {...listeners} {...attributes} className="cursor-move p-1.5 rounded-lg hover:bg-gray-100 hover:text-gray-700">
+            <MoveVertical className="h-5 w-5 text-gray-700" />
+          </div>
+          <div className="flex items-center gap-3">
+            <div>
+              <CardTitle className="text-xl font-bold">{section.name}</CardTitle>
+              <p className="text-sm text-gray-500 mt-1">{section.items.length} items</p>
+            </div>
+            <Button
+              size="sm"
+              variant="ghost"
+              onClick={toggleExpand}
+              className="h-8 w-8 p-0 hover:bg-gray-100 hover:text-gray-700 rounded-lg"
+            >
+              {isExpanded ? (
+                <ChevronUp className="h-4 w-4 text-gray-700" />
+              ) : (
+                <ChevronDown className="h-4 w-4 text-gray-700" />
+              )}
+            </Button>
+          </div>
+        </div>
+        <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2">
+            <Switch
+              checked={!section.isDisabled}
+              onCheckedChange={(checked) => onToggleSectionDisabled(section.id, !checked)}
+            />
+            <span className="text-sm text-gray-600">
+              {section.isDisabled ? 'Disabled' : 'Active'}
+            </span>
+          </div>
+          <Button size="sm" variant="outline" onClick={() => onAddItem(section.id)} className="h-8 px-2 border-gray-200 hover:bg-gray-50 hover:text-gray-700 rounded-lg">
+            <Plus className="h-4 w-4 text-gray-700" />
+          </Button>
+          <Button size="sm" variant="outline" onClick={() => onEdit(section)} className="h-8 px-2 border-gray-200 hover:bg-gray-50 hover:text-gray-700 rounded-lg">
+            <Edit className="h-4 w-4 text-gray-700" />
+          </Button>
+          <Button size="sm" variant="outline" onClick={() => onDelete(section.id)} className="h-8 px-2 border-red-200 text-red-600 hover:bg-red-50 hover:text-red-700 rounded-lg">
+            <Trash2 className="h-4 w-4" />
+          </Button>
+        </div>
+      </CardHeader>
+      <CardContent 
+        className={`
+          overflow-hidden 
+          px-3
+          py-4
+          ${isExpanded ? 'border-t border-gray-200' : 'border-transparent'}
+        `}
+      >
+        <div 
+          className={`
+            max-h-[600px] 
+            overflow-y-auto 
+            scrollbar-thin 
+            scrollbar-thumb-gray-200 
+            scrollbar-track-transparent 
+            ${isExpanded ? 'block' : 'hidden'}
+          `}
+        >
+          <DndContext
+            sensors={sensors}
+            collisionDetection={closestCenter}
+            onDragEnd={handleDragEnd}
+          >
+            <SortableContext
+              items={section.items.map(item => item.id)}
+              strategy={verticalListSortingStrategy}
+            >
+              <div className="space-y-3">
+                {section.items.length > 0 ? (
+                  section.items.map(item => (
+                    <SortableMenuItem
+                      key={item.id}
+                      item={item}
+                      onEdit={(item) => onEditItem(section.id, item)}
+                      onDelete={(itemId) => onDeleteItem(section.id, itemId)}
+                      onStatusChange={(itemId, status) => onStatusChange(section.id, itemId, status)}
+                      currencySymbol={currencySymbol}
+                    />
+                  ))
+                ) : (
+                  <div className="text-center py-6 border-2 border-dashed border-gray-200 rounded-lg bg-gray-50">
+                    <p className="text-gray-500 mb-3">No items in this section</p>
+                    <Button 
+                      variant="outline" 
+                      onClick={() => onAddItem(section.id)}
+                      className="border-gray-200 text-black hover:bg-gray-50 hover:text-gray-700"
+                    >
+                      <Plus className="h-4 w-4 mr-2" />
+                      Add First Item
+                    </Button>
+                  </div>
+                )}
+              </div>
+            </SortableContext>
+          </DndContext>
+        </div>
+      </CardContent>
+    </Card>
+  );
+};
