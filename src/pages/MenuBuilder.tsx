@@ -180,6 +180,10 @@ const MenuBuilder = () => {
   // Dialog states
   const [sectionDialogOpen, setSectionDialogOpen] = useState(false);
   const [itemDialogOpen, setItemDialogOpen] = useState(false);
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [deleteType, setDeleteType] = useState<'section' | 'item'>();
+  const [itemToDelete, setItemToDelete] = useState<{ sectionId: string; itemId: string; name: string } | null>(null);
+  const [sectionToDelete, setSectionToDelete] = useState<{ id: string; name: string } | null>(null);
   const [currentSection, setCurrentSection] = useState<MenuSection | null>(null);
   const [currentSectionId, setCurrentSectionId] = useState<string>("");
   const [currentItem, setCurrentItem] = useState<MenuItem | null>(null);
@@ -337,16 +341,12 @@ const MenuBuilder = () => {
   };
 
   const handleDeleteSection = (sectionId: string) => {
-    if (confirm("Are you sure you want to delete this section and all its items?")) {
-      const updatedSections = menuSections.filter(section => section.id !== sectionId);
-      setMenuSections(updatedSections);
-      setMenuChanged(true);
-      
-      toast({
-        title: "Section deleted",
-        description: "The section has been removed from your menu.",
-      });
-    }
+    const section = menuSections.find(s => s.id === sectionId);
+    if (!section) return;
+    
+    setDeleteType('section');
+    setSectionToDelete({ id: sectionId, name: section.name });
+    setDeleteDialogOpen(true);
   };
 
   const openAddItemDialog = (sectionId: string) => {
@@ -425,22 +425,13 @@ const MenuBuilder = () => {
   };
 
   const handleDeleteItem = (sectionId: string, itemId: string) => {
-    const sectionIndex = menuSections.findIndex(section => section.id === sectionId);
-    if (sectionIndex === -1) return;
+    const section = menuSections.find(s => s.id === sectionId);
+    const item = section?.items.find(i => i.id === itemId);
+    if (!section || !item) return;
 
-    const updatedSections = [...menuSections];
-    const section = { ...updatedSections[sectionIndex] };
-    
-    section.items = section.items.filter(item => item.id !== itemId);
-    updatedSections[sectionIndex] = section;
-    
-    setMenuSections(updatedSections);
-    setMenuChanged(true);
-    
-    toast({
-      title: "Item deleted",
-      description: "The item has been removed from the menu.",
-    });
+    setDeleteType('item');
+    setItemToDelete({ sectionId, itemId, name: item.name });
+    setDeleteDialogOpen(true);
   };
 
   const handleStatusChange = (sectionId: string, itemId: string, status: 'active' | 'disabled' | 'outOfStock') => {
@@ -564,6 +555,41 @@ const MenuBuilder = () => {
       newExpandedSections[section.id] = newExpandedState;
     });
     setExpandedSections(newExpandedSections);
+  };
+
+  const confirmDelete = () => {
+    if (deleteType === 'section' && sectionToDelete) {
+      const updatedSections = menuSections.filter(section => section.id !== sectionToDelete.id);
+      setMenuSections(updatedSections);
+      setMenuChanged(true);
+      
+      toast({
+        title: "Section deleted",
+        description: "The section has been removed from your menu.",
+      });
+    } else if (deleteType === 'item' && itemToDelete) {
+      const sectionIndex = menuSections.findIndex(section => section.id === itemToDelete.sectionId);
+      if (sectionIndex === -1) return;
+
+      const updatedSections = [...menuSections];
+      const section = { ...updatedSections[sectionIndex] };
+      
+      section.items = section.items.filter(item => item.id !== itemToDelete.itemId);
+      updatedSections[sectionIndex] = section;
+      
+      setMenuSections(updatedSections);
+      setMenuChanged(true);
+      
+      toast({
+        title: "Item deleted",
+        description: "The item has been removed from the menu.",
+      });
+    }
+    
+    setDeleteDialogOpen(false);
+    setDeleteType(undefined);
+    setItemToDelete(null);
+    setSectionToDelete(null);
   };
 
   if (loading) {
@@ -841,6 +867,36 @@ const MenuBuilder = () => {
             </Button>
             <Button onClick={handleSaveItem} className="bg-black text-white hover:bg-gray-50 hover:text-black">
               {currentItem ? 'Save Changes' : 'Add Item'}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Delete Confirmation Dialog */}
+      <Dialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Confirm Deletion</DialogTitle>
+            <DialogDescription>
+              {deleteType === 'section' 
+                ? `Are you sure you want to delete the section "${sectionToDelete?.name}"? This will also delete all items within this section.`
+                : `Are you sure you want to delete the item "${itemToDelete?.name}"?`
+              }
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter>
+            <Button 
+              variant="outline" 
+              onClick={() => setDeleteDialogOpen(false)}
+              className="hover:bg-gray-50 hover:text-black"
+            >
+              Cancel
+            </Button>
+            <Button 
+              onClick={confirmDelete}
+              className="bg-red-600 text-white hover:bg-gray-50 hover:text-red-600"
+            >
+              Delete
             </Button>
           </DialogFooter>
         </DialogContent>
