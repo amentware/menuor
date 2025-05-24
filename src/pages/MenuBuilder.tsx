@@ -642,15 +642,15 @@ const MenuBuilder = () => {
       </div>
 
       {menuSections.length === 0 ? (
-        <Card className="bg-gradient-to-br from-blue-50/50 to-indigo-50/50 border-dashed border-2 border-blue-200">
+        <Card className="bg-gradient-to-br from-black-50/50 to-indigo-50/50 border-dashed border-2 border-black-200">
           <CardContent className="py-12">
             <div className="text-center">
-              <div className="w-12 h-12 bg-blue-100 rounded-2xl flex items-center justify-center mx-auto mb-4">
-                <Sparkles className="h-6 w-6 text-blue-600" />
+              <div className="w-12 h-12 bg-white rounded-2xl flex items-center justify-center mx-auto mb-4">
+                <Sparkles className="h-6 w-6 text-black" />
               </div>
               <h3 className="text-xl font-semibold text-gray-900 mb-2">Start Building Your Menu</h3>
               <p className="text-gray-600 mb-6">Create sections to organize your menu items.</p>
-              <Button onClick={openAddSectionDialog} className="bg-blue-600 hover:bg-blue-700">
+              <Button onClick={openAddSectionDialog} className="bg-black">
                 <Plus className="h-4 w-4 mr-2" />
                 Add First Section
               </Button>
@@ -795,7 +795,7 @@ const MenuBuilder = () => {
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="itemImageUrl">Image URL</Label>
+              <Label htmlFor="itemImageUrl">Image URL (Optional)</Label>
               <Input
                 id="itemImageUrl"
                 value={itemImageUrl}
