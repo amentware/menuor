@@ -148,62 +148,44 @@ export const SortableMenuSection = ({
         </div>
       </CardHeader>
       
-      <CardContent
-        className={`
-          overflow-hidden 
-          px-3
-          py-4
-          ${isExpanded ? 'border-t border-gray-200' : 'border-transparent'}
-        `}
-      >
-        <div 
-          className={`
-            max-h-[600px] 
-            overflow-y-auto 
-            scrollbar-thin 
-            scrollbar-thumb-gray-200 
-            scrollbar-track-transparent 
-            ${isExpanded ? 'block' : 'hidden'}
-          `}
+      <CardContent className={`${isExpanded ? 'block' : 'hidden'}`}>
+        <DndContext
+          sensors={sensors}
+          collisionDetection={closestCenter}
+          onDragEnd={handleDragEnd}
         >
-          <DndContext
-            sensors={sensors}
-            collisionDetection={closestCenter}
-            onDragEnd={handleDragEnd}
+          <SortableContext
+            items={section.items.map(item => item.id)}
+            strategy={verticalListSortingStrategy}
           >
-            <SortableContext
-              items={section.items.map(item => item.id)}
-              strategy={verticalListSortingStrategy}
-            >
-              <div className="space-y-3">
-                {section.items.length > 0 ? (
-                  section.items.map(item => (
-                    <SortableMenuItem
-                      key={item.id}
-                      item={item}
-                      onEdit={(item) => onEditItem(section.id, item)}
-                      onDelete={(itemId) => onDeleteItem(section.id, itemId)}
-                      onStatusChange={(itemId, status) => onStatusChange(section.id, itemId, status)}
-                      currencySymbol={currencySymbol}
-                    />
-                  ))
-                ) : (
-                  <div className="text-center py-6 border-2 border-dashed border-gray-200 rounded-lg bg-gray-50">
-                    <p className="text-gray-500 mb-3">No items in this section</p>
-                    <Button 
-                      variant="outline" 
-                      onClick={() => onAddItem(section.id)}
-                      className="border-gray-200 text-black hover:bg-gray-50 hover:text-gray-700"
-                    >
-                      <Plus className="h-4 w-4 mr-2" />
-                      Add First Item
-                    </Button>
-                  </div>
-                )}
-              </div>
-            </SortableContext>
-          </DndContext>
-        </div>
+            <div className="space-y-4">
+              {section.items.length > 0 ? (
+                section.items.map(item => (
+                  <SortableMenuItem
+                    key={item.id}
+                    item={item}
+                    onEdit={(item) => onEditItem(section.id, item)}
+                    onDelete={(itemId) => onDeleteItem(section.id, itemId)}
+                    onStatusChange={(itemId, status) => onStatusChange(section.id, itemId, status)}
+                    currencySymbol={currencySymbol}
+                  />
+                ))
+              ) : (
+                <div className="text-center py-6 border-2 border-dashed border-gray-200 rounded-lg bg-gray-50">
+                  <p className="text-gray-500 mb-3">No items in this section</p>
+                  <Button 
+                    variant="outline" 
+                    onClick={() => onAddItem(section.id)}
+                    className="border-gray-200 text-black hover:bg-gray-50 hover:text-gray-700"
+                  >
+                    <Plus className="h-4 w-4 mr-2" />
+                    Add First Item
+                  </Button>
+                </div>
+              )}
+            </div>
+          </SortableContext>
+        </DndContext>
       </CardContent>
     </Card>
   );
