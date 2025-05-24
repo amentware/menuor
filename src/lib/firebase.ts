@@ -26,13 +26,13 @@ import { getAnalytics } from 'firebase/analytics';
 
 // Firebase configuration
 const firebaseConfig = {
-  apiKey: "AIzaSyBN6TQKgxiSUnmgRUrvsM53BwYb3KBL-eA",
-  authDomain: "menulink-test.firebaseapp.com",
-  projectId: "menulink-test",
-  storageBucket: "menulink-test.firebasestorage.app",
-  messagingSenderId: "882833572105",
-  appId: "1:882833572105:web:9c718e34c362d6fc4c13d8",
-  measurementId: "G-ZCFMLH9LT0"
+  apiKey: "AIzaSyBVc6v2AcDqf4JCS96099Ihh_gvk3z6gDY",
+  authDomain: "menu-or.firebaseapp.com",
+  projectId: "menu-or",
+  storageBucket: "menu-or.firebasestorage.app",
+  messagingSenderId: "557949447387",
+  appId: "1:557949447387:web:df000f97ba2cfc6d1330fe",
+  measurementId: "G-PFSMRLLKC5"
 };
 
 // Initialize Firebase
