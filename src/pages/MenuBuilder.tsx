@@ -6,6 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Switch } from "@/components/ui/switch";
+import { Badge } from "@/components/ui/badge";
 import { 
   Dialog, 
   DialogContent, 
@@ -29,7 +30,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { MenuSection, MenuItem, PriceVariation } from "@/types";
-import { Plus, Trash2, MoveVertical, Save, Edit, RefreshCcw, AlertCircle, XCircle, MoreVertical, Sparkles } from "lucide-react";
+import { Plus, Trash2, MoveVertical, Save, Edit, RefreshCcw, AlertCircle, XCircle, MoreVertical, Sparkles, ChevronDown, ChevronUp } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { v4 as uuidv4 } from "uuid";
 import { 
@@ -173,6 +174,8 @@ const MenuBuilder = () => {
   const [saving, setSaving] = useState(false);
   const [menuChanged, setMenuChanged] = useState(false);
   const [currencySymbol, setCurrencySymbol] = useState("₹");
+  const [expandedSections, setExpandedSections] = useState<Record<string, boolean>>({});
+  const [allExpanded, setAllExpanded] = useState(true);
   
   // Dialog states
   const [sectionDialogOpen, setSectionDialogOpen] = useState(false);
@@ -209,6 +212,14 @@ const MenuBuilder = () => {
   useEffect(() => {
     fetchRestaurantData();
   }, [currentUser]);
+
+  useEffect(() => {
+    const newExpandedSections: Record<string, boolean> = {};
+    menuSections.forEach(section => {
+      newExpandedSections[section.id] = expandedSections[section.id] ?? true;
+    });
+    setExpandedSections(newExpandedSections);
+  }, [menuSections]);
 
   const fetchRestaurantData = async () => {
     if (!currentUser) {
@@ -546,6 +557,24 @@ const MenuBuilder = () => {
     }
   };
 
+  const handleToggleExpand = (sectionId: string) => {
+    setExpandedSections(prev => ({
+      ...prev,
+      [sectionId]: !prev[sectionId]
+    }));
+  };
+
+  const handleToggleAllSections = () => {
+    const newExpandedState = !allExpanded;
+    setAllExpanded(newExpandedState);
+    
+    const newExpandedSections: Record<string, boolean> = {};
+    menuSections.forEach(section => {
+      newExpandedSections[section.id] = newExpandedState;
+    });
+    setExpandedSections(newExpandedSections);
+  };
+
   if (loading) {
     return (
       <div className="page-container flex items-center justify-center min-h-[60vh]">
@@ -604,8 +633,29 @@ const MenuBuilder = () => {
         </Card>
       ) : (
         <>
-          <div className="flex justify-end mb-6">
-            <Button onClick={openAddSectionDialog} variant="outline" className="border-dashed border-2">
+          <div className="flex justify-end gap-3 mb-6">
+            <Button
+              variant="outline"
+              onClick={handleToggleAllSections}
+              className="flex items-center rounded-lg px-4 py-2 bg-white border-gray-200 hover:bg-gray-50 hover:text-black"
+            >
+              {allExpanded ? (
+                <>
+                  <ChevronUp className="h-4 w-4 mr-2" />
+                  Collapse All
+                </>
+              ) : (
+                <>
+                  <ChevronDown className="h-4 w-4 mr-2" />
+                  Expand All
+                </>
+              )}
+            </Button>
+            <Button 
+              onClick={openAddSectionDialog} 
+              variant="outline" 
+              className="flex items-center rounded-lg px-4 py-2 bg-white border-gray-200 hover:bg-gray-50 hover:text-black"
+            >
               <Plus className="h-4 w-4 mr-2" />
               Add Section
             </Button>
@@ -634,6 +684,8 @@ const MenuBuilder = () => {
                     onToggleSectionDisabled={handleToggleSectionDisabled}
                     onItemsReorder={handleItemsReorder}
                     currencySymbol={currencySymbol}
+                    isExpanded={expandedSections[section.id] ?? true}
+                    onToggleExpand={handleToggleExpand}
                   />
                 ))}
               </div>
@@ -663,10 +715,10 @@ const MenuBuilder = () => {
             </div>
           </div>
           <DialogFooter>
-            <Button variant="outline" onClick={() => setSectionDialogOpen(false)}>
+            <Button variant="outline" onClick={() => setSectionDialogOpen(false)} className="hover:bg-gray-50 hover:text-black">
               Cancel
             </Button>
-            <Button onClick={handleSaveSection}>
+            <Button onClick={handleSaveSection} className="bg-black text-white hover:bg-gray-50 hover:text-black">
               {currentSection ? 'Save Changes' : 'Add Section'}
             </Button>
           </DialogFooter>
@@ -784,10 +836,10 @@ const MenuBuilder = () => {
             </div>
           </div>
           <DialogFooter>
-            <Button variant="outline" onClick={() => setItemDialogOpen(false)}>
+            <Button variant="outline" onClick={() => setItemDialogOpen(false)} className="hover:bg-gray-50 hover:text-black">
               Cancel
             </Button>
-            <Button onClick={handleSaveItem}>
+            <Button onClick={handleSaveItem} className="bg-black text-white hover:bg-gray-50 hover:text-black">
               {currentItem ? 'Save Changes' : 'Add Item'}
             </Button>
           </DialogFooter>

@@ -1,4 +1,3 @@
-
 import { Link, useLocation } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import { Button } from '@/components/ui/button';
@@ -30,23 +29,35 @@ const Navigation = () => {
               <>
                 <Link 
                   to="/" 
-                  className={`flex items-center gap-2 px-3 py-2 rounded-md text-sm font-medium ${isActive('/') ? 'bg-primary/10 text-primary' : 'text-black hover:bg-primary/5 hover:text-primary'}`}
+                  className={`flex items-center gap-2 px-4 py-2 rounded-lg ${
+                    location.pathname === '/' 
+                      ? 'bg-gray-100 text-gray-900' 
+                      : 'text-gray-600 hover:bg-gray-50 hover:text-gray-700'
+                  }`}
                 >
-                  <Home className="h-4 w-4" />
+                  <Home className="h-5 w-5" />
                   Home
                 </Link>
                 <Link 
                   to="/login" 
-                  className={`flex items-center gap-2 px-3 py-2 rounded-md text-sm font-medium ${isActive('/login') ? 'bg-primary/10 text-primary' : 'text-black hover:bg-primary/5 hover:text-primary'}`}
+                  className={`flex items-center gap-2 px-4 py-2 rounded-lg ${
+                    location.pathname === '/login' 
+                      ? 'bg-gray-100 text-gray-900' 
+                      : 'text-gray-600 hover:bg-gray-50 hover:text-gray-700'
+                  }`}
                 >
-                  <User className="h-4 w-4" />
+                  <User className="h-5 w-5" />
                   Login
                 </Link>
                 <Link 
                   to="/register" 
-                  className={`flex items-center gap-2 px-3 py-2 rounded-md text-sm font-medium ${isActive('/register') ? 'bg-primary/10 text-primary' : 'text-black hover:bg-primary/5 hover:text-primary'}`}
+                  className={`flex items-center gap-2 px-4 py-2 rounded-lg ${
+                    location.pathname === '/register' 
+                      ? 'bg-gray-100 text-gray-900' 
+                      : 'text-gray-600 hover:bg-gray-50 hover:text-gray-700'
+                  }`}
                 >
-                  <User className="h-4 w-4" />
+                  <User className="h-5 w-5" />
                   Register
                 </Link>
               </>
@@ -56,23 +67,35 @@ const Navigation = () => {
               <>
                 <Link 
                   to="/dashboard" 
-                  className={`flex items-center gap-2 px-3 py-2 rounded-md text-sm font-medium ${isActive('/dashboard') ? 'bg-primary/10 text-primary' : 'text-black hover:bg-primary/5 hover:text-primary'}`}
+                  className={`flex items-center gap-2 px-4 py-2 rounded-lg ${
+                    location.pathname === '/dashboard' 
+                      ? 'bg-gray-100 text-gray-900' 
+                      : 'text-gray-600 hover:bg-gray-50 hover:text-gray-700'
+                  }`}
                 >
-                  <LayoutDashboard className="h-4 w-4" />
+                  <LayoutDashboard className="h-5 w-5" />
                   Dashboard
                 </Link>
-                <Link 
-                  to="/menu-builder" 
-                  className={`flex items-center gap-2 px-3 py-2 rounded-md text-sm font-medium ${isActive('/menu-builder') ? 'bg-primary/10 text-primary' : 'text-black hover:bg-primary/5 hover:text-primary'}`}
+                <Link
+                  to="/menu-builder"
+                  className={`flex items-center gap-2 px-4 py-2 rounded-lg ${
+                    location.pathname === '/menu-builder' 
+                      ? 'bg-gray-100 text-gray-900' 
+                      : 'text-gray-600 hover:bg-gray-50 hover:text-gray-700'
+                  }`}
                 >
-                  <MenuIcon className="h-4 w-4" />
+                  <MenuIcon className="h-5 w-5" />
                   Menu Builder
                 </Link>
-                <Link 
-                  to="/qr-code" 
-                  className={`flex items-center gap-2 px-3 py-2 rounded-md text-sm font-medium ${isActive('/qr-code') ? 'bg-primary/10 text-primary' : 'text-black hover:bg-primary/5 hover:text-primary'}`}
+                <Link
+                  to="/qr-code"
+                  className={`flex items-center gap-2 px-4 py-2 rounded-lg ${
+                    location.pathname === '/qr-code' 
+                      ? 'bg-gray-100 text-gray-900' 
+                      : 'text-gray-600 hover:bg-gray-50 hover:text-gray-700'
+                  }`}
                 >
-                  <QrCode className="h-4 w-4" />
+                  <QrCode className="h-5 w-5" />
                   QR Code
                 </Link>
               </>
@@ -81,9 +104,13 @@ const Navigation = () => {
             {isAdmin && (
               <Link 
                 to="/admin" 
-                className={`flex items-center gap-2 px-3 py-2 rounded-md text-sm font-medium ${isActive('/admin') ? 'bg-primary/10 text-primary' : 'text-black hover:bg-primary/5 hover:text-primary'}`}
+                className={`flex items-center gap-2 px-4 py-2 rounded-lg ${
+                  location.pathname === '/admin' 
+                    ? 'bg-gray-100 text-gray-900' 
+                    : 'text-gray-600 hover:bg-gray-50 hover:text-gray-700'
+                }`}
               >
-                <Settings className="h-4 w-4" />
+                <Settings className="h-5 w-5" />
                 Admin Panel
               </Link>
             )}
@@ -91,7 +118,7 @@ const Navigation = () => {
             {isAuthenticated && (
               <Button 
                 variant="outline" 
-                className="border-red-300 text-red-600 hover:bg-red-50 hover:text-red-700 hover:border-red-400 flex items-center gap-2 transition-colors" 
+                className="bg-black text-white hover:bg-gray-50 hover:text-black flex items-center gap-2 transition-colors" 
                 onClick={logout}
               >
                 <LogOut className="h-4 w-4" />

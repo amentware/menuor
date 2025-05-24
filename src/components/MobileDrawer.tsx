@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
@@ -53,10 +52,10 @@ const MobileDrawer = () => {
                   key={item.to}
                   to={item.to}
                   onClick={closeDrawer}
-                  className={`flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition-colors ${
+                  className={`flex items-center gap-3 px-4 py-3 rounded-lg ${
                     isActive(item.to)
-                      ? 'bg-primary/10 text-primary'
-                      : 'text-gray-700 hover:bg-gray-100'
+                      ? 'bg-gray-100 text-gray-900'
+                      : 'text-gray-600 hover:bg-gray-50 hover:text-gray-700'
                   }`}
                 >
                   <Icon className="h-5 w-5" />
@@ -74,7 +73,7 @@ const MobileDrawer = () => {
                   logout();
                   closeDrawer();
                 }}
-                className="w-full justify-start text-red-600 hover:text-red-700 hover:bg-red-50"
+                className="w-full justify-start border-red-300 text-red-600 hover:bg-red-50 hover:text-red-700 hover:border-red-400 flex items-center gap-2 transition-colors"
               >
                 <LogOut className="h-5 w-5 mr-3" />
                 Logout

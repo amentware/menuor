@@ -35,6 +35,8 @@ interface SortableMenuSectionProps {
   onToggleSectionDisabled: (sectionId: string, disabled: boolean) => void;
   onItemsReorder: (sectionId: string, items: MenuItem[]) => void;
   currencySymbol: string;
+  isExpanded: boolean;
+  onToggleExpand: (sectionId: string) => void;
 }
 
 export const SortableMenuSection = ({
@@ -47,10 +49,10 @@ export const SortableMenuSection = ({
   onStatusChange,
   onToggleSectionDisabled,
   onItemsReorder,
-  currencySymbol
+  currencySymbol,
+  isExpanded,
+  onToggleExpand
 }: SortableMenuSectionProps) => {
-  const [isExpanded, setIsExpanded] = useState(true);
-
   const {
     attributes,
     listeners,
@@ -91,10 +93,6 @@ export const SortableMenuSection = ({
     }
   };
 
-  const toggleExpand = () => {
-    setIsExpanded(!isExpanded);
-  };
-
   return (
     <Card 
       ref={setNodeRef}
@@ -114,7 +112,7 @@ export const SortableMenuSection = ({
             <Button
               size="sm"
               variant="ghost"
-              onClick={toggleExpand}
+              onClick={() => onToggleExpand(section.id)}
               className="h-8 w-8 p-0 hover:bg-gray-100 hover:text-gray-700 rounded-lg"
             >
               {isExpanded ? (
@@ -125,8 +123,9 @@ export const SortableMenuSection = ({
             </Button>
           </div>
         </div>
+        
         <div className="flex items-center gap-2">
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2 mr-4">
             <Switch
               checked={!section.isDisabled}
               onCheckedChange={(checked) => onToggleSectionDisabled(section.id, !checked)}
@@ -135,18 +134,21 @@ export const SortableMenuSection = ({
               {section.isDisabled ? 'Disabled' : 'Active'}
             </span>
           </div>
-          <Button size="sm" variant="outline" onClick={() => onAddItem(section.id)} className="h-8 px-2 border-gray-200 hover:bg-gray-50 hover:text-gray-700 rounded-lg">
-            <Plus className="h-4 w-4 text-gray-700" />
-          </Button>
-          <Button size="sm" variant="outline" onClick={() => onEdit(section)} className="h-8 px-2 border-gray-200 hover:bg-gray-50 hover:text-gray-700 rounded-lg">
-            <Edit className="h-4 w-4 text-gray-700" />
-          </Button>
-          <Button size="sm" variant="outline" onClick={() => onDelete(section.id)} className="h-8 px-2 border-red-200 text-red-600 hover:bg-red-50 hover:text-red-700 rounded-lg">
-            <Trash2 className="h-4 w-4" />
-          </Button>
+          <div className="flex items-center gap-2">
+            <Button size="sm" variant="outline" onClick={() => onAddItem(section.id)} className="h-8 px-2 border-gray-200 hover:bg-gray-50 hover:text-gray-700 rounded-lg">
+              <Plus className="h-4 w-4 text-gray-700" />
+            </Button>
+            <Button size="sm" variant="outline" onClick={() => onEdit(section)} className="h-8 px-2 border-gray-200 hover:bg-gray-50 hover:text-gray-700 rounded-lg">
+              <Edit className="h-4 w-4 text-gray-700" />
+            </Button>
+            <Button size="sm" variant="outline" onClick={() => onDelete(section.id)} className="h-8 px-2 border-red-200 text-red-600 hover:bg-red-50 hover:text-red-700 rounded-lg">
+              <Trash2 className="h-4 w-4" />
+            </Button>
+          </div>
         </div>
       </CardHeader>
-      <CardContent 
+      
+      <CardContent
         className={`
           overflow-hidden 
           px-3
