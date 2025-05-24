@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import { db, doc, getDoc, updateDoc } from "../lib/firebase";
@@ -6,6 +7,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Switch } from "@/components/ui/switch";
+import { Badge } from "@/components/ui/badge";
 import { 
   Dialog, 
   DialogContent, 
@@ -16,20 +18,13 @@ import {
 } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
 import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { MenuSection, MenuItem, PriceVariation } from "@/types";
-import { Plus, Trash2, MoveVertical, Save, Edit, RefreshCcw, AlertCircle, XCircle, MoreVertical, Sparkles } from "lucide-react";
+import { Plus, Trash2, MoveVertical, Save, Edit, RefreshCcw, XCircle, Eye, EyeOff, Sparkles } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { v4 as uuidv4 } from "uuid";
 import { 
@@ -44,9 +39,9 @@ import {
 import {
   arrayMove,
   SortableContext,
-  sortableKeyboardCoordinates,
   useSortable,
-  verticalListSortingStrategy
+  verticalListSortingStrategy,
+  sortableKeyboardCoordinates
 } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 import { useIsMobile } from "@/hooks/use-mobile";
@@ -86,77 +81,87 @@ const SortableMenuItem = ({
     transition,
   };
 
+  const getStatusBadge = () => {
+    const status = getItemStatus();
+    switch (status) {
+      case 'outOfStock':
+        return <Badge variant="destructive" className="text-xs px-2 py-1 rounded-full">Out of Stock</Badge>;
+      case 'disabled':
+        return <Badge variant="secondary" className="text-xs px-2 py-1 rounded-full">Disabled</Badge>;
+      default:
+        return <Badge variant="default" className="text-xs px-2 py-1 rounded-full bg-emerald-100 text-emerald-700 border-emerald-200">Active</Badge>;
+    }
+  };
+
   return (
     <div
       ref={setNodeRef}
       style={style}
       {...attributes}
-      className={`bg-white rounded-2xl border-2 border-gray-100 shadow-sm hover:shadow-lg transition-all duration-300 hover:border-blue-200 mb-4 p-6 ${item.isDisabled ? 'opacity-60' : ''}`}
+      className={`group bg-white border border-gray-100 rounded-2xl p-4 hover:shadow-lg transition-all duration-300 hover:border-blue-200 ${item.isDisabled ? 'opacity-60' : ''}`}
     >
-      <div className="flex items-center justify-between">
-        <div className="flex-1 min-w-0">
-          <div className="flex justify-between items-start">
-            <div className="font-bold text-lg truncate flex items-center gap-3 text-gray-900">
-              {item.name}
-              {item.outOfStock && (
-                <span className="text-xs px-3 py-1 bg-orange-100 text-orange-700 rounded-full font-medium">Out of Stock</span>
-              )}
-              {item.isDisabled && (
-                <span className="text-xs px-3 py-1 bg-gray-100 text-gray-600 rounded-full font-medium">Disabled</span>
-              )}
-            </div>
-            <div className="text-primary font-bold ml-2">
-              {item.priceVariations && item.priceVariations.length > 0 ? (
-                <span className="text-green-600 text-xl">{`${currencySymbol}${item.priceVariations[0].price.toFixed(2)}+`}</span>
-              ) : (
-                item.price ? <span className="text-green-600 text-xl">{currencySymbol}{item.price.toFixed(2)}</span> : <span className="text-gray-400">-</span>
-              )}
-            </div>
+      <div className="flex items-start justify-between">
+        <div className="flex-1 min-w-0 mr-4">
+          <div className="flex items-center gap-3 mb-2">
+            <h4 className="font-semibold text-gray-900 truncate text-lg">{item.name}</h4>
+            {getStatusBadge()}
           </div>
-          <div className="text-sm text-gray-600 truncate mt-2 leading-relaxed">{item.description}</div>
+          {item.description && (
+            <p className="text-sm text-gray-600 mb-3 line-clamp-2 leading-relaxed">{item.description}</p>
+          )}
+          <div className="text-xl font-bold text-blue-600">
+            {item.priceVariations && item.priceVariations.length > 0 ? (
+              <span>{`${currencySymbol}${item.priceVariations[0].price.toFixed(2)}+`}</span>
+            ) : (
+              item.price ? <span>{currencySymbol}{item.price.toFixed(2)}</span> : <span className="text-gray-400">-</span>
+            )}
+          </div>
         </div>
         
-        <div className={`flex items-center ml-4 ${isMobile ? 'flex-col gap-2' : 'gap-3'}`}>
+        <div className="flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button 
-                size="sm" 
-                variant="outline"
-                className="h-10 px-3 border-gray-200 hover:bg-gray-50 rounded-xl"
-              >
-                <MoreVertical className="h-4 w-4" />
+              <Button size="sm" variant="outline" className="h-8 w-8 p-0 rounded-full border-gray-200 hover:bg-gray-50">
+                {getItemStatus() === 'active' ? (
+                  <Eye className="h-4 w-4 text-emerald-600" />
+                ) : (
+                  <EyeOff className="h-4 w-4 text-gray-400" />
+                )}
               </Button>
             </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="w-40 rounded-xl border border-gray-100 shadow-lg">
+            <DropdownMenuContent align="end" className="bg-white rounded-xl border border-gray-100 shadow-lg">
               <DropdownMenuItem 
                 onClick={() => onStatusChange(item.id, 'active')}
-                className={`rounded-lg ${getItemStatus() === 'active' ? 'bg-green-50 text-green-700 font-medium' : ''}`}
+                className={`rounded-lg ${getItemStatus() === 'active' ? 'bg-emerald-50 text-emerald-700 font-medium' : ''}`}
               >
+                <Eye className="h-4 w-4 mr-2" />
                 Active
               </DropdownMenuItem>
               <DropdownMenuItem 
                 onClick={() => onStatusChange(item.id, 'outOfStock')}
-                className={`rounded-lg ${getItemStatus() === 'outOfStock' ? 'bg-orange-50 text-orange-700 font-medium' : ''}`}
+                className={`rounded-lg ${getItemStatus() === 'outOfStock' ? 'bg-red-50 text-red-700 font-medium' : ''}`}
               >
+                <XCircle className="h-4 w-4 mr-2" />
                 Out of Stock
               </DropdownMenuItem>
               <DropdownMenuItem 
                 onClick={() => onStatusChange(item.id, 'disabled')}
                 className={`rounded-lg ${getItemStatus() === 'disabled' ? 'bg-gray-50 text-gray-700 font-medium' : ''}`}
               >
+                <EyeOff className="h-4 w-4 mr-2" />
                 Disabled
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
           
-          <Button size="sm" variant="outline" onClick={() => onEdit(item)} className="h-10 px-3 border-gray-200 hover:bg-gray-50 rounded-xl">
+          <Button size="sm" variant="outline" onClick={() => onEdit(item)} className="h-8 w-8 p-0 rounded-full border-gray-200 hover:bg-gray-50">
             <Edit className="h-4 w-4" />
           </Button>
-          <Button size="sm" variant="outline" onClick={() => onDelete(item.id)} className="h-10 px-3 border-red-200 text-red-600 hover:bg-red-50 rounded-xl">
+          <Button size="sm" variant="outline" onClick={() => onDelete(item.id)} className="h-8 w-8 p-0 rounded-full border-red-200 text-red-500 hover:bg-red-50">
             <Trash2 className="h-4 w-4" />
           </Button>
-          <div {...listeners} className="cursor-move p-2 rounded-xl hover:bg-gray-100 transition-colors">
-            <MoveVertical className="h-5 w-5 text-gray-400" />
+          <div {...listeners} className="cursor-move p-2 rounded-full hover:bg-gray-100 transition-colors">
+            <MoveVertical className="h-4 w-4 text-gray-400" />
           </div>
         </div>
       </div>
@@ -223,114 +228,108 @@ const SortableMenuSection = ({
   };
 
   return (
-    <Card
+    <div
       ref={setNodeRef}
       style={style}
-      className={`bg-gradient-to-br from-white via-blue-50/30 to-indigo-50/30 border-2 shadow-lg hover:shadow-xl transition-all duration-300 rounded-3xl ${section.isDisabled ? 'border-gray-300 opacity-75' : 'border-blue-200'}`}
+      className="bg-gradient-to-br from-white to-gray-50/50 border border-gray-100 rounded-3xl p-8 shadow-sm hover:shadow-md transition-all duration-300"
     >
-      <CardHeader className="pb-6">
-        <div className={`flex ${isMobile ? 'flex-col gap-4' : 'justify-between items-center'}`}>
-          <div className="flex items-center gap-4">
-            <div {...listeners} className="cursor-move p-3 rounded-2xl hover:bg-white/80 transition-colors">
-              <MoveVertical className="h-6 w-6 text-gray-400" />
-            </div>
-            <div>
-              <h3 className="text-2xl font-bold text-gray-900 flex items-center gap-3">
-                {section.name}
-                {section.isDisabled && (
-                  <span className="text-xs px-3 py-1 bg-gray-100 text-gray-600 rounded-full font-medium">Section Disabled</span>
-                )}
-              </h3>
-              <p className="text-sm text-gray-500 mt-1">{section.items.length} items</p>
-            </div>
+      <div className="flex items-center justify-between mb-8">
+        <div className="flex items-center gap-4">
+          <div {...listeners} className="cursor-move p-2 rounded-xl hover:bg-gray-100 transition-colors">
+            <MoveVertical className="h-5 w-5 text-gray-400" />
           </div>
-          
-          <div className="flex flex-wrap gap-3 items-center">
-            <div className="flex items-center gap-3 bg-white rounded-full px-4 py-2 border border-gray-200 shadow-sm">
-              <Label htmlFor={`section-disabled-${section.id}`} className="text-sm font-medium">Disabled</Label>
-              <Switch 
-                id={`section-disabled-${section.id}`} 
-                checked={section.isDisabled || false}
-                onCheckedChange={(checked) => onToggleSectionDisabled(section.id, checked)}
-              />
-            </div>
-            
-            <Button 
-              variant="outline" 
-              size="sm"
-              onClick={() => onEdit(section)}
-              className="rounded-full px-4 py-2 border-gray-200 hover:bg-gray-50"
-            >
-              <Edit className="h-4 w-4 mr-2" />
-              Edit
-            </Button>
-            <Button 
-              variant="outline" 
-              size="sm"
-              onClick={() => onAddItem(section.id)}
-              className="rounded-full px-4 py-2 bg-blue-50 border-blue-200 text-blue-700 hover:bg-blue-100"
-            >
-              <Plus className="h-4 w-4 mr-2" />
-              Add Item
-            </Button>
-            <Button 
-              variant="outline" 
-              size="sm"
-              onClick={() => onDelete(section.id)}
-              className="rounded-full px-4 py-2 border-red-200 text-red-600 hover:bg-red-50"
-            >
-              <Trash2 className="h-4 w-4 mr-1" />
-              Delete
-            </Button>
+          <div>
+            <h3 className="text-2xl font-bold text-gray-900 flex items-center gap-3">
+              {section.name}
+              {section.isDisabled && (
+                <Badge variant="secondary" className="text-xs px-3 py-1 rounded-full">Hidden</Badge>
+              )}
+            </h3>
+            <p className="text-sm text-gray-500 mt-1">{section.items.length} items</p>
           </div>
         </div>
-      </CardHeader>
-      
-      <CardContent className="px-8 pb-8">
-        <DndContext
-          sensors={sensors}
-          collisionDetection={closestCenter}
-          onDragEnd={handleDragEnd}
-        >
-          <SortableContext
-            items={section.items.map(item => item.id)}
-            strategy={verticalListSortingStrategy}
+        
+        <div className="flex items-center gap-3">
+          <div className="flex items-center gap-3 bg-white rounded-full px-4 py-2 border border-gray-200">
+            <Label htmlFor={`section-disabled-${section.id}`} className="text-sm font-medium">Hidden</Label>
+            <Switch 
+              id={`section-disabled-${section.id}`} 
+              checked={section.isDisabled || false}
+              onCheckedChange={(checked) => onToggleSectionDisabled(section.id, checked)}
+            />
+          </div>
+          
+          <Button 
+            variant="outline" 
+            size="sm"
+            onClick={() => onEdit(section)}
+            className="rounded-full px-4 py-2 border-gray-200 hover:bg-gray-50"
           >
-            <div className="space-y-3">
-              {section.items.length > 0 ? (
-                section.items.map(item => (
-                  <SortableMenuItem
-                    key={item.id}
-                    item={item}
-                    onEdit={(item) => onEditItem(section.id, item)}
-                    onDelete={(itemId) => onDeleteItem(section.id, itemId)}
-                    onStatusChange={(itemId, status) => onStatusChange(section.id, itemId, status)}
-                    currencySymbol={currencySymbol}
-                  />
-                ))
-              ) : (
-                <div className="text-center py-16 border-2 border-dashed border-gray-200 rounded-2xl bg-white/60">
-                  <div className="flex flex-col items-center">
-                    <div className="w-16 h-16 bg-blue-100 rounded-2xl flex items-center justify-center mb-4">
-                      <Plus className="h-8 w-8 text-blue-600" />
-                    </div>
-                    <p className="text-gray-600 mb-4 font-medium">No items in this section</p>
-                    <Button 
-                      variant="outline" 
-                      className="bg-blue-50 border-blue-200 text-blue-700 hover:bg-blue-100 rounded-full px-6"
-                      onClick={() => onAddItem(section.id)}
-                    >
-                      <Plus className="h-4 w-4 mr-2" />
-                      Add First Item
-                    </Button>
+            <Edit className="h-4 w-4 mr-2" />
+            Edit
+          </Button>
+          <Button 
+            variant="outline" 
+            size="sm"
+            onClick={() => onAddItem(section.id)}
+            className="rounded-full px-4 py-2 bg-blue-50 border-blue-200 text-blue-700 hover:bg-blue-100"
+          >
+            <Plus className="h-4 w-4 mr-2" />
+            Add Item
+          </Button>
+          <Button 
+            variant="outline" 
+            size="sm"
+            onClick={() => onDelete(section.id)}
+            className="rounded-full px-4 py-2 border-red-200 text-red-600 hover:bg-red-50"
+          >
+            <Trash2 className="h-4 w-4" />
+          </Button>
+        </div>
+      </div>
+      
+      <DndContext
+        sensors={sensors}
+        collisionDetection={closestCenter}
+        onDragEnd={handleDragEnd}
+      >
+        <SortableContext
+          items={section.items.map(item => item.id)}
+          strategy={verticalListSortingStrategy}
+        >
+          <div className="grid gap-4">
+            {section.items.length > 0 ? (
+              section.items.map(item => (
+                <SortableMenuItem
+                  key={item.id}
+                  item={item}
+                  onEdit={(item) => onEditItem(section.id, item)}
+                  onDelete={(itemId) => onDeleteItem(section.id, itemId)}
+                  onStatusChange={(itemId, status) => onStatusChange(section.id, itemId, status)}
+                  currencySymbol={currencySymbol}
+                />
+              ))
+            ) : (
+              <div className="text-center py-16 border-2 border-dashed border-gray-200 rounded-2xl bg-gray-50/50">
+                <div className="flex flex-col items-center">
+                  <div className="w-16 h-16 bg-blue-100 rounded-2xl flex items-center justify-center mb-4">
+                    <Plus className="h-8 w-8 text-blue-600" />
                   </div>
+                  <p className="text-gray-600 mb-3 font-medium">No items in this section</p>
+                  <Button 
+                    variant="outline" 
+                    className="bg-blue-50 border-blue-200 text-blue-700 hover:bg-blue-100 rounded-full px-6"
+                    onClick={() => onAddItem(section.id)}
+                  >
+                    Add your first item
+                  </Button>
                 </div>
-              )}
-            </div>
-          </SortableContext>
-        </DndContext>
-      </CardContent>
-    </Card>
+              </div>
+            )}
+          </div>
+        </SortableContext>
+      </DndContext>
+    </div>
   );
 };
 
@@ -547,9 +546,9 @@ const MenuBuilder = () => {
       return;
     }
 
-    // If no price variations, price is required
+    // Price is only required if no variations exist
     let price = parseFloat(itemPrice);
-    if (priceVariations.length === 0 && (isNaN(price) || price < 0)) {
+    if (!priceVariations.length && (isNaN(price) || price < 0)) {
       toast({
         title: "Valid price required",
         description: "Please enter a valid price or add price variations.",
@@ -558,9 +557,9 @@ const MenuBuilder = () => {
       return;
     }
 
-    // If price variations exist, price is not used
+    // If price variations exist, price is optional
     if (priceVariations.length > 0) {
-      price = 0;
+      price = 0; // Set to 0 or undefined when variations exist
     }
 
     const sectionIndex = menuSections.findIndex(section => section.id === currentSectionId);
@@ -569,6 +568,7 @@ const MenuBuilder = () => {
     const updatedSections = [...menuSections];
     const section = { ...updatedSections[sectionIndex] };
 
+    // Image URL is optional - if empty, use undefined
     const imageUrl = itemImageUrl.trim() || "";
 
     if (currentItem) {
@@ -683,7 +683,7 @@ const MenuBuilder = () => {
     setMenuChanged(true);
     
     toast({
-      title: isDisabled ? "Section disabled" : "Section enabled",
+      title: isDisabled ? "Section hidden" : "Section visible",
       description: `The section has been ${isDisabled ? 'hidden from' : 'shown on'} the menu.`,
     });
   };
@@ -706,7 +706,18 @@ const MenuBuilder = () => {
   };
 
   const handleRemoveVariation = (index: number) => {
-    setPriceVariations(priceVariations.filter((_, i) => i !== index));
+    // Don't allow removing the last variation if we're using variations (and no base price)
+    const shouldPreventRemoval = priceVariations.length === 1 && !itemPrice;
+    
+    if (!shouldPreventRemoval) {
+      setPriceVariations(priceVariations.filter((_, i) => i !== index));
+    } else {
+      toast({
+        title: "Cannot remove all variations",
+        description: "You must have at least one price option. Add a base price or keep at least one variation.",
+        variant: "destructive",
+      });
+    }
   };
 
   const handleItemsReorder = (sectionId: string, items: MenuItem[]) => {
@@ -737,7 +748,7 @@ const MenuBuilder = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-blue-50/50 to-indigo-50/50 flex items-center justify-center p-4">
+      <div className="min-h-screen bg-gradient-to-br from-blue-50/50 to-indigo-50/50 flex items-center justify-center">
         <div className="flex flex-col items-center bg-white rounded-3xl p-12 shadow-lg border border-gray-100">
           <div className="w-16 h-16 bg-blue-100 rounded-2xl flex items-center justify-center mb-6">
             <RefreshCcw className="h-8 w-8 animate-spin text-blue-600" />
@@ -752,52 +763,49 @@ const MenuBuilder = () => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50/50 to-indigo-50/50">
       <div className="max-w-7xl mx-auto px-6 sm:px-8 lg:px-10 py-12">
-        {/* Header */}
-        <div className="bg-white rounded-3xl shadow-lg border border-gray-100 p-8 mb-12">
-          <div className="flex flex-col md:flex-row md:items-center md:justify-between">
-            <div className="mb-6 md:mb-0">
-              <div className="flex items-center gap-4 mb-3">
-                <div className="w-14 h-14 bg-gradient-to-br from-blue-600 to-indigo-600 rounded-2xl flex items-center justify-center">
-                  <Sparkles className="h-7 w-7 text-white" />
-                </div>
-                <h1 className="text-4xl md:text-5xl font-bold text-gray-900">Menu Builder</h1>
+        <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-12">
+          <div className="mb-6 md:mb-0">
+            <div className="flex items-center gap-3 mb-3">
+              <div className="w-12 h-12 bg-gradient-to-br from-blue-600 to-indigo-600 rounded-2xl flex items-center justify-center">
+                <Sparkles className="h-6 w-6 text-white" />
               </div>
-              <p className="text-lg text-gray-600">Create and manage your restaurant menu with style</p>
+              <h1 className="text-4xl md:text-5xl font-bold text-gray-900">Menu Builder</h1>
             </div>
+            <p className="text-lg text-gray-600">Create and manage your restaurant menu with style</p>
+          </div>
+          
+          <div className="flex flex-wrap gap-4">
+            <Button
+              variant="outline"
+              onClick={openAddSectionDialog}
+              className="flex items-center rounded-full px-6 py-3 bg-white border-gray-200 hover:bg-gray-50 hover:border-blue-300 transition-all duration-200"
+            >
+              <Plus className="h-5 w-5 mr-2" />
+              Add Section
+            </Button>
             
-            <div className="flex flex-wrap gap-4">
-              <Button
-                variant="outline"
-                onClick={openAddSectionDialog}
-                className="flex items-center rounded-full px-6 py-3 border-gray-200 hover:bg-gray-50 hover:border-blue-300 transition-all duration-200"
-              >
-                <Plus className="h-5 w-5 mr-2" />
-                Add Section
-              </Button>
-              
-              <Button
-                onClick={handleSaveMenu}
-                disabled={saving || !menuChanged}
-                className="flex items-center rounded-full px-8 py-3 bg-gradient-to-r from-blue-600 to-indigo-600 text-white hover:from-blue-700 hover:to-indigo-700 shadow-lg hover:shadow-xl transition-all duration-200 disabled:opacity-50"
-              >
-                {saving ? (
-                  <>
-                    <RefreshCcw className="h-5 w-5 mr-2 animate-spin" />
-                    Saving...
-                  </>
-                ) : (
-                  <>
-                    <Save className="h-5 w-5 mr-2" />
-                    Save Menu
-                  </>
-                )}
-              </Button>
-            </div>
+            <Button
+              onClick={handleSaveMenu}
+              disabled={saving || !menuChanged}
+              className="flex items-center rounded-full px-8 py-3 bg-gradient-to-r from-blue-600 to-indigo-600 text-white hover:from-blue-700 hover:to-indigo-700 shadow-lg hover:shadow-xl transition-all duration-200 disabled:opacity-50"
+            >
+              {saving ? (
+                <>
+                  <RefreshCcw className="h-5 w-5 mr-2 animate-spin" />
+                  Saving...
+                </>
+              ) : (
+                <>
+                  <Save className="h-5 w-5 mr-2" />
+                  Save Menu
+                </>
+              )}
+            </Button>
           </div>
         </div>
 
         {menuSections.length === 0 ? (
-          <div className="bg-white rounded-3xl border border-gray-100 p-20 text-center shadow-lg">
+          <div className="bg-white rounded-3xl border border-gray-100 p-16 text-center shadow-sm">
             <div className="w-24 h-24 bg-gradient-to-br from-blue-100 to-indigo-100 rounded-3xl flex items-center justify-center mx-auto mb-8">
               <Plus className="h-12 w-12 text-blue-600" />
             </div>
@@ -846,20 +854,20 @@ const MenuBuilder = () => {
 
         {/* Section Dialog */}
         <Dialog open={sectionDialogOpen} onOpenChange={setSectionDialogOpen}>
-          <DialogContent className={`bg-white rounded-3xl ${isMobile ? 'w-[90vw] max-w-none mx-auto' : ''}`}>
+          <DialogContent className="bg-white">
             <DialogHeader>
-              <DialogTitle className="text-2xl">
+              <DialogTitle>
                 {currentSection ? "Edit Section" : "Add Section"}
               </DialogTitle>
-              <DialogDescription className="text-base">
+              <DialogDescription>
                 {currentSection
                   ? "Update the name of this menu section"
                   : "Add a new section to organize your menu items"}
               </DialogDescription>
             </DialogHeader>
             
-            <div className="grid gap-6 py-6">
-              <div className="space-y-3">
+            <div className="grid gap-4 py-4">
+              <div className="space-y-2">
                 <label htmlFor="name" className="text-sm font-medium">
                   Section Name
                 </label>
@@ -868,18 +876,17 @@ const MenuBuilder = () => {
                   value={sectionName}
                   onChange={(e) => setSectionName(e.target.value)}
                   placeholder="e.g., Appetizers, Main Course, Desserts"
-                  className="border-gray-300 rounded-xl h-12"
                 />
               </div>
             </div>
             
             <DialogFooter>
-              <Button variant="outline" onClick={() => setSectionDialogOpen(false)} className="border-gray-300 rounded-xl">
+              <Button variant="outline" onClick={() => setSectionDialogOpen(false)}>
                 Cancel
               </Button>
               <Button 
                 onClick={handleSaveSection}
-                className="bg-gradient-to-r from-blue-600 to-indigo-600 text-white hover:from-blue-700 hover:to-indigo-700 rounded-xl"
+                className="bg-primary text-white hover:bg-primary/90"
               >
                 {currentSection ? "Update Section" : "Add Section"}
               </Button>
@@ -889,20 +896,20 @@ const MenuBuilder = () => {
 
         {/* Item Dialog */}
         <Dialog open={itemDialogOpen} onOpenChange={setItemDialogOpen}>
-          <DialogContent className={`bg-white rounded-3xl ${isMobile ? 'w-[90vw] max-w-none mx-auto' : 'sm:max-w-[500px]'} max-h-[90vh] overflow-y-auto`}>
+          <DialogContent className="bg-white sm:max-w-[500px] max-h-[90vh] overflow-y-auto">
             <DialogHeader>
-              <DialogTitle className="text-2xl">
+              <DialogTitle>
                 {currentItem ? "Edit Menu Item" : "Add Menu Item"}
               </DialogTitle>
-              <DialogDescription className="text-base">
+              <DialogDescription>
                 {currentItem
                   ? "Update details for this menu item"
                   : "Add details for your new menu item"}
               </DialogDescription>
             </DialogHeader>
             
-            <div className="grid gap-6 py-6">
-              <div className="space-y-3">
+            <div className="grid gap-4 py-4">
+              <div className="space-y-2">
                 <label htmlFor="item-name" className="text-sm font-medium">
                   Item Name
                 </label>
@@ -911,11 +918,10 @@ const MenuBuilder = () => {
                   value={itemName}
                   onChange={(e) => setItemName(e.target.value)}
                   placeholder="e.g., Caesar Salad"
-                  className="border-gray-300 rounded-xl h-12"
                 />
               </div>
               
-              <div className={`space-y-3 ${priceVariations.length > 0 ? 'opacity-50' : ''}`}>
+              <div className={`space-y-2 ${priceVariations.length > 0 ? 'opacity-50' : ''}`}>
                 <label htmlFor="item-price" className="text-sm font-medium flex justify-between">
                   <span>Base Price {priceVariations.length > 0 && "(Not used with variations)"}</span>
                   {priceVariations.length > 0 && 
@@ -923,7 +929,7 @@ const MenuBuilder = () => {
                   }
                 </label>
                 <div className="flex items-center">
-                  <span className="mr-2 text-lg">{currencySymbol}</span>
+                  <span className="mr-1">{currencySymbol}</span>
                   <Input
                     id="item-price"
                     value={itemPrice}
@@ -933,7 +939,6 @@ const MenuBuilder = () => {
                     step="0.01"
                     min="0"
                     disabled={priceVariations.length > 0}
-                    className="border-gray-300 rounded-xl h-12"
                   />
                 </div>
               </div>
@@ -945,22 +950,22 @@ const MenuBuilder = () => {
                     type="button" 
                     size="sm" 
                     onClick={handleAddVariation}
-                    className="bg-blue-600 text-white hover:bg-blue-700 rounded-xl"
+                    className="bg-primary text-white hover:bg-primary/90"
                   >
                     <Plus className="h-4 w-4 mr-1" /> Add Variation
                   </Button>
                 </div>
                 
                 {priceVariations.map((variation, index) => (
-                  <div key={index} className={`${isMobile ? 'flex flex-col gap-3' : 'flex items-center space-x-3'}`}>
+                  <div key={index} className={`${isMobile ? 'flex flex-col gap-2' : 'flex items-center space-x-2'}`}>
                     <Input
                       placeholder="Name (e.g., Quarter, Half)"
                       value={variation.name}
                       onChange={(e) => handleUpdateVariation(index, 'name', e.target.value)}
-                      className="flex-1 border-gray-300 rounded-xl h-12"
+                      className="flex-1"
                     />
                     <div className="flex items-center">
-                      <span className="mr-2 text-lg">{currencySymbol}</span>
+                      <span className="mr-1">{currencySymbol}</span>
                       <Input
                         placeholder="Price"
                         type="number"
@@ -968,7 +973,7 @@ const MenuBuilder = () => {
                         min="0"
                         value={variation.price}
                         onChange={(e) => handleUpdateVariation(index, 'price', e.target.value)}
-                        className={`border-gray-300 rounded-xl h-12 ${isMobile ? "flex-1" : "w-28"}`}
+                        className={isMobile ? "flex-1" : "w-24"}
                       />
                     </div>
                     <Button 
@@ -976,7 +981,7 @@ const MenuBuilder = () => {
                       size="icon" 
                       variant="ghost" 
                       onClick={() => handleRemoveVariation(index)}
-                      className="text-red-500 hover:bg-red-50 rounded-xl"
+                      className="text-red-500"
                     >
                       <Trash2 className="h-4 w-4" />
                     </Button>
@@ -990,7 +995,7 @@ const MenuBuilder = () => {
                 }
               </div>
               
-              <div className="space-y-3">
+              <div className="space-y-2">
                 <label htmlFor="item-description" className="text-sm font-medium">
                   Description
                 </label>
@@ -1000,11 +1005,11 @@ const MenuBuilder = () => {
                   onChange={(e) => setItemDescription(e.target.value)}
                   placeholder="Describe this item..."
                   rows={3}
-                  className="border-gray-300 resize-none rounded-xl"
+                  className="resize-none"
                 />
               </div>
               
-              <div className="space-y-3">
+              <div className="space-y-2">
                 <label htmlFor="item-image" className="text-sm font-medium">
                   Image URL (Optional)
                 </label>
@@ -1013,16 +1018,15 @@ const MenuBuilder = () => {
                   value={itemImageUrl}
                   onChange={(e) => setItemImageUrl(e.target.value)}
                   placeholder="https://example.com/image.jpg"
-                  className="border-gray-300 rounded-xl h-12"
                 />
                 <p className="text-xs text-gray-500">
                   Images are optional. For best results, use square images (1:1 aspect ratio)
                 </p>
                 
                 {itemImageUrl && (
-                  <div className="mt-3 border rounded-xl p-3">
-                    <p className="text-xs font-medium mb-2">Image Preview:</p>
-                    <div className="aspect-square w-24 h-24 overflow-hidden rounded-xl bg-gray-100">
+                  <div className="mt-2 border rounded-md p-2">
+                    <p className="text-xs font-medium mb-1">Image Preview:</p>
+                    <div className="aspect-square w-24 h-24 overflow-hidden rounded-md bg-gray-100">
                       <img 
                         src={itemImageUrl} 
                         alt="Preview" 
@@ -1037,13 +1041,13 @@ const MenuBuilder = () => {
               </div>
             </div>
             
-            <DialogFooter className={isMobile ? "flex-col space-y-3" : ""}>
-              <Button variant="outline" onClick={() => setItemDialogOpen(false)} className="border-gray-300 rounded-xl">
+            <DialogFooter className={isMobile ? "flex-col space-y-2" : ""}>
+              <Button variant="outline" onClick={() => setItemDialogOpen(false)}>
                 Cancel
               </Button>
               <Button 
                 onClick={handleSaveItem}
-                className="bg-gradient-to-r from-blue-600 to-indigo-600 text-white hover:from-blue-700 hover:to-indigo-700 rounded-xl"
+                className="bg-primary text-white hover:bg-primary/90"
               >
                 {currentItem ? "Update Item" : "Add Item"}
               </Button>

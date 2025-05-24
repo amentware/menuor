@@ -34,16 +34,10 @@ export type Restaurant = {
   isBlocked: boolean;
   createdAt: any; // Timestamp
   menuSections: MenuSection[];
-  theme?: {
-    colors: {
-      primary: string;
-      secondary: string;
-      accent: string;
-      text: string;
-      background: string;
-    };
-    currencySymbol?: string;
-  };
+  currencySymbol?: string;
+  qrScans?: number;
+  viewCount?: number;
+  dailyViews?: { [date: string]: number };
 };
 
 export type RestaurantSummary = {
