@@ -422,11 +422,11 @@ const MenuBuilder = () => {
     const newItem = {
       id: currentItem?.id || uuidv4(),
       name: itemName.trim(),
-      description: itemDescription.trim(),
+      description: itemDescription?.trim() || "",
       price,
-      ...(itemImageUrl.trim() ? { imageUrl: itemImageUrl.trim() } : {}),
-      isDisabled: itemIsDisabled,
-      outOfStock: itemOutOfStock,
+      imageUrl: itemImageUrl?.trim() || "",
+      isDisabled: itemIsDisabled || false,
+      outOfStock: itemOutOfStock || false,
       ...(priceVariations.length > 0 ? { priceVariations } : {})
     };
 
