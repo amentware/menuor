@@ -97,7 +97,7 @@ export const SortableMenuSection = ({
     <Card 
       ref={setNodeRef}
       style={style}
-      className={`mb-3 border-b border-gray-100 ${section.isDisabled ? 'opacity-60' : ''} ${isDragging ? 'shadow-2xl rotate-2' : ''} w-full overflow-hidden`}
+      className={`mb-2 border-b border-gray-100 ${section.isDisabled ? 'opacity-60' : ''} ${isDragging ? 'shadow-2xl rotate-2' : ''} w-full overflow-hidden`}
     >
       <CardHeader className="flex flex-row items-center justify-between space-y-0 py-3 px-3 sticky top-0 bg-white z-10 border-b rounded-t-lg">
         <div className="flex items-center gap-3">
@@ -107,7 +107,21 @@ export const SortableMenuSection = ({
           <div className="flex items-center gap-3">
             <div>
               <CardTitle className="text-xl font-bold">{section.name}</CardTitle>
-              <p className="text-sm text-gray-500 mt-1">{section.items.length} items</p>
+              <div className="flex items-center gap-2 text-sm mt-1">
+                <span className="text-gray-500">{section.items.length} items</span>
+                {section.priceVariationCategories && section.priceVariationCategories.length > 0 && (
+                  <>
+                    <span className="text-gray-400">•</span>
+                    <div className="flex flex-wrap gap-1">
+                      {section.priceVariationCategories.map((cat, index) => (
+                        <span key={cat.id} className="px-2 py-0.5 bg-blue-50 text-blue-700 rounded-full text-xs font-medium">
+                          {cat.name}
+                        </span>
+                      ))}
+                    </div>
+                  </>
+                )}
+              </div>
             </div>
             <Button
               size="sm"

@@ -1,4 +1,3 @@
-
 {
   "short_name": "MenuBuilder",
   "name": "MenuBuilder - Digital Restaurant Menu",
@@ -22,7 +21,7 @@
   ],
   "start_url": "/",
   "display": "standalone",
-  "theme_color": "#8B2635",
+  "theme_color": "#FFFFFF",
   "background_color": "#ffffff",
   "orientation": "portrait",
   "categories": ["business", "food", "productivity"],

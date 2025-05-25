@@ -55,30 +55,31 @@ export const SortableMenuItem = ({
       {...attributes}
       className={`bg-white rounded-lg border border-gray-200 mb-3 p-3 ${item.isDisabled ? 'opacity-60' : ''}`}
     >
-      <div className="flex items-center justify-between">
+      <div className="flex items-center">
         <div className="flex-1 min-w-0">
-          <div className="flex justify-between items-start">
-            <div className="font-semibold truncate flex items-center gap-3 text-gray-900">
-              {item.name}
-              {item.outOfStock && (
-                <span className="text-xs px-2 py-1 bg-orange-100 text-orange-700 rounded-full font-medium">Out of Stock</span>
-              )}
-              {item.isDisabled && (
-                <span className="text-xs px-2 py-1 bg-gray-100 text-gray-600 rounded-full font-medium">Disabled</span>
-              )}
-            </div>
-            <div className="text-primary font-bold ml-3">
-              {item.priceVariations && item.priceVariations.length > 0 ? (
-                <span className="text-green-600">{`${currencySymbol}${item.priceVariations[0].price.toFixed(2)}+`}</span>
-              ) : (
-                item.price ? <span className="text-green-600">{currencySymbol}{item.price.toFixed(2)}</span> : <span className="text-gray-400">-</span>
-              )}
-            </div>
+          <div className="font-semibold truncate flex items-center gap-3 text-gray-900">
+            {item.name}
+            {item.outOfStock && (
+              <span className="text-xs px-2 py-1 bg-orange-100 text-orange-700 rounded-full font-medium">Out of Stock</span>
+            )}
+            {item.isDisabled && (
+              <span className="text-xs px-2 py-1 bg-gray-100 text-gray-600 rounded-full font-medium">Disabled</span>
+            )}
           </div>
-          <div className="text-sm text-gray-500 truncate mt-1">{item.description}</div>
+          {item.description && (
+            <div className="text-sm text-gray-500 truncate mt-1">{item.description}</div>
+          )}
         </div>
-        
-        <div className={`flex items-center ml-3 ${isMobile ? 'flex-col gap-2' : 'gap-2'}`}>
+
+        <div className="flex items-center gap-3 ml-3">
+          <div className="text-primary font-bold">
+            {item.priceVariations && item.priceVariations.length > 0 ? (
+              <span className="text-green-600">{`${currencySymbol}${item.priceVariations[0].price.toFixed(2)}+`}</span>
+            ) : (
+              item.price ? <span className="text-green-600">{currencySymbol}{item.price.toFixed(2)}</span> : <span className="text-gray-400">-</span>
+            )}
+          </div>
+
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button 

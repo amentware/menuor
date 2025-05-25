@@ -419,9 +419,10 @@ const MenuBuilder = () => {
     const section = menuSections.find(s => s.id === sectionId);
     const sectionCategories = section?.priceVariationCategories || [];
     
-    if (sectionCategories.length > 0) {
-      // If item has variations, match them with section categories
-      if (item.priceVariations?.length) {
+    // Check if the item uses base price or variations
+    if (item.priceVariations && item.priceVariations.length > 0) {
+      // Item uses variations - match with section categories if available
+      if (sectionCategories.length > 0) {
         const variations = sectionCategories.map(cat => {
           const existing = item.priceVariations?.find(v => v.name === cat.name);
           return {
@@ -431,17 +432,11 @@ const MenuBuilder = () => {
         });
         setPriceVariations(variations);
       } else {
-        // Initialize with section categories
-        setPriceVariations(
-          sectionCategories.map(cat => ({
-            name: cat.name,
-            price: 0
-          }))
-        );
+        setPriceVariations(item.priceVariations);
       }
     } else {
-      // No section categories, use item's custom variations if any
-      setPriceVariations(item.priceVariations || []);
+      // Item uses base price - don't initialize variations even if section has them
+      setPriceVariations([]);
     }
     
     setItemDialogOpen(true);
@@ -458,12 +453,14 @@ const MenuBuilder = () => {
     }
 
     // Price validation
-    let price = 0; // Default to 0 instead of undefined
-    if (itemPrice) {
-      const parsedPrice = parseFloat(itemPrice);
-      if (!isNaN(parsedPrice)) {
-        price = parsedPrice;
-      }
+    let price = itemPrice === '' ? 0 : parseFloat(itemPrice);
+    if (itemPrice !== '' && isNaN(price)) {
+      toast({
+        title: "Invalid price",
+        description: "Please enter a valid price.",
+        variant: "destructive",
+      });
+      return;
     }
 
     // Check if we have valid price variations
@@ -480,8 +477,8 @@ const MenuBuilder = () => {
       return;
     }
 
-    // If no variations, require base price
-    if (!hasValidVariations && !price) {
+    // If no variations, require base price only if no valid price is set
+    if (priceVariations.length === 0 && !price && itemPrice !== '0') {
       toast({
         title: "Price required",
         description: "Please enter a base price when not using variations.",
@@ -494,7 +491,7 @@ const MenuBuilder = () => {
       id: currentItem?.id || uuidv4(),
       name: itemName.trim(),
       description: itemDescription?.trim() || "", // Empty string if not provided
-      price: hasValidVariations ? 0 : price, // 0 instead of undefined
+      price: hasValidVariations ? 0 : price, // Use base price if no variations
       imageUrl: itemImageUrl?.trim() || "", // Empty string if not provided
       isDisabled: itemIsDisabled || false,
       outOfStock: itemOutOfStock || false,
@@ -606,7 +603,8 @@ const MenuBuilder = () => {
     if (field === 'name') {
       updated[index].name = value;
     } else if (field === 'price') {
-      updated[index].price = parseFloat(value) || 0;
+      const price = value === '0' ? '' : value;
+      updated[index].price = parseFloat(price) || 0;
     }
     setPriceVariations(updated);
   };
@@ -809,7 +807,7 @@ const MenuBuilder = () => {
               items={menuSections.map(section => section.id)}
               strategy={verticalListSortingStrategy}
             >
-              <div className="space-y-8">
+              <div className="space-y-4">
                 {menuSections.map(section => (
                   <SortableMenuSection
                     key={section.id}
@@ -926,7 +924,7 @@ const MenuBuilder = () => {
                   id="itemPrice"
                   type="number"
                   value={itemPrice}
-                  onChange={(e) => setItemPrice(e.target.value)}
+                  onChange={(e) => setItemPrice(e.target.value === '0' ? '' : e.target.value)}
                   placeholder="0.00"
                   step="0.01"
                   disabled={priceVariations.length > 0}
@@ -974,7 +972,7 @@ const MenuBuilder = () => {
                             onClick={() => setPriceVariations([])}
                             className="h-8 px-2 text-red-600 hover:text-red-700"
                           >
-                            <XCircle className="h-4 w-4" />
+                            Clear Variations
                           </Button>
                         )}
                       </div>
@@ -984,7 +982,7 @@ const MenuBuilder = () => {
                       <Button
                         type="button"
                         variant="outline"
-                        className="w-full h-20 border-dashed"
+                        className="w-full h-15 border-dashed hover:bg-gray-50 hover:text-black"
                         onClick={() => {
                           setPriceVariations(
                             section.priceVariationCategories.map(cat => ({
@@ -1007,7 +1005,7 @@ const MenuBuilder = () => {
                           />
                           <Input
                             type="number"
-                            value={variation.price}
+                            value={variation.price || ''}
                             onChange={(e) => handleUpdateVariation(index, 'price', e.target.value)}
                             placeholder="0.00"
                             step="0.01"
@@ -1059,7 +1057,7 @@ const MenuBuilder = () => {
                       />
                       <Input
                         type="number"
-                        value={variation.price}
+                        value={variation.price || ''}
                         onChange={(e) => handleUpdateVariation(index, 'price', e.target.value)}
                         placeholder="0.00"
                         step="0.01"
