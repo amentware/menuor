@@ -36,20 +36,20 @@ export const MenuItemComponent = ({
   };
 
   return (
-    <div className={`bg-white rounded-2xl border-2 border-gray-100 shadow-sm hover:shadow-lg transition-all duration-300 hover:border-blue-200 p-6 ${item.isDisabled ? 'opacity-60' : ''}`}>
-      <div className="flex items-center justify-between">
+    <div className={`bg-white rounded-2xl border-2 border-gray-100 shadow-sm hover:shadow-lg transition-all duration-300 hover:border-blue-200 p-4 sm:p-6 ${item.isDisabled ? 'opacity-60' : ''}`}>
+      <div className="flex flex-col sm:flex-row sm:items-center gap-3">
         <div className="flex-1 min-w-0">
-          <div className="flex justify-between items-start">
-            <div className="font-bold text-lg truncate flex items-center gap-3 text-gray-900">
+          <div className="flex flex-col sm:flex-row sm:items-start gap-2">
+            <div className="font-bold text-lg truncate flex items-center gap-2 text-gray-900">
               {item.name}
               {item.outOfStock && (
-                <span className="text-xs px-3 py-1 bg-orange-100 text-orange-700 rounded-full font-medium">Out of Stock</span>
+                <span className="text-xs px-2 py-1 bg-orange-100 text-orange-700 rounded-full font-medium">Out of Stock</span>
               )}
               {item.isDisabled && (
-                <span className="text-xs px-3 py-1 bg-gray-100 text-gray-600 rounded-full font-medium">Disabled</span>
+                <span className="text-xs px-2 py-1 bg-gray-100 text-gray-600 rounded-full font-medium">Disabled</span>
               )}
             </div>
-            <div className="text-primary font-bold ml-2">
+            <div className="text-primary font-bold sm:ml-2">
               {item.priceVariations && item.priceVariations.length > 0 ? (
                 <TooltipProvider>
                   <Tooltip delayDuration={0}>
@@ -74,16 +74,18 @@ export const MenuItemComponent = ({
               )}
             </div>
           </div>
-          <div className="text-sm text-gray-600 truncate mt-2 leading-relaxed">{item.description}</div>
+          {item.description && (
+            <div className="text-sm text-gray-600 truncate mt-2 leading-relaxed">{item.description}</div>
+          )}
         </div>
         
-        <div className="flex items-center gap-3 ml-4">
+        <div className="flex items-center justify-end gap-2 sm:gap-3 mt-2 sm:mt-0 sm:ml-4">
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button 
                 size="sm" 
                 variant="outline"
-                className="h-10 px-3 border-gray-200 hover:bg-gray-50 rounded-xl"
+                className="h-10 w-10 sm:h-10 sm:w-10 p-0 border-gray-200 hover:bg-gray-50 rounded-xl"
               >
                 <MoreVertical className="h-4 w-4" />
               </Button>
@@ -110,10 +112,20 @@ export const MenuItemComponent = ({
             </DropdownMenuContent>
           </DropdownMenu>
           
-          <Button size="sm" variant="outline" onClick={() => onEdit(item)} className="h-10 px-3 border-gray-200 hover:bg-gray-50 rounded-xl">
+          <Button 
+            size="sm" 
+            variant="outline" 
+            onClick={() => onEdit(item)} 
+            className="h-10 w-10 sm:h-10 sm:w-10 p-0 border-gray-200 hover:bg-gray-50 rounded-xl"
+          >
             <Edit className="h-4 w-4" />
           </Button>
-          <Button size="sm" variant="outline" onClick={() => onDelete(item.id)} className="h-10 px-3 border-red-200 text-red-600 hover:bg-red-50 rounded-xl">
+          <Button 
+            size="sm" 
+            variant="outline" 
+            onClick={() => onDelete(item.id)} 
+            className="h-10 w-10 sm:h-10 sm:w-10 p-0 border-red-200 text-red-600 hover:bg-red-50 rounded-xl"
+          >
             <Trash2 className="h-4 w-4" />
           </Button>
         </div>

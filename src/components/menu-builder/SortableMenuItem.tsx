@@ -61,9 +61,9 @@ export const SortableMenuItem = ({
       {...attributes}
       className={`bg-white rounded-lg border border-gray-200 mb-3 p-3 ${item.isDisabled ? 'opacity-60' : ''}`}
     >
-      <div className="flex items-center">
+      <div className="flex flex-col sm:flex-row sm:items-center gap-3">
         <div className="flex-1 min-w-0">
-          <div className="font-semibold truncate flex items-center gap-3 text-gray-900">
+          <div className="font-semibold truncate flex items-center gap-2 text-gray-900">
             {item.name}
             {item.outOfStock && (
               <span className="text-xs px-2 py-1 bg-orange-100 text-orange-700 rounded-full font-medium">Out of Stock</span>
@@ -75,10 +75,34 @@ export const SortableMenuItem = ({
           {item.description && (
             <div className="text-sm text-gray-500 truncate mt-1">{item.description}</div>
           )}
+          <div className="text-primary font-bold mt-2 sm:hidden">
+            {item.priceVariations && item.priceVariations.length > 0 ? (
+              <TooltipProvider>
+                <Tooltip delayDuration={0}>
+                  <TooltipTrigger>
+                    <span className="text-green-600">
+                      {currencySymbol}{item.priceVariations[0].price.toFixed(2)}+
+                    </span>
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    <div className="space-y-1">
+                      {item.priceVariations.map((variation) => (
+                        <div key={variation.name} className="whitespace-nowrap">
+                          {variation.name}: {currencySymbol}{variation.price.toFixed(2)}
+                        </div>
+                      ))}
+                    </div>
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
+            ) : (
+              item.price ? <span className="text-green-600">{currencySymbol}{item.price.toFixed(2)}</span> : <span className="text-gray-400">-</span>
+            )}
+          </div>
         </div>
 
-        <div className="flex items-center gap-3 ml-3">
-          <div className="text-primary font-bold">
+        <div className="flex items-center justify-between sm:justify-end gap-2 sm:gap-3 mt-2 sm:mt-0">
+          <div className="text-primary font-bold hidden sm:block">
             {item.priceVariations && item.priceVariations.length > 0 ? (
               <TooltipProvider>
                 <Tooltip delayDuration={0}>
@@ -108,7 +132,7 @@ export const SortableMenuItem = ({
               <Button 
                 size="sm" 
                 variant="outline"
-                className="h-8 px-2 border-gray-200 hover:bg-gray-50 hover:text-gray-700 rounded-lg"
+                className="h-10 w-10 sm:h-8 sm:w-8 p-0 border-gray-200 hover:bg-gray-50 hover:text-gray-700 rounded-lg"
               >
                 <MoreVertical className="h-4 w-4 text-gray-700" />
               </Button>
@@ -147,13 +171,26 @@ export const SortableMenuItem = ({
             </DropdownMenuContent>
           </DropdownMenu>
           
-          <Button size="sm" variant="outline" onClick={() => onEdit(item)} className="h-8 px-2 border-gray-200 hover:bg-gray-50 hover:text-gray-700 rounded-lg">
+          <Button 
+            size="sm" 
+            variant="outline" 
+            onClick={() => onEdit(item)} 
+            className="h-10 w-10 sm:h-8 sm:w-8 p-0 border-gray-200 hover:bg-gray-50 hover:text-gray-700 rounded-lg"
+          >
             <Edit className="h-4 w-4 text-gray-700" />
           </Button>
-          <Button size="sm" variant="outline" onClick={() => onDelete(item.id)} className="h-8 px-2 border-red-200 text-red-600 hover:bg-red-50 hover:text-red-700 rounded-lg">
+          <Button 
+            size="sm" 
+            variant="outline" 
+            onClick={() => onDelete(item.id)} 
+            className="h-10 w-10 sm:h-8 sm:w-8 p-0 border-red-200 text-red-600 hover:bg-red-50 hover:text-red-700 rounded-lg"
+          >
             <Trash2 className="h-4 w-4" />
           </Button>
-          <div {...listeners} className="cursor-move p-1.5 rounded-lg hover:bg-gray-100 hover:text-gray-700">
+          <div 
+            {...listeners} 
+            className="cursor-move p-2 sm:p-1.5 rounded-lg hover:bg-gray-100 hover:text-gray-700"
+          >
             <MoveVertical className="h-4 w-4 text-gray-700" />
           </div>
         </div>
