@@ -18,12 +18,18 @@ export type MenuItem = {
   priceVariations?: PriceVariation[];
 };
 
+export type PriceVariationCategory = {
+  id: string;
+  name: string;
+};
+
 export type MenuSection = {
   id: string;
   name: string;
   items: MenuItem[];
   isDisabled?: boolean;
   variations?: SectionVariation[]; // Section level variations (name only)
+  priceVariationCategories?: PriceVariationCategory[];
 };
 
 export type Restaurant = {

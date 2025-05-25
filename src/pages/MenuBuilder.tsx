@@ -198,6 +198,9 @@ const MenuBuilder = () => {
   const [itemOutOfStock, setItemOutOfStock] = useState(false);
   const [priceVariations, setPriceVariations] = useState<PriceVariation[]>([]);
   
+  // Add this state for section price variations
+  const [sectionPriceVariations, setSectionPriceVariations] = useState<string[]>([]);
+
   const { currentUser } = useAuth();
   const { toast } = useToast();
   const isMobile = useIsMobile();
@@ -288,13 +291,29 @@ const MenuBuilder = () => {
   const openAddSectionDialog = () => {
     setCurrentSection(null);
     setSectionName("");
+    setSectionPriceVariations([]);
     setSectionDialogOpen(true);
   };
 
   const openEditSectionDialog = (section: MenuSection) => {
     setCurrentSection(section);
     setSectionName(section.name);
+    setSectionPriceVariations(section.priceVariationCategories?.map(v => v.name) || []);
     setSectionDialogOpen(true);
+  };
+
+  const handleAddSectionVariation = () => {
+    setSectionPriceVariations([...sectionPriceVariations, ""]);
+  };
+
+  const handleUpdateSectionVariation = (index: number, value: string) => {
+    const updated = [...sectionPriceVariations];
+    updated[index] = value;
+    setSectionPriceVariations(updated);
+  };
+
+  const handleRemoveSectionVariation = (index: number) => {
+    setSectionPriceVariations(sectionPriceVariations.filter((_, i) => i !== index));
   };
 
   const handleSaveSection = () => {
@@ -307,11 +326,21 @@ const MenuBuilder = () => {
       return;
     }
 
+    // Filter out empty variation names
+    const validVariations = sectionPriceVariations
+      .map(name => name.trim())
+      .filter(name => name.length > 0)
+      .map(name => ({ id: uuidv4(), name }));
+
     if (currentSection) {
       // Edit existing section
       const updatedSections = menuSections.map(section =>
         section.id === currentSection.id
-          ? { ...section, name: sectionName }
+          ? { 
+              ...section, 
+              name: sectionName,
+              priceVariationCategories: validVariations
+            }
           : section
       );
       
@@ -326,7 +355,8 @@ const MenuBuilder = () => {
         id: uuidv4(),
         name: sectionName,
         items: [],
-        isDisabled: false
+        isDisabled: false,
+        priceVariationCategories: validVariations
       };
       
       setMenuSections([...menuSections, newSection]);
@@ -358,7 +388,20 @@ const MenuBuilder = () => {
     setItemImageUrl("");
     setItemIsDisabled(false);
     setItemOutOfStock(false);
-    setPriceVariations([]);
+    
+    // Initialize price variations from section categories
+    const section = menuSections.find(s => s.id === sectionId);
+    if (section?.priceVariationCategories?.length) {
+      setPriceVariations(
+        section.priceVariationCategories.map(cat => ({
+          name: cat.name,
+          price: 0
+        }))
+      );
+    } else {
+      setPriceVariations([]);
+    }
+    
     setItemDialogOpen(true);
   };
 
@@ -371,7 +414,36 @@ const MenuBuilder = () => {
     setItemImageUrl(item.imageUrl || "");
     setItemIsDisabled(item.isDisabled || false);
     setItemOutOfStock(item.outOfStock || false);
-    setPriceVariations(item.priceVariations || []);
+    
+    // Get section's variation categories
+    const section = menuSections.find(s => s.id === sectionId);
+    const sectionCategories = section?.priceVariationCategories || [];
+    
+    if (sectionCategories.length > 0) {
+      // If item has variations, match them with section categories
+      if (item.priceVariations?.length) {
+        const variations = sectionCategories.map(cat => {
+          const existing = item.priceVariations?.find(v => v.name === cat.name);
+          return {
+            name: cat.name,
+            price: existing?.price || 0
+          };
+        });
+        setPriceVariations(variations);
+      } else {
+        // Initialize with section categories
+        setPriceVariations(
+          sectionCategories.map(cat => ({
+            name: cat.name,
+            price: 0
+          }))
+        );
+      }
+    } else {
+      // No section categories, use item's custom variations if any
+      setPriceVariations(item.priceVariations || []);
+    }
+    
     setItemDialogOpen(true);
   };
 
@@ -385,6 +457,50 @@ const MenuBuilder = () => {
       return;
     }
 
+    // Price validation
+    let price = 0; // Default to 0 instead of undefined
+    if (itemPrice) {
+      const parsedPrice = parseFloat(itemPrice);
+      if (!isNaN(parsedPrice)) {
+        price = parsedPrice;
+      }
+    }
+
+    // Check if we have valid price variations
+    const hasValidVariations = priceVariations.length > 0 && 
+      priceVariations.every(v => !isNaN(v.price) && v.price > 0);
+
+    // If using variations, ensure all have valid prices
+    if (priceVariations.length > 0 && !hasValidVariations) {
+      toast({
+        title: "Invalid variation prices",
+        description: "Please enter valid prices for all variations.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    // If no variations, require base price
+    if (!hasValidVariations && !price) {
+      toast({
+        title: "Price required",
+        description: "Please enter a base price when not using variations.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    const newItem = {
+      id: currentItem?.id || uuidv4(),
+      name: itemName.trim(),
+      description: itemDescription?.trim() || "", // Empty string if not provided
+      price: hasValidVariations ? 0 : price, // 0 instead of undefined
+      imageUrl: itemImageUrl?.trim() || "", // Empty string if not provided
+      isDisabled: itemIsDisabled || false,
+      outOfStock: itemOutOfStock || false,
+      priceVariations: hasValidVariations ? priceVariations : [] // Empty array if not using variations
+    };
+
     const sectionIndex = menuSections.findIndex(section => section.id === currentSectionId);
     if (sectionIndex === -1) {
       toast({
@@ -394,41 +510,6 @@ const MenuBuilder = () => {
       });
       return;
     }
-
-    // Price validation
-    let price = undefined;
-    if (itemPrice) {
-      const parsedPrice = parseFloat(itemPrice);
-      if (!isNaN(parsedPrice)) {
-        price = parsedPrice;
-      }
-    }
-
-    // If no variations, price is required
-    if (!priceVariations.length && !price) {
-      toast({
-        title: "Price required",
-        description: "Please enter a price or add price variations.",
-        variant: "destructive",
-      });
-      return;
-    }
-
-    // If variations exist, price should be undefined
-    if (priceVariations.length > 0) {
-      price = undefined;
-    }
-
-    const newItem = {
-      id: currentItem?.id || uuidv4(),
-      name: itemName.trim(),
-      description: itemDescription?.trim() || "",
-      price,
-      imageUrl: itemImageUrl?.trim() || "",
-      isDisabled: itemIsDisabled || false,
-      outOfStock: itemOutOfStock || false,
-      ...(priceVariations.length > 0 ? { priceVariations } : {})
-    };
 
     const updatedSections = [...menuSections];
     const section = { ...updatedSections[sectionIndex] };
@@ -660,7 +741,7 @@ const MenuBuilder = () => {
           >
             {saving ? (
               <>
-                <RefreshCcw className="h-4 w-4 mr-2" />
+                <RefreshCcw className="h-4 w-4 mr-2 animate-spin" />
                 Saving...
               </>
             ) : (
@@ -771,6 +852,42 @@ const MenuBuilder = () => {
                 placeholder="e.g., Appetizers, Main Course, Desserts"
               />
             </div>
+
+            <div className="space-y-4">
+              <div className="flex items-center justify-between">
+                <Label>Price Variations</Label>
+                <Button 
+                  type="button" 
+                  variant="outline" 
+                  size="sm" 
+                  onClick={handleAddSectionVariation}
+                  className="h-8 px-2 border-gray-200 hover:bg-gray-50 hover:text-gray-700 rounded-lg"
+                >
+                  <Plus className="h-4 w-4 mr-2" />
+                  Add Variation
+                </Button>
+              </div>
+              
+              {sectionPriceVariations.map((variation, index) => (
+                <div key={index} className="flex items-center gap-4">
+                  <Input
+                    value={variation}
+                    onChange={(e) => handleUpdateSectionVariation(index, e.target.value)}
+                    placeholder="e.g., Small, Medium, Large"
+                    className="flex-1"
+                  />
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => handleRemoveSectionVariation(index)}
+                    className="px-3"
+                  >
+                    <XCircle className="h-4 w-4 text-red-500" />
+                  </Button>
+                </div>
+              ))}
+            </div>
           </div>
           <DialogFooter>
             <Button variant="outline" onClick={() => setSectionDialogOpen(false)} className="hover:bg-gray-50 hover:text-black">
@@ -812,6 +929,7 @@ const MenuBuilder = () => {
                   onChange={(e) => setItemPrice(e.target.value)}
                   placeholder="0.00"
                   step="0.01"
+                  disabled={priceVariations.length > 0}
                 />
               </div>
             </div>
@@ -836,43 +954,131 @@ const MenuBuilder = () => {
               />
             </div>
 
-            <div className="space-y-4">
-              <div className="flex items-center justify-between">
-                <Label>Price Variations</Label>
-                <Button type="button" variant="outline" size="sm" onClick={handleAddVariation}>
-                  <Plus className="h-4 w-4 mr-2" />
-                  Add Variation
-                </Button>
-              </div>
+            {/* Show section's price variations if available */}
+            {(function PriceVariationsSection() {
+              const section = menuSections.find(s => s.id === currentSectionId);
+              const hasCategories = section?.priceVariationCategories?.length > 0;
               
-              {priceVariations.map((variation, index) => (
-                <div key={index} className="flex items-center gap-4">
-                  <Input
-                    value={variation.name}
-                    onChange={(e) => handleUpdateVariation(index, 'name', e.target.value)}
-                    placeholder="Size/Variation name"
-                    className="flex-1"
-                  />
-                  <Input
-                    type="number"
-                    value={variation.price}
-                    onChange={(e) => handleUpdateVariation(index, 'price', e.target.value)}
-                    placeholder="0.00"
-                    step="0.01"
-                    className="w-32"
-                  />
-                  <Button
-                    type="button"
-                    variant="ghost"
-                    size="sm"
-                    onClick={() => handleRemoveVariation(index)}
-                    className="px-3"
-                  >
-                    <XCircle className="h-4 w-4 text-red-500" />
-                  </Button>
+              if (hasCategories) {
+                return (
+                  <div className="space-y-4">
+                    <div className="flex items-center justify-between">
+                      <Label>Price Variations (Optional)</Label>
+                      <div className="flex items-center gap-2">
+                        <p className="text-sm text-gray-500">Using section's categories</p>
+                        {priceVariations.length > 0 && (
+                          <Button 
+                            type="button" 
+                            variant="ghost" 
+                            size="sm" 
+                            onClick={() => setPriceVariations([])}
+                            className="h-8 px-2 text-red-600 hover:text-red-700"
+                          >
+                            <XCircle className="h-4 w-4" />
+                          </Button>
+                        )}
+                      </div>
+                    </div>
+                    
+                    {priceVariations.length === 0 ? (
+                      <Button
+                        type="button"
+                        variant="outline"
+                        className="w-full h-20 border-dashed"
+                        onClick={() => {
+                          setPriceVariations(
+                            section.priceVariationCategories.map(cat => ({
+                              name: cat.name,
+                              price: 0
+                            }))
+                          );
+                        }}
+                      >
+                        <Plus className="h-4 w-4 mr-2" />
+                        Add Price Variations
+                      </Button>
+                    ) : (
+                      priceVariations.map((variation, index) => (
+                        <div key={index} className="flex items-center gap-4">
+                          <Input
+                            value={variation.name}
+                            disabled
+                            className="flex-1 bg-gray-50"
+                          />
+                          <Input
+                            type="number"
+                            value={variation.price}
+                            onChange={(e) => handleUpdateVariation(index, 'price', e.target.value)}
+                            placeholder="0.00"
+                            step="0.01"
+                            className="w-32"
+                          />
+                        </div>
+                      ))
+                    )}
+                  </div>
+                );
+              }
+              
+              return (
+                <div className="space-y-4">
+                  <div className="flex items-center justify-between">
+                    <Label>Custom Price Variations (Optional)</Label>
+                    <div className="flex items-center gap-2">
+                      {priceVariations.length > 0 && (
+                        <Button 
+                          type="button" 
+                          variant="ghost" 
+                          size="sm" 
+                          onClick={() => setPriceVariations([])}
+                          className="h-8 px-2 text-red-600 hover:text-red-700"
+                        >
+                          Clear All
+                        </Button>
+                      )}
+                      <Button 
+                        type="button" 
+                        variant="outline" 
+                        size="sm" 
+                        onClick={handleAddVariation}
+                        className="h-8 px-2"
+                      >
+                        <Plus className="h-4 w-4 mr-2" />
+                        Add Variation
+                      </Button>
+                    </div>
+                  </div>
+                  
+                  {priceVariations.map((variation, index) => (
+                    <div key={index} className="flex items-center gap-4">
+                      <Input
+                        value={variation.name}
+                        onChange={(e) => handleUpdateVariation(index, 'name', e.target.value)}
+                        placeholder="Size/Variation name"
+                        className="flex-1"
+                      />
+                      <Input
+                        type="number"
+                        value={variation.price}
+                        onChange={(e) => handleUpdateVariation(index, 'price', e.target.value)}
+                        placeholder="0.00"
+                        step="0.01"
+                        className="w-32"
+                      />
+                      <Button
+                        type="button"
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => handleRemoveVariation(index)}
+                        className="px-3"
+                      >
+                        <XCircle className="h-4 w-4 text-red-500" />
+                      </Button>
+                    </div>
+                  ))}
                 </div>
-              ))}
-            </div>
+              );
+            })()}
 
             <div className="flex flex-col gap-4 sm:flex-row sm:gap-6">
               <div className="flex items-center space-x-2">
