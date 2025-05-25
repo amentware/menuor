@@ -6,6 +6,12 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 import { Edit, MoreVertical, Trash2 } from "lucide-react";
 
 interface MenuItemProps {
@@ -45,7 +51,24 @@ export const MenuItemComponent = ({
             </div>
             <div className="text-primary font-bold ml-2">
               {item.priceVariations && item.priceVariations.length > 0 ? (
-                <span className="text-green-600 text-xl">{`${currencySymbol}${item.priceVariations[0].price.toFixed(2)}+`}</span>
+                <TooltipProvider>
+                  <Tooltip delayDuration={0}>
+                    <TooltipTrigger>
+                      <span className="text-green-600 text-xl">
+                        {currencySymbol}{item.priceVariations[0].price.toFixed(2)}+
+                      </span>
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      <div className="space-y-1">
+                        {item.priceVariations.map((variation) => (
+                          <div key={variation.name} className="whitespace-nowrap">
+                            {variation.name}: {currencySymbol}{variation.price.toFixed(2)}
+                          </div>
+                        ))}
+                      </div>
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
               ) : (
                 item.price ? <span className="text-green-600 text-xl">{currencySymbol}{item.price.toFixed(2)}</span> : <span className="text-gray-400">-</span>
               )}

@@ -6,6 +6,12 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 import { Edit, MoreVertical, MoveVertical, Trash2 } from "lucide-react";
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
@@ -74,7 +80,24 @@ export const SortableMenuItem = ({
         <div className="flex items-center gap-3 ml-3">
           <div className="text-primary font-bold">
             {item.priceVariations && item.priceVariations.length > 0 ? (
-              <span className="text-green-600">{`${currencySymbol}${item.priceVariations[0].price.toFixed(2)}+`}</span>
+              <TooltipProvider>
+                <Tooltip delayDuration={0}>
+                  <TooltipTrigger>
+                    <span className="text-green-600">
+                      {currencySymbol}{item.priceVariations[0].price.toFixed(2)}+
+                    </span>
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    <div className="space-y-1">
+                      {item.priceVariations.map((variation) => (
+                        <div key={variation.name} className="whitespace-nowrap">
+                          {variation.name}: {currencySymbol}{variation.price.toFixed(2)}
+                        </div>
+                      ))}
+                    </div>
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
             ) : (
               item.price ? <span className="text-green-600">{currencySymbol}{item.price.toFixed(2)}</span> : <span className="text-gray-400">-</span>
             )}
