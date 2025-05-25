@@ -19,7 +19,7 @@ const Navigation = () => {
         <div className="flex justify-between h-16">
           <div className="flex">
             <Link to={logoDestination} className="flex-shrink-0 flex items-center">
-              <span className="font-display text-xl font-bold text-primary">MenuBuilder</span>
+              <span className="font-display text-xl font-bold text-primary">Menuor</span>
             </Link>
           </div>
           

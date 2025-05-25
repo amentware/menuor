@@ -40,10 +40,10 @@ const MobileDrawer = () => {
       </SheetTrigger>
       <SheetContent side="right" className="w-80 bg-white">
         <SheetHeader className="text-left">
-          <SheetTitle className="text-xl font-bold text-primary">MenuBuilder</SheetTitle>
+          <SheetTitle className="text-xl font-bold text-primary">Menuor</SheetTitle>
         </SheetHeader>
         
-        <div className="flex flex-col h-full pt-6">
+        <div className="flex flex-col justify-between h-[calc(100vh-80px)] pt-6 pb-8">
           <nav className="flex-1 space-y-2">
             {navigationItems.map((item) => {
               const Icon = item.icon;
@@ -66,7 +66,7 @@ const MobileDrawer = () => {
           </nav>
           
           {isAuthenticated && (
-            <div className="border-t pt-4 mt-4">
+            <div className="border-t pt-4">
               <Button
                 variant="ghost"
                 onClick={() => {
