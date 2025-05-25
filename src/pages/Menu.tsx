@@ -238,7 +238,7 @@ const Menu = () => {
         style={{ backgroundColor: secondaryColor }}
       >
         <p className="text-gray-600">
-          Powered by MenuBuilder
+          Powered by Menuor
         </p>
       </div>
     </div>
