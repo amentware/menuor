@@ -198,9 +198,9 @@ const QRCodePage = () => {
                 <Button
                   onClick={downloadQRCode}
                   disabled={!restaurant.isPublic}
-                  className="w-full bg-primary text-primary-foreground hover:bg-secondary hover:text-secondary-foreground transition-colors duration-200"
+                  className="group w-full bg-primary text-primary-foreground hover:bg-secondary hover:text-secondary-foreground transition-colors duration-200"
                 >
-                  <Download className="h-4 w-4 mr-2" />
+                  <Download className="h-4 w-4 mr-2 group-hover:text-secondary-foreground" />
                   Download QR Code
                 </Button>
               </CardFooter>
@@ -223,7 +223,7 @@ const QRCodePage = () => {
               <CardFooter>
                 <Button
                   variant="outline"
-                  className="w-full border-gray-300 bg-white hover:bg-gray-50 text-black"
+                  className="w-full bg-primary text-primary-foreground hover:bg-secondary hover:text-secondary-foreground transition-colors duration-200"
                   onClick={() => {
                     navigator.clipboard.writeText(menuUrl);
                     toast({
