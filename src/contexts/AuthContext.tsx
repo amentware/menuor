@@ -43,7 +43,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
       if (user) {
         // Check if user is admin (In a real app, you'd check custom claims or a Firestore document)
         // For demo purposes, we're considering a specific UID as admin
-        const isAdmin = user.uid === 'admin123' || (await user.getIdTokenResult()).claims.admin === true;
+        const isAdmin = user.uid === 'REDiVtB7LrQ6A7Se6uWiuD2HQGW2' || (await user.getIdTokenResult()).claims.admin === true;
         setUserRole(isAdmin ? 'admin' : 'owner');
       } else {
         setUserRole('none');
