@@ -735,7 +735,7 @@ const MenuBuilder = () => {
           <Button
             onClick={handleSaveMenu}
             disabled={!menuChanged || saving}
-            className={`bg-black text-white ${saving ? '' : 'hover:bg-gray-50 hover:text-black'}`}
+            className={`group bg-primary text-primary-foreground hover:bg-secondary hover:text-secondary-foreground transition-colors duration-200 ${saving ? '' : 'group bg-primary text-primary-foreground hover:bg-secondary hover:text-secondary-foreground transition-colors duration-200'}`}
           >
             {saving ? (
               <>
@@ -744,7 +744,7 @@ const MenuBuilder = () => {
               </>
             ) : (
               <>
-                <Save className="h-4 w-4 mr-2" />
+                <Save className="h-4 w-4 mr-2 group-hover:text-secondary-foreground" />
                 Save Changes
               </>
             )}
@@ -891,7 +891,7 @@ const MenuBuilder = () => {
             <Button variant="outline" onClick={() => setSectionDialogOpen(false)} className="hover:bg-gray-50 hover:text-black">
               Cancel
             </Button>
-            <Button onClick={handleSaveSection} className="bg-black text-white hover:bg-gray-50 hover:text-black">
+            <Button onClick={handleSaveSection} className="bg-primary text-primary-foreground hover:bg-secondary hover:text-secondary-foreground transition-colors duration-200">
               {currentSection ? 'Save Changes' : 'Add Section'}
             </Button>
           </DialogFooter>
@@ -1101,7 +1101,7 @@ const MenuBuilder = () => {
             <Button variant="outline" onClick={() => setItemDialogOpen(false)} className="hover:bg-gray-50 hover:text-black">
               Cancel
             </Button>
-            <Button onClick={handleSaveItem} className="bg-black text-white hover:bg-gray-50 hover:text-black">
+            <Button onClick={handleSaveItem} className="bg-primary text-primary-foreground hover:bg-secondary hover:text-secondary-foreground transition-colors duration-200">
               {currentItem ? 'Save Changes' : 'Add Item'}
             </Button>
           </DialogFooter>
