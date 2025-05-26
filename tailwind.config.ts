@@ -1,4 +1,3 @@
-
 import type { Config } from "tailwindcss";
 
 export default {
@@ -40,42 +39,53 @@ export default {
 				background: 'hsl(var(--background))',
 				foreground: 'hsl(var(--foreground))',
 				primary: {
-					DEFAULT: 'hsl(var(--primary))',
-					foreground: 'hsl(var(--primary-foreground))'
+					DEFAULT: '#048872',
+					foreground: '#FEFDF8'
 				},
 				secondary: {
-					DEFAULT: 'hsl(var(--secondary))',
-					foreground: 'hsl(var(--secondary-foreground))'
+					DEFAULT: '#3A9F86',
+					foreground: '#FEFDF8'
 				},
 				destructive: {
 					DEFAULT: 'hsl(var(--destructive))',
 					foreground: 'hsl(var(--destructive-foreground))'
 				},
 				muted: {
-					DEFAULT: 'hsl(var(--muted))',
-					foreground: 'hsl(var(--muted-foreground))'
+					DEFAULT: '#B8CEB3',
+					foreground: '#282727'
 				},
 				accent: {
-					DEFAULT: 'hsl(var(--accent))',
-					foreground: 'hsl(var(--accent-foreground))'
+					DEFAULT: '#F0B516',
+					foreground: '#282727'
 				},
 				popover: {
-					DEFAULT: 'hsl(var(--popover))',
-					foreground: 'hsl(var(--popover-foreground))'
+					DEFAULT: '#FEFDF8',
+					foreground: '#282727'
 				},
 				card: {
-					DEFAULT: 'hsl(var(--card))',
-					foreground: 'hsl(var(--card-foreground))'
+					DEFAULT: '#EEF2F0',
+					foreground: '#282727'
+				},
+				theme: {
+					asparagus: '#6A8C4D',
+					viridian: '#048872',
+					zomp: '#3A9F86',
+					'ash-gray': '#B8CEB3',
+					'baby-powder': '#FEFDF8',
+					'raisin-black': '#282727',
+					xanthous: '#F0B516',
+					'antiflash-white': '#EEF2F0',
+					'mint-green': '#D1ECE3'
 				},
 				sidebar: {
-					DEFAULT: 'hsl(var(--sidebar-background))',
-					foreground: 'hsl(var(--sidebar-foreground))',
-					primary: 'hsl(var(--sidebar-primary))',
-					'primary-foreground': 'hsl(var(--sidebar-primary-foreground))',
-					accent: 'hsl(var(--sidebar-accent))',
-					'accent-foreground': 'hsl(var(--sidebar-accent-foreground))',
-					border: 'hsl(var(--sidebar-border))',
-					ring: 'hsl(var(--sidebar-ring))'
+					DEFAULT: '#048872',
+					foreground: '#FEFDF8',
+					primary: '#3A9F86',
+					'primary-foreground': '#FEFDF8',
+					accent: '#F0B516',
+					'accent-foreground': '#282727',
+					border: '#B8CEB3',
+					ring: '#6A8C4D'
 				},
 				restaurant: {
 					burgundy: 'var(--restaurant-burgundy, #8B2635)',
@@ -84,17 +94,10 @@ export default {
 					dark: 'var(--restaurant-dark, #2D2D2D)',
 					light: 'var(--restaurant-light, #FFFFFF)',
 				},
-				theme: {
-					primary: 'var(--restaurant-burgundy, #8B2635)',
-					secondary: 'var(--restaurant-cream, #F5F5DC)',
-					accent: 'var(--restaurant-gold, #D4AF37)',
-					background: 'var(--restaurant-light, #FFFFFF)',
-					text: 'var(--restaurant-dark, #2D2D2D)',
-				},
 				glass: {
-					'light': 'rgba(255, 255, 255, 0.2)',
-					'medium': 'rgba(255, 255, 255, 0.4)',
-					'dark': 'rgba(0, 0, 0, 0.2)',
+					'light': 'rgba(254, 253, 248, 0.2)',
+					'medium': 'rgba(254, 253, 248, 0.4)',
+					'dark': 'rgba(40, 39, 39, 0.2)',
 				}
 			},
 			borderRadius: {
