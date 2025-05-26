@@ -79,7 +79,7 @@ const Login = () => {
         <CardHeader>
           <CardTitle className="text-3xl font-display text-center text-primary">Login</CardTitle>
           <CardDescription className="text-center">
-            Sign in to your MenuBuilder account
+            Sign in to your Menuor account
           </CardDescription>
         </CardHeader>
         
