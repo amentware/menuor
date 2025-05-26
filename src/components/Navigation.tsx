@@ -117,7 +117,7 @@ const Navigation = () => {
             
             {isAuthenticated && (
               <Button 
-                variant="outline" 
+                //variant="outline" 
                 className="group bg-primary text-primary-foreground hover:bg-secondary hover:text-secondary-foreground flex items-center gap-2 transition-colors" 
                 onClick={logout}
               >
