@@ -198,7 +198,7 @@ const QRCodePage = () => {
                 <Button
                   onClick={downloadQRCode}
                   disabled={!restaurant.isPublic}
-                  className="w-full bg-black text-white hover:bg-gray-800"
+                  className="w-full bg-primary text-primary-foreground hover:bg-secondary hover:text-secondary-foreground transition-colors duration-200"
                 >
                   <Download className="h-4 w-4 mr-2" />
                   Download QR Code
