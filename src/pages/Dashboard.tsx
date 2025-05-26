@@ -108,10 +108,11 @@ const Dashboard = () => {
       <div className="flex items-center justify-between mb-8">
         <h1 className="text-4xl font-bold font-display text-black">Restaurant Dashboard</h1>
         <Button 
-          className="bg-black text-white hover:bg-gray-800 flex items-center gap-2"
+          variant="outline"
+          className="group bg-primary-foreground text-primary hover:bg-secondary hover:text-secondary-foreground flex items-center gap-2"
           onClick={() => navigate('/menu-builder')}
         >
-          <MenuIcon className="h-4 w-4" />
+          <MenuIcon className="h-4 w-4 group-hover:text-secondary-foreground"/>
           Edit Menu
         </Button>
       </div>
