@@ -131,7 +131,7 @@ const Login = () => {
               
               <Button 
                 type="submit" 
-                className="w-full bg-restaurant-burgundy hover:bg-restaurant-burgundy/90"
+                className="w-full bg-black hover:bg-gray-100 hover:text-black"
                 disabled={isLoading}
               >
                 {isLoading ? (
