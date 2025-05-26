@@ -118,10 +118,10 @@ const Navigation = () => {
             {isAuthenticated && (
               <Button 
                 variant="outline" 
-                className="bg-black text-white hover:bg-gray-50 hover:text-black flex items-center gap-2 transition-colors" 
+                className="group bg-primary text-primary-foreground hover:bg-secondary hover:text-secondary-foreground flex items-center gap-2 transition-colors" 
                 onClick={logout}
               >
-                <LogOut className="h-4 w-4" />
+                <LogOut className="h-4 w-4 text-primary-foreground group-hover:text-secondary-foreground" />
                 Logout
               </Button>
             )}
