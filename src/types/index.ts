@@ -32,6 +32,11 @@ export type MenuSection = {
   priceVariationCategories?: PriceVariationCategory[];
 };
 
+export type DailyScan = {
+  date: string;  // Format: YYYY-MM-DD
+  count: number;
+};
+
 export type Restaurant = {
   id: string;
   ownerId: string;
@@ -48,6 +53,9 @@ export type Restaurant = {
   qrScans?: number;
   viewCount?: number;
   dailyViews?: { [date: string]: number };
+  dailyScans?: DailyScan[];  // Last 7 days of QR scan data
+  lastScanDate?: any;  // Timestamp
+  lastScanDay?: string;  // YYYY-MM-DD format
 };
 
 export type RestaurantSummary = {

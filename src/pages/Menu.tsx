@@ -1,6 +1,6 @@
 import React from 'react';
 import { useEffect, useState, useCallback } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useSearchParams } from 'react-router-dom';
 import { db, doc, getDoc } from '@/lib/firebase';
 import { Restaurant, MenuSection } from '@/types';
 import { useQRTracking } from '@/hooks/useQRTracking';
@@ -8,6 +8,7 @@ import { Clock, MapPin, Phone, Globe, Star, ChevronDown, ChevronUp, Menu as Menu
 
 const Menu = () => {
   const { restaurantId } = useParams();
+  const [searchParams] = useSearchParams();
   const [restaurant, setRestaurant] = useState<Restaurant | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -16,6 +17,10 @@ const Menu = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [favoriteItems, setFavoriteItems] = useState(new Set());
   const { trackQRScan } = useQRTracking();
+  const [menuFullyLoaded, setMenuFullyLoaded] = useState(false);
+
+  // Check if this is a preview view
+  const isPreview = searchParams.get('preview') === 'true' || document.referrer.includes('/dashboard') || document.referrer.includes('/menu-builder');
 
   // Memoize the fetch function to prevent recreating it on every render
   const fetchRestaurant = useCallback(async () => {
@@ -39,23 +44,31 @@ const Menu = () => {
         }
         
         setRestaurant(restaurantData);
-        // Track QR scan only once after successful menu load
-        try {
-          await trackQRScan(restaurantId);
-        } catch (error) {
-          console.error('Error tracking QR scan:', error);
-          // Don't set error state for tracking failure
-        }
+        setLoading(false);
+        
+        // Set menu as fully loaded after a short delay to ensure all content is rendered
+        setTimeout(() => {
+          setMenuFullyLoaded(true);
+        }, 1000);
       } else {
         setError('Restaurant not found');
+        setLoading(false);
       }
     } catch (error) {
       console.error('Error fetching restaurant:', error);
       setError('Failed to load menu');
-    } finally {
       setLoading(false);
     }
-  }, [restaurantId]); // Only depend on restaurantId
+  }, [restaurantId]);
+
+  // Track QR scan only after menu is fully loaded and not in preview mode
+  useEffect(() => {
+    if (menuFullyLoaded && !isPreview && restaurantId) {
+      trackQRScan(restaurantId).catch(error => {
+        console.error('Error tracking QR scan:', error);
+      });
+    }
+  }, [menuFullyLoaded, isPreview, restaurantId]);
 
   // Use effect with only fetchRestaurant as dependency
   useEffect(() => {
