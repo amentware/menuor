@@ -216,18 +216,6 @@ const MenuBuilder = () => {
     })
   );
 
-  useEffect(() => {
-    fetchRestaurantData();
-  }, [currentUser]);
-
-  useEffect(() => {
-    const newExpandedSections: Record<string, boolean> = {};
-    menuSections.forEach(section => {
-      newExpandedSections[section.id] = expandedSections[section.id] ?? true;
-    });
-    setExpandedSections(newExpandedSections);
-  }, [menuSections]);
-
   const fetchRestaurantData = async () => {
     if (!currentUser) {
       setLoading(false);
@@ -235,7 +223,9 @@ const MenuBuilder = () => {
     }
     
     try {
-      const restaurantDoc = await getDoc(doc(db, 'restaurants', currentUser.uid));
+      // Use get() instead of an implicit listener
+      const restaurantRef = doc(db, 'restaurants', currentUser.uid);
+      const restaurantDoc = await getDoc(restaurantRef);
       
       if (restaurantDoc.exists()) {
         const data = restaurantDoc.data();
@@ -260,6 +250,39 @@ const MenuBuilder = () => {
       setLoading(false);
     }
   };
+
+  // Updated useEffect with cleanup and proper subscription handling
+  useEffect(() => {
+    if (!currentUser?.uid) {
+      setLoading(false);
+      return;
+    }
+
+    setLoading(true);
+    fetchRestaurantData();
+
+    // Only set up real-time listener if specifically needed
+    // const unsubscribe = onSnapshot(doc(db, 'restaurants', currentUser.uid), (doc) => {
+    //   if (doc.exists()) {
+    //     const data = doc.data();
+    //     setRestaurant(data);
+    //     setMenuSections(data.menuSections || []);
+    //     setCurrencySymbol(data.currencySymbol || "₹");
+    //   }
+    // });
+
+    // return () => {
+    //   unsubscribe();
+    // };
+  }, [currentUser?.uid]);
+
+  useEffect(() => {
+    const newExpandedSections: Record<string, boolean> = {};
+    menuSections.forEach(section => {
+      newExpandedSections[section.id] = expandedSections[section.id] ?? true;
+    });
+    setExpandedSections(newExpandedSections);
+  }, [menuSections]);
 
   const handleSaveMenu = async () => {
     if (!currentUser) return;

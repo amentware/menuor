@@ -1,4 +1,3 @@
-
 import { initializeApp } from 'firebase/app';
 import { 
   getAuth, 
@@ -19,7 +18,11 @@ import {
   query,
   where,
   getDocs,
-  Timestamp
+  Timestamp,
+  increment,
+  enableIndexedDbPersistence,
+  connectFirestoreEmulator,
+  type FirestoreSettings
 } from 'firebase/firestore';
 import { getStorage } from 'firebase/storage';
 import { getAnalytics } from 'firebase/analytics';
@@ -38,6 +41,14 @@ const firebaseConfig = {
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
+
+// Configure Firestore settings
+const firestoreSettings: FirestoreSettings = {
+  experimentalForceLongPolling: false, // Disable long polling
+  ignoreUndefinedProperties: true,
+  cacheSizeBytes: 0 // Disable offline persistence
+};
+
 const db = getFirestore(app);
 const storage = getStorage(app);
 let analytics = null;
@@ -67,6 +78,7 @@ export {
   where,
   getDocs,
   Timestamp,
+  increment,
 };
 
 // Export the User type correctly using 'export type'

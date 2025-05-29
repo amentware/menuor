@@ -1,10 +1,9 @@
 import React from 'react';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { useParams } from 'react-router-dom';
 import { db, doc, getDoc } from '@/lib/firebase';
 import { Restaurant, MenuSection } from '@/types';
 import { useQRTracking } from '@/hooks/useQRTracking';
-import { useAuth } from '@/contexts/AuthContext';
 import { Clock, MapPin, Phone, Globe, Star, ChevronDown, ChevronUp, Menu as MenuIcon, Search, Filter, Heart, Share2 } from 'lucide-react';
 
 const Menu = () => {
@@ -17,47 +16,51 @@ const Menu = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [favoriteItems, setFavoriteItems] = useState(new Set());
   const { trackQRScan } = useQRTracking();
-  const { currentUser } = useAuth();
 
-  useEffect(() => {
-    const fetchRestaurant = async () => {
-      if (!restaurantId) {
-        setError('Restaurant ID not provided');
-        setLoading(false);
-        return;
-      }
+  // Memoize the fetch function to prevent recreating it on every render
+  const fetchRestaurant = useCallback(async () => {
+    if (!restaurantId) {
+      setError('Restaurant ID not provided');
+      setLoading(false);
+      return;
+    }
 
-      try {
-        const restaurantDoc = await getDoc(doc(db, 'restaurants', restaurantId));
+    try {
+      const restaurantDoc = await getDoc(doc(db, 'restaurants', restaurantId));
+      
+      if (restaurantDoc.exists()) {
+        const data = restaurantDoc.data();
+        const restaurantData: Restaurant = { id: restaurantDoc.id, ...data } as Restaurant;
         
-        if (restaurantDoc.exists()) {
-          const data = restaurantDoc.data();
-          const restaurantData: Restaurant = { id: restaurantDoc.id, ...data } as Restaurant;
-          
-          if (!restaurantData.isPublic) {
-            setError('This menu is private and not available for public viewing');
-            setLoading(false);
-            return;
-          }
-          
-          setRestaurant(restaurantData);
-       
-          if (!currentUser || currentUser.uid !== restaurantData.ownerId) {
-            await trackQRScan(restaurantId);
-          }
-        } else {
-          setError('Restaurant not found');
+        if (!restaurantData.isPublic) {
+          setError('This menu is private and not available for public viewing');
+          setLoading(false);
+          return;
         }
-      } catch (error) {
-        console.error('Error fetching restaurant:', error);
-        setError('Failed to load menu');
-      } finally {
-        setLoading(false);
+        
+        setRestaurant(restaurantData);
+        // Track QR scan only once after successful menu load
+        try {
+          await trackQRScan(restaurantId);
+        } catch (error) {
+          console.error('Error tracking QR scan:', error);
+          // Don't set error state for tracking failure
+        }
+      } else {
+        setError('Restaurant not found');
       }
-    };
+    } catch (error) {
+      console.error('Error fetching restaurant:', error);
+      setError('Failed to load menu');
+    } finally {
+      setLoading(false);
+    }
+  }, [restaurantId]); // Only depend on restaurantId
 
+  // Use effect with only fetchRestaurant as dependency
+  useEffect(() => {
     fetchRestaurant();
-  }, [restaurantId, trackQRScan, currentUser]);
+  }, [fetchRestaurant]);
 
   const toggleSection = (sectionId) => {
     const newOpenSections = new Set(openSections);
