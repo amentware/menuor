@@ -27,12 +27,12 @@ const Home = () => {
             {!isAuthenticated && (
               <>
                 <Link to="/register">
-                  <Button size="lg" className="bg-white text-restaurant-burgundy hover:bg-restaurant-cream">
+                  <Button size="lg" className="bg-white text-restaurant-burgundy hover:bg-restaurant-cream hover:text-black ">
                     Get Started
                   </Button>
                 </Link>
                 <Link to="/login">
-                  <Button size="lg" variant="outline" className="border-white text-white hover:bg-white hover:text-restaurant-burgundy">
+                  <Button size="lg" variant="outline" className="border-white text-black hover:bg-white hover:text-black">
                     Sign In
                   </Button>
                 </Link>

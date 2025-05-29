@@ -216,18 +216,6 @@ const MenuBuilder = () => {
     })
   );
 
-  useEffect(() => {
-    fetchRestaurantData();
-  }, [currentUser]);
-
-  useEffect(() => {
-    const newExpandedSections: Record<string, boolean> = {};
-    menuSections.forEach(section => {
-      newExpandedSections[section.id] = expandedSections[section.id] ?? true;
-    });
-    setExpandedSections(newExpandedSections);
-  }, [menuSections]);
-
   const fetchRestaurantData = async () => {
     if (!currentUser) {
       setLoading(false);
@@ -235,7 +223,9 @@ const MenuBuilder = () => {
     }
     
     try {
-      const restaurantDoc = await getDoc(doc(db, 'restaurants', currentUser.uid));
+      // Use get() instead of an implicit listener
+      const restaurantRef = doc(db, 'restaurants', currentUser.uid);
+      const restaurantDoc = await getDoc(restaurantRef);
       
       if (restaurantDoc.exists()) {
         const data = restaurantDoc.data();
@@ -260,6 +250,39 @@ const MenuBuilder = () => {
       setLoading(false);
     }
   };
+
+  // Updated useEffect with cleanup and proper subscription handling
+  useEffect(() => {
+    if (!currentUser?.uid) {
+      setLoading(false);
+      return;
+    }
+
+    setLoading(true);
+    fetchRestaurantData();
+
+    // Only set up real-time listener if specifically needed
+    // const unsubscribe = onSnapshot(doc(db, 'restaurants', currentUser.uid), (doc) => {
+    //   if (doc.exists()) {
+    //     const data = doc.data();
+    //     setRestaurant(data);
+    //     setMenuSections(data.menuSections || []);
+    //     setCurrencySymbol(data.currencySymbol || "₹");
+    //   }
+    // });
+
+    // return () => {
+    //   unsubscribe();
+    // };
+  }, [currentUser?.uid]);
+
+  useEffect(() => {
+    const newExpandedSections: Record<string, boolean> = {};
+    menuSections.forEach(section => {
+      newExpandedSections[section.id] = expandedSections[section.id] ?? true;
+    });
+    setExpandedSections(newExpandedSections);
+  }, [menuSections]);
 
   const handleSaveMenu = async () => {
     if (!currentUser) return;
@@ -735,7 +758,7 @@ const MenuBuilder = () => {
           <Button
             onClick={handleSaveMenu}
             disabled={!menuChanged || saving}
-            className={`bg-black text-white ${saving ? '' : 'hover:bg-gray-50 hover:text-black'}`}
+            className={`group bg-primary text-primary-foreground hover:bg-secondary hover:text-secondary-foreground transition-colors duration-200 ${saving ? '' : 'group bg-primary text-primary-foreground hover:bg-secondary hover:text-secondary-foreground transition-colors duration-200'}`}
           >
             {saving ? (
               <>
@@ -744,7 +767,7 @@ const MenuBuilder = () => {
               </>
             ) : (
               <>
-                <Save className="h-4 w-4 mr-2" />
+                <Save className="h-4 w-4 mr-2 group-hover:text-secondary-foreground" />
                 Save Changes
               </>
             )}
@@ -891,7 +914,7 @@ const MenuBuilder = () => {
             <Button variant="outline" onClick={() => setSectionDialogOpen(false)} className="hover:bg-gray-50 hover:text-black">
               Cancel
             </Button>
-            <Button onClick={handleSaveSection} className="bg-black text-white hover:bg-gray-50 hover:text-black">
+            <Button onClick={handleSaveSection} className="bg-primary text-primary-foreground hover:bg-secondary hover:text-secondary-foreground transition-colors duration-200">
               {currentSection ? 'Save Changes' : 'Add Section'}
             </Button>
           </DialogFooter>
@@ -1101,7 +1124,7 @@ const MenuBuilder = () => {
             <Button variant="outline" onClick={() => setItemDialogOpen(false)} className="hover:bg-gray-50 hover:text-black">
               Cancel
             </Button>
-            <Button onClick={handleSaveItem} className="bg-black text-white hover:bg-gray-50 hover:text-black">
+            <Button onClick={handleSaveItem} className="bg-primary text-primary-foreground hover:bg-secondary hover:text-secondary-foreground transition-colors duration-200">
               {currentItem ? 'Save Changes' : 'Add Item'}
             </Button>
           </DialogFooter>

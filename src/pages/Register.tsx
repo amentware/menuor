@@ -109,8 +109,8 @@ const Register = () => {
     <div className="min-h-screen flex items-center justify-center bg-restaurant-cream/20 py-12 px-4 sm:px-6 lg:px-8">
       <Card className="w-full max-w-md">
         <CardHeader>
-          <CardTitle className="text-3xl font-display text-center">Register</CardTitle>
-          <CardDescription className="text-center">
+          <CardTitle className="text-3xl font-display text-center text-primary">Register</CardTitle>
+          <CardDescription className="text-center ">
             Create a MenuBuilder account for your restaurant
           </CardDescription>
         </CardHeader>
@@ -200,7 +200,7 @@ const Register = () => {
               
               <Button 
                 type="submit" 
-                className="w-full bg-restaurant-burgundy hover:bg-restaurant-burgundy/90"
+                className="w-full bg-primary text-primary-foreground hover:bg-secondary hover:text-secondary-foreground transition-colors duration-200"
                 disabled={isLoading}
               >
                 {isLoading ? (
@@ -219,7 +219,7 @@ const Register = () => {
         <CardFooter className="flex flex-col space-y-2">
           <p className="text-center text-sm">
             Already have an account?{" "}
-            <Link to="/login" className="text-restaurant-burgundy font-medium hover:underline">
+            <Link to="/login" className="text-accent font-medium hover:underline">
               Login
             </Link>
           </p>

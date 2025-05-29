@@ -6,51 +6,44 @@
 
 @layer base {
   :root {
-    /* Base shadcn/ui color scheme */
-    --background: 0 0% 100%;
-    --foreground: 0 0% 0%;
+    --background: 50 75% 98%;
+    --foreground: 0 1% 15%;
 
-    --card: 0 0% 100%;
-    --card-foreground: 0 0% 0%;
+    --card: 150 13% 94%;
+    --card-foreground: 0 1% 15%;
 
-    --popover: 0 0% 100%;
-    --popover-foreground: 0 0% 0%;
+    --popover: 50 75% 98%;
+    --popover-foreground: 0 1% 15%;
 
-    --primary: 0 0% 0%;
-    --primary-foreground: 0 0% 100%;
+    --primary: 170 94% 27%;
+    --primary-foreground: 50 75% 98%;
 
-    --secondary: 0 0% 96%;
-    --secondary-foreground: 0 0% 0%;
+    --secondary: 165 47% 43%;
+    --secondary-foreground: 50 75% 98%;
 
-    --muted: 0 0% 96%;
-    --muted-foreground: 0 0% 45%;
+    --muted: 109 22% 75%;
+    --muted-foreground: 0 1% 15%;
 
-    --accent: 142 71% 45%;
-    --accent-foreground: 0 0% 100%;
-
-    --success: 142 71% 45%;
-    --success-foreground: 0 0% 100%;
-
-    --warning: 38 92% 50%;
-    --warning-foreground: 0 0% 100%;
+    --accent: 44 88% 51%;
+    --accent-foreground: 0 1% 15%;
 
     --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 0 0% 100%;
+    --destructive-foreground: 50 75% 98%;
 
-    --border: 0 0% 90%;
-    --input: 0 0% 90%;
-    --ring: 0 0% 0%;
+    --border: 109 22% 75%;
+    --input: 109 22% 75%;
+    --ring: 92 29% 43%;
 
     --radius: 0.5rem;
 
-    --sidebar-background: 0 0% 98%;
-    --sidebar-foreground: 0 0% 26%;
-    --sidebar-primary: 0 0% 10%;
-    --sidebar-primary-foreground: 0 0% 98%;
-    --sidebar-accent: 0 0% 96%;
-    --sidebar-accent-foreground: 0 0% 10%;
-    --sidebar-border: 0 0% 90%;
-    --sidebar-ring: 0 0% 0%;
+    --sidebar-background: 170 94% 27%;
+    --sidebar-foreground: 50 75% 98%;
+    --sidebar-primary: 165 47% 43%;
+    --sidebar-primary-foreground: 50 75% 98%;
+    --sidebar-accent: 44 88% 51%;
+    --sidebar-accent-foreground: 0 1% 15%;
+    --sidebar-border: 109 22% 75%;
+    --sidebar-ring: 92 29% 43%;
 
     /* Theme variables */
     --primary: var(--primary, 0 0% 0%);
@@ -65,48 +58,42 @@
   }
 
   .dark {
-    --background: 0 0% 0%;
-    --foreground: 0 0% 100%;
+    --background: 0 1% 15%;
+    --foreground: 50 75% 98%;
 
-    --card: 0 0% 0%;
-    --card-foreground: 0 0% 100%;
+    --card: 0 1% 20%;
+    --card-foreground: 50 75% 98%;
 
-    --popover: 0 0% 0%;
-    --popover-foreground: 0 0% 100%;
+    --popover: 0 1% 15%;
+    --popover-foreground: 50 75% 98%;
 
-    --primary: 0 0% 100%;
-    --primary-foreground: 0 0% 0%;
+    --primary: 170 94% 27%;
+    --primary-foreground: 50 75% 98%;
 
-    --secondary: 0 0% 15%;
-    --secondary-foreground: 0 0% 100%;
+    --secondary: 165 47% 43%;
+    --secondary-foreground: 50 75% 98%;
 
-    --muted: 0 0% 15%;
-    --muted-foreground: 0 0% 65%;
+    --muted: 109 22% 75%;
+    --muted-foreground: 0 1% 15%;
 
-    --accent: 142 71% 45%;
-    --accent-foreground: 0 0% 100%;
-
-    --success: 142 71% 45%;
-    --success-foreground: 0 0% 100%;
-
-    --warning: 38 92% 50%;
-    --warning-foreground: 0 0% 100%;
+    --accent: 44 88% 51%;
+    --accent-foreground: 0 1% 15%;
 
     --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 0 0% 100%;
+    --destructive-foreground: 50 75% 98%;
 
-    --border: 0 0% 15%;
-    --input: 0 0% 15%;
-    --ring: 0 0% 83.9%;
+    --border: 109 22% 75%;
+    --input: 109 22% 75%;
+    --ring: 92 29% 43%;
     
-    --sidebar-background: 0 0% 10%;
-    --sidebar-foreground: 0 0% 98%;
-    --sidebar-primary: 0 0% 10%;
-    --sidebar-primary-foreground: 0 0% 98%;
-    --sidebar-accent: 0 0% 96%;
-    --sidebar-accent-foreground: 0 0% 10%;
-    --sidebar-border: 0 0% 90%;
-    --sidebar-ring: 0 0% 0%;
+    --sidebar-background: 170 94% 27%;
+    --sidebar-foreground: 50 75% 98%;
+    --sidebar-primary: 165 47% 43%;
+    --sidebar-primary-foreground: 50 75% 98%;
+    --sidebar-accent: 44 88% 51%;
+    --sidebar-accent-foreground: 0 1% 15%;
+    --sidebar-border: 109 22% 75%;
+    --sidebar-ring: 92 29% 43%;
   }
 }
 
@@ -139,111 +126,111 @@
 
   /* Button overrides */
   .btn-primary {
-    @apply bg-black text-white hover:bg-gray-800;
+    @apply bg-primary text-primary-foreground hover:bg-secondary transition-colors duration-200;
   }
 
   .btn-secondary {
-    @apply bg-white border border-gray-300 text-black hover:bg-gray-50;
+    @apply bg-muted border border-border text-foreground hover:bg-accent hover:text-accent-foreground transition-colors duration-200;
   }
 
   /* Status indicators */
   .status-active {
-    @apply bg-green-50 text-green-700;
+    @apply bg-theme-mint-green text-theme-viridian;
   }
 
   .status-outOfStock {
-    @apply bg-orange-50 text-orange-700;
+    @apply bg-theme-ash-gray text-theme-raisin-black;
   }
 
   .status-disabled {
-    @apply bg-gray-100 text-gray-600;
+    @apply bg-muted text-muted-foreground;
   }
 
   /* Navigation fixes */
   .nav-item {
-    @apply text-black hover:text-gray-600;
+    @apply text-foreground hover:text-primary transition-colors duration-200;
   }
 
   .nav-item.active {
-    @apply text-black font-semibold;
+    @apply text-primary font-semibold;
   }
 
   /* Logout button fix */
   .logout-button {
-    @apply text-red-600 hover:text-red-700 transition-colors;
+    @apply text-destructive hover:text-destructive/90 transition-colors duration-200;
   }
 
   .logout-button:hover {
-    @apply text-red-700 !important;
+    @apply text-destructive/90;
   }
 
   .logout-button:hover svg {
-    @apply text-red-700 !important;
+    @apply text-destructive/90;
   }
 
   /* Loading states */
   .loading-spinner {
-    @apply text-black;
+    @apply text-primary;
   }
 
   /* Cards */
   .dashboard-card {
-    @apply bg-white border border-gray-200 rounded-lg shadow-sm hover:shadow-md transition-shadow;
+    @apply bg-card border border-border rounded-lg shadow-sm hover:shadow-md transition-shadow;
   }
 
   /* Form inputs */
   .form-input {
-    @apply bg-white border border-gray-300 text-black focus:border-black focus:ring-1 focus:ring-black;
+    @apply bg-background border border-input text-foreground focus:border-primary focus:ring-1 focus:ring-primary transition-colors duration-200;
   }
 
   /* Switches and toggles */
   .switch-checked {
-    @apply bg-green-600;
+    @apply bg-primary;
   }
 
   .switch-unchecked {
-    @apply bg-gray-400;
+    @apply bg-muted;
   }
 }
 
 /* Override any remaining glassmorphism */
 .card {
-  @apply bg-white border border-gray-200;
+  @apply bg-card border border-border;
 }
 
 .glass, .glass-card, .restaurant-card {
-  @apply bg-white border border-gray-200 backdrop-blur-none;
+  @apply bg-background/80 border border-border backdrop-blur-sm;
 }
 
 /* Navigation specific fixes */
 [data-component="navigation"] button:hover {
-  color: #4b5563 !important;
+  @apply text-primary transition-colors duration-200 !important;
 }
 
 [data-component="navigation"] button:hover svg {
-  color: #4b5563 !important;
+  @apply text-primary transition-colors duration-200 !important;
 }
 
 /* Ensure all text remains visible on hover */
 button:hover {
-  color: inherit;
+  @apply text-primary transition-colors duration-200;
 }
 
 button:hover svg {
-  color: inherit;
+  @apply text-primary transition-colors duration-200;
 }
 
 /* Specific logout button styling */
 .logout-btn {
-  @apply text-red-600 hover:text-red-700 !important;
+  @apply text-destructive hover:text-destructive/90 transition-colors duration-200 !important;
 }
 
 .logout-btn:hover {
-  @apply bg-red-50 text-red-700 !important;
+  @apply bg-destructive/10 text-destructive !important;
 }
 
 .logout-btn:hover svg {
-  @apply text-red-700 !important;
+  @apply text-destructive !important;
 }
 
 /* Custom Scrollbar Styles */
@@ -261,12 +248,11 @@ button:hover svg {
   }
 
   .scrollbar-thumb-gray-200::-webkit-scrollbar-thumb {
-    background-color: #E5E7EB;
-    border-radius: 20px;
+    @apply bg-muted rounded-full;
   }
 
   .scrollbar-thumb-gray-200::-webkit-scrollbar-thumb:hover {
-    background-color: #D1D5DB;
+    @apply bg-primary/60;
   }
 
   .scrollbar-track-transparent::-webkit-scrollbar-track {

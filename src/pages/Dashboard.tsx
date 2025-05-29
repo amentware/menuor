@@ -1,4 +1,3 @@
-
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { db, doc, getDoc } from '../lib/firebase';
@@ -62,35 +61,54 @@ const Dashboard = () => {
   const totalViews = restaurant?.viewCount || 0;
   const isPublic = restaurant?.isPublic || false;
 
+  // Get today's QR scan count
+  const getTodayQRScans = () => {
+    if (!restaurant?.dailyScans) return 0;
+    
+    const today = new Date().toISOString().split('T')[0]; // Format: YYYY-MM-DD
+    const todayScan = restaurant.dailyScans.find(scan => scan.date === today);
+    return todayScan?.count || 0;
+  };
+
   // Create chart data for menu sections
   const chartData = restaurant?.menuSections?.map(section => ({
     name: section.name.length > 10 ? section.name.substring(0, 10) + '...' : section.name,
     items: section.items?.length || 0
   })) || [];
 
-  // Generate QR scan data from restaurant's dailyViews
+  // Generate QR scan data from restaurant's dailyScans
   const generateQRScanData = () => {
-    const data = [];
-    const today = new Date();
-    
-    for (let i = 6; i >= 0; i--) {
-      const date = new Date(today);
-      date.setDate(date.getDate() - i);
-      const dateString = date.toISOString().split('T')[0];
+    if (!restaurant?.dailyScans) {
+      // If no data, return empty data for last 7 days
+      const data = [];
+      const today = new Date();
       
-      // Use real data from restaurant.dailyViews if available
-      const scans = restaurant?.dailyViews?.[dateString] || 0;
+      for (let i = 6; i >= 0; i--) {
+        const date = new Date(today);
+        date.setDate(date.getDate() - i);
+        data.push({
+          date: date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }),
+          scans: 0
+        });
+      }
       
-      data.push({
-        date: date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }),
-        scans: scans
-      });
+      return data;
     }
-    
-    return data;
+
+    // Sort dailyScans by date in ascending order
+    const sortedScans = [...restaurant.dailyScans].sort((a, b) => 
+      a.date.localeCompare(b.date)
+    );
+
+    // Format the data for the chart
+    return sortedScans.map(scan => ({
+      date: new Date(scan.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }),
+      scans: scan.count
+    }));
   };
 
   const qrScanData = generateQRScanData();
+  const totalQRScans = restaurant?.qrScans || 0;
 
   if (loading) {
     return (
@@ -108,10 +126,11 @@ const Dashboard = () => {
       <div className="flex items-center justify-between mb-8">
         <h1 className="text-4xl font-bold font-display text-black">Restaurant Dashboard</h1>
         <Button 
-          className="bg-black text-white hover:bg-gray-800 flex items-center gap-2"
+          variant="outline"
+          className="group bg-primary-foreground text-primary hover:bg-secondary hover:text-secondary-foreground flex items-center gap-2"
           onClick={() => navigate('/menu-builder')}
         >
-          <MenuIcon className="h-4 w-4" />
+          <MenuIcon className="h-4 w-4 group-hover:text-secondary-foreground"/>
           Edit Menu
         </Button>
       </div>
@@ -133,16 +152,16 @@ const Dashboard = () => {
               icon={MenuIcon}
             />
             <StatsCard
+              title="Today's Scans"
+              value={getTodayQRScans()}
+              description="QR scans today"
+              icon={QrCode}
+            />
+            <StatsCard
               title="Status"
               value={isPublic ? "Public" : "Private"}
               description="Menu visibility"
               icon={Eye}
-            />
-            <StatsCard
-              title="Total Views"
-              value={totalViews}
-              description="Menu views"
-              icon={QrCode}
             />
           </div>
 
@@ -268,16 +287,13 @@ const Dashboard = () => {
             </div>
           </div>
 
-          {/* Chart Section - Half size and side by side on desktop */}
+          {/* Charts Section */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            {chartData.length > 0 && (
-              <div className="h-[300px]">
-                <MenuItemsChart data={chartData} />
-              </div>
-            )}
-            <div className="h-[300px]">
-              <QRScanChart data={qrScanData} />
-            </div>
+            {/* QR Scan Chart */}
+            <QRScanChart data={qrScanData} />
+            
+            {/* Menu Items Chart */}
+            <MenuItemsChart data={chartData} />
           </div>
         </div>
       ) : (

@@ -77,9 +77,9 @@ const Login = () => {
     <div className="min-h-screen flex items-center justify-center bg-restaurant-cream/20 py-12 px-4 sm:px-6 lg:px-8">
       <Card className="w-full max-w-md">
         <CardHeader>
-          <CardTitle className="text-3xl font-display text-center">Login</CardTitle>
+          <CardTitle className="text-3xl font-display text-center text-primary">Login</CardTitle>
           <CardDescription className="text-center">
-            Sign in to your MenuBuilder account
+            Sign in to your Menuor account
           </CardDescription>
         </CardHeader>
         
@@ -131,7 +131,7 @@ const Login = () => {
               
               <Button 
                 type="submit" 
-                className="w-full bg-restaurant-burgundy hover:bg-restaurant-burgundy/90"
+                className="w-full bg-primary text-primary-foreground hover:bg-secondary hover:text-secondary-foreground transition-colors duration-200"
                 disabled={isLoading}
               >
                 {isLoading ? (
@@ -150,7 +150,7 @@ const Login = () => {
         <CardFooter className="flex flex-col space-y-2">
           <p className="text-center text-sm">
             Don't have an account?{" "}
-            <Link to="/register" className="text-restaurant-burgundy font-medium hover:underline">
+            <Link to="/register" className="text-accent font-medium hover:underline">
               Register
             </Link>
           </p>

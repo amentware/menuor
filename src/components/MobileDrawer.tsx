@@ -54,7 +54,7 @@ const MobileDrawer = () => {
                   onClick={closeDrawer}
                   className={`flex items-center gap-3 px-4 py-3 rounded-lg ${
                     isActive(item.to)
-                      ? 'bg-gray-100 text-gray-900'
+                      ? 'bg-gray-50 text-primary'
                       : 'text-gray-600 hover:bg-gray-50 hover:text-gray-700'
                   }`}
                 >

@@ -31,7 +31,7 @@ const Navigation = () => {
                   to="/" 
                   className={`flex items-center gap-2 px-4 py-2 rounded-lg ${
                     location.pathname === '/' 
-                      ? 'bg-gray-100 text-gray-900' 
+                      ? 'bg-gray-50 text-primary' 
                       : 'text-gray-600 hover:bg-gray-50 hover:text-gray-700'
                   }`}
                 >
@@ -42,7 +42,7 @@ const Navigation = () => {
                   to="/login" 
                   className={`flex items-center gap-2 px-4 py-2 rounded-lg ${
                     location.pathname === '/login' 
-                      ? 'bg-gray-100 text-gray-900' 
+                      ? 'bg-gray-50 text-primary' 
                       : 'text-gray-600 hover:bg-gray-50 hover:text-gray-700'
                   }`}
                 >
@@ -53,7 +53,7 @@ const Navigation = () => {
                   to="/register" 
                   className={`flex items-center gap-2 px-4 py-2 rounded-lg ${
                     location.pathname === '/register' 
-                      ? 'bg-gray-100 text-gray-900' 
+                      ? 'bg-gray-50 text-primary' 
                       : 'text-gray-600 hover:bg-gray-50 hover:text-gray-700'
                   }`}
                 >
@@ -69,7 +69,7 @@ const Navigation = () => {
                   to="/dashboard" 
                   className={`flex items-center gap-2 px-4 py-2 rounded-lg ${
                     location.pathname === '/dashboard' 
-                      ? 'bg-gray-100 text-gray-900' 
+                      ? 'bg-gray-50 text-primary' 
                       : 'text-gray-600 hover:bg-gray-50 hover:text-gray-700'
                   }`}
                 >
@@ -80,7 +80,7 @@ const Navigation = () => {
                   to="/menu-builder"
                   className={`flex items-center gap-2 px-4 py-2 rounded-lg ${
                     location.pathname === '/menu-builder' 
-                      ? 'bg-gray-100 text-gray-900' 
+                      ? 'bg-gray-50 text-primary' 
                       : 'text-gray-600 hover:bg-gray-50 hover:text-gray-700'
                   }`}
                 >
@@ -91,7 +91,7 @@ const Navigation = () => {
                   to="/qr-code"
                   className={`flex items-center gap-2 px-4 py-2 rounded-lg ${
                     location.pathname === '/qr-code' 
-                      ? 'bg-gray-100 text-gray-900' 
+                      ? 'bg-gray-50 text-primary' 
                       : 'text-gray-600 hover:bg-gray-50 hover:text-gray-700'
                   }`}
                 >
@@ -106,7 +106,7 @@ const Navigation = () => {
                 to="/admin" 
                 className={`flex items-center gap-2 px-4 py-2 rounded-lg ${
                   location.pathname === '/admin' 
-                    ? 'bg-gray-100 text-gray-900' 
+                    ? 'bg-gray-50 text-primary' 
                     : 'text-gray-600 hover:bg-gray-50 hover:text-gray-700'
                 }`}
               >
@@ -117,11 +117,11 @@ const Navigation = () => {
             
             {isAuthenticated && (
               <Button 
-                variant="outline" 
-                className="bg-black text-white hover:bg-gray-50 hover:text-black flex items-center gap-2 transition-colors" 
+                //variant="outline" 
+                className="group bg-primary text-primary-foreground hover:bg-secondary hover:text-secondary-foreground flex items-center gap-2 transition-colors" 
                 onClick={logout}
               >
-                <LogOut className="h-4 w-4" />
+                <LogOut className="h-4 w-4 text-primary-foreground group-hover:text-secondary-foreground" />
                 Logout
               </Button>
             )}
