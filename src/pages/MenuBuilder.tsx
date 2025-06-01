@@ -902,9 +902,9 @@ const MenuBuilder = () => {
                     variant="ghost"
                     size="sm"
                     onClick={() => handleRemoveSectionVariation(index)}
-                    className="px-3"
+                    className="group px-3 hover:bg-red-50"
                   >
-                    <XCircle className="h-4 w-4 text-red-500" />
+                    <XCircle className="h-4 w-4 text-red-500 group-hover:text-red-700" />
                   </Button>
                 </div>
               ))}
@@ -993,9 +993,9 @@ const MenuBuilder = () => {
                             variant="ghost" 
                             size="sm" 
                             onClick={() => setPriceVariations([])}
-                            className="h-8 px-2 text-red-600 hover:text-red-700"
+                            className="group h-8 px-2 text-red-600 hover:bg-red-50"
                           >
-                            Clear Variations
+                            <span className="group-hover:text-red-700">Clear Variations</span>
                           </Button>
                         )}
                       </div>
@@ -1052,9 +1052,9 @@ const MenuBuilder = () => {
                           variant="ghost" 
                           size="sm" 
                           onClick={() => setPriceVariations([])}
-                          className="h-8 px-2 text-red-600 hover:text-red-700"
+                          className="group h-8 px-2 text-red-600 hover:bg-red-50"
                         >
-                          Clear All
+                          <span className="group-hover:text-red-700">Clear All</span>
                         </Button>
                       )}
                       <Button 
@@ -1091,9 +1091,9 @@ const MenuBuilder = () => {
                         variant="ghost"
                         size="sm"
                         onClick={() => handleRemoveVariation(index)}
-                        className="px-3"
+                        className="group px-3 hover:bg-red-50"
                       >
-                        <XCircle className="h-4 w-4 text-red-500" />
+                        <XCircle className="h-4 w-4 text-red-500 group-hover:text-red-700" />
                       </Button>
                     </div>
                   ))}
@@ -1153,8 +1153,9 @@ const MenuBuilder = () => {
             </Button>
             <Button 
               onClick={confirmDelete}
-              className="bg-red-600 text-white hover:bg-gray-50 hover:text-red-600"
+              className="group bg-red-600 text-white hover:bg-red-50"
             >
+              <Trash2 className="h-4 w-4 mr-2 group-hover:text-red-700" />
               Delete
             </Button>
           </DialogFooter>

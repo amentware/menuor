@@ -168,7 +168,7 @@ export const SortableMenuSection = ({
               size="sm" 
               variant="outline" 
               onClick={() => onDelete(section.id)} 
-              className="group h-9 sm:h-8 w-9 sm:w-8 p-0 border-red-200 text-red-600 rounded-lg [&:hover]:bg-red-50 [&:hover]:text-red-700 [&:hover]:border-red-300"
+              className="group h-9 sm:h-8 w-9 sm:w-8 p-0 border-red-200 text-red-600 rounded-lg hover:bg-red-50 hover:border-red-300"
             >
               <Trash2 className="h-4 w-4 group-hover:text-red-700" />
             </Button>
