@@ -38,7 +38,8 @@ export const SortableMenuItem = ({
     listeners,
     setNodeRef,
     transform,
-    transition
+    transition,
+    isDragging
   } = useSortable({ id: item.id });
 
   const isMobile = useIsMobile();
@@ -50,8 +51,10 @@ export const SortableMenuItem = ({
   };
 
   const style: CSSProperties = {
-    transform: CSS.Transform.toString(transform),
-    transition
+    transform: transform ? `translate3d(${transform.x}px, ${transform.y}px, 0)` : undefined,
+    transition,
+    zIndex: isDragging ? 1000 : 'auto',
+    position: isDragging ? 'relative' : undefined,
   };
 
   return (
@@ -59,7 +62,7 @@ export const SortableMenuItem = ({
       ref={setNodeRef}
       style={style}
       {...attributes}
-      className={`bg-white rounded-lg border border-gray-200 mb-3 p-3 ${item.isDisabled ? 'opacity-60' : ''}`}
+      className={`bg-white rounded-lg border border-gray-200 mb-3 p-3 ${item.isDisabled ? 'opacity-60' : ''} ${isDragging ? 'rotate-2' : ''}`}
     >
       <div className="flex flex-col sm:flex-row sm:items-center gap-3">
         <div className="flex-1 min-w-0">
@@ -179,12 +182,7 @@ export const SortableMenuItem = ({
           >
             <Edit className="h-4 w-4 text-gray-700" />
           </Button>
-          <Button 
-            size="sm" 
-            variant="outline" 
-            onClick={() => onDelete(item.id)} 
-            className="h-10 w-10 sm:h-8 sm:w-8 p-0 border-red-200 text-red-600 hover:bg-red-50 hover:text-red-700 rounded-lg"
-          >
+          <Button size="sm" variant="outline" onClick={() => onDelete(item.id)} className="h-10 w-10 sm:h-8 sm:w-8 p-0 border-red-200 text-red-600 rounded-lg hover:bg-red-50 hover:text-red-700 hover:border-red-300">
             <Trash2 className="h-4 w-4" />
           </Button>
           <div 

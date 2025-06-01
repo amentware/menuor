@@ -1005,7 +1005,7 @@ const MenuBuilder = () => {
                       <Button
                         type="button"
                         variant="outline"
-                        className="w-full h-15 border-dashed hover:bg-gray-50 hover:text-black"
+                        className="w-full h-15 border-dashed [&:hover]:bg-gray-50 [&:hover]:text-gray-700"
                         onClick={() => {
                           setPriceVariations(
                             section.priceVariationCategories.map(cat => ({
@@ -1062,7 +1062,7 @@ const MenuBuilder = () => {
                         variant="outline" 
                         size="sm" 
                         onClick={handleAddVariation}
-                        className="h-8 px-2"
+                        className="h-8 px-2 [&:hover]:bg-gray-50 [&:hover]:text-gray-700"
                       >
                         <Plus className="h-4 w-4 mr-2" />
                         Add Variation

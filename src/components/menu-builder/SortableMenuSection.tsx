@@ -97,7 +97,7 @@ export const SortableMenuSection = ({
     <Card 
       ref={setNodeRef}
       style={style}
-      className={`mb-2 border-b border-gray-100 ${section.isDisabled ? 'opacity-60' : ''} ${isDragging ? 'shadow-2xl rotate-2' : ''} w-full overflow-hidden`}
+      className={`mb-2 border-b border-gray-100 ${section.isDisabled ? 'opacity-60' : ''} ${isDragging ? 'rotate-2' : ''} w-full overflow-hidden`}
     >
       <CardHeader className="flex flex-col sm:flex-row sm:items-center justify-between space-y-3 sm:space-y-0 py-3 px-3 sticky top-0 bg-white z-10 border-b rounded-t-lg">
         <div className="flex items-center gap-3">
@@ -168,7 +168,7 @@ export const SortableMenuSection = ({
               size="sm" 
               variant="outline" 
               onClick={() => onDelete(section.id)} 
-              className="h-9 sm:h-8 w-9 sm:w-8 p-0 border-red-200 text-red-600 hover:bg-red-50 hover:text-red-700 rounded-lg"
+              className="h-9 sm:h-8 w-9 sm:w-8 p-0 border-red-200 text-red-600 rounded-lg [&:hover]:bg-red-50 [&:hover]:text-red-700 [&:hover]:border-red-300"
             >
               <Trash2 className="h-4 w-4" />
             </Button>
