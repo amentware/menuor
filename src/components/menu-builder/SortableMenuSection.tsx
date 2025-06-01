@@ -97,7 +97,7 @@ export const SortableMenuSection = ({
     <Card 
       ref={setNodeRef}
       style={style}
-      className={`mb-2 border-b border-gray-100 ${section.isDisabled ? 'opacity-60' : ''} ${isDragging ? 'shadow-2xl rotate-2' : ''} w-full overflow-hidden`}
+      className={`mb-2 border-b border-gray-100 ${section.isDisabled ? 'opacity-60' : ''} ${isDragging ? 'rotate-2' : ''} w-full overflow-hidden`}
     >
       <CardHeader className="flex flex-col sm:flex-row sm:items-center justify-between space-y-3 sm:space-y-0 py-3 px-3 sticky top-0 bg-white z-10 border-b rounded-t-lg">
         <div className="flex items-center gap-3">
@@ -138,9 +138,11 @@ export const SortableMenuSection = ({
         
         <div className="flex flex-wrap items-center gap-2 sm:gap-3 w-full sm:w-auto">
           <div className="flex items-center gap-2 mr-2 sm:mr-4 flex-1 sm:flex-none">
-            <Switch
-              checked={!section.isDisabled}
-              onCheckedChange={(checked) => onToggleSectionDisabled(section.id, !checked)}
+            <Switch 
+              id={`section-disabled-${section.id}`} 
+              checked={section.isDisabled || false}
+              onCheckedChange={(checked) => onToggleSectionDisabled(section.id, checked)}
+              className="data-[state=checked]:bg-accent"
             />
             <span className="text-sm text-gray-600 whitespace-nowrap">
               {section.isDisabled ? 'Disabled' : 'Active'}
@@ -168,9 +170,9 @@ export const SortableMenuSection = ({
               size="sm" 
               variant="outline" 
               onClick={() => onDelete(section.id)} 
-              className="h-9 sm:h-8 w-9 sm:w-8 p-0 border-red-200 text-red-600 hover:bg-red-50 hover:text-red-700 rounded-lg"
+              className="group h-9 sm:h-8 w-9 sm:w-8 p-0 border-red-200 text-red-600 rounded-lg hover:bg-red-50 hover:border-red-300"
             >
-              <Trash2 className="h-4 w-4" />
+              <Trash2 className="h-4 w-4 group-hover:text-red-700" />
             </Button>
           </div>
         </div>

@@ -1,4 +1,3 @@
-
 import { useEffect, useState, useRef } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { db, doc, getDoc } from '../lib/firebase';
@@ -188,7 +187,7 @@ const QRCodePage = () => {
                     checked={restaurant.isPublic}
                     onCheckedChange={handlePublicToggle}
                     disabled={toggleLoading}
-                    className="data-[state=checked]:bg-black data-[state=unchecked]:bg-gray-400"
+                    className="data-[state=checked]:bg-accent"
                   />
                   <Label htmlFor="public-mode" className="text-black font-medium">
                     {restaurant.isPublic ? "Menu is Public" : "Menu is Private"}

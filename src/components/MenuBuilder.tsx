@@ -949,7 +949,8 @@ const MenuBuilder = () => {
                     type="button" 
                     size="sm" 
                     onClick={handleAddVariation}
-                    className="bg-primary text-white hover:bg-primary/90"
+                    variant="outline"
+                    className="h-8 px-2 [&:hover]:bg-gray-50 [&:hover]:text-gray-700"
                   >
                     <Plus className="h-4 w-4 mr-1" /> Add Variation
                   </Button>
@@ -980,7 +981,7 @@ const MenuBuilder = () => {
                       size="icon" 
                       variant="ghost" 
                       onClick={() => handleRemoveVariation(index)}
-                      className="text-red-500"
+                      className="text-red-500 hover:text-red-700 hover:bg-red-50"
                     >
                       <Trash2 className="h-4 w-4" />
                     </Button>

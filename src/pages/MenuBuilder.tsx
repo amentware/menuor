@@ -902,9 +902,9 @@ const MenuBuilder = () => {
                     variant="ghost"
                     size="sm"
                     onClick={() => handleRemoveSectionVariation(index)}
-                    className="px-3"
+                    className="group px-3 hover:bg-red-50"
                   >
-                    <XCircle className="h-4 w-4 text-red-500" />
+                    <XCircle className="h-4 w-4 text-red-500 group-hover:text-red-700" />
                   </Button>
                 </div>
               ))}
@@ -993,9 +993,9 @@ const MenuBuilder = () => {
                             variant="ghost" 
                             size="sm" 
                             onClick={() => setPriceVariations([])}
-                            className="h-8 px-2 text-red-600 hover:text-red-700"
+                            className="group h-8 px-2 text-red-600 hover:bg-red-50"
                           >
-                            Clear Variations
+                            <span className="group-hover:text-red-700">Clear Variations</span>
                           </Button>
                         )}
                       </div>
@@ -1005,7 +1005,7 @@ const MenuBuilder = () => {
                       <Button
                         type="button"
                         variant="outline"
-                        className="w-full h-15 border-dashed hover:bg-gray-50 hover:text-black"
+                        className="w-full h-15 border-dashed [&:hover]:bg-gray-50 [&:hover]:text-gray-700"
                         onClick={() => {
                           setPriceVariations(
                             section.priceVariationCategories.map(cat => ({
@@ -1052,9 +1052,9 @@ const MenuBuilder = () => {
                           variant="ghost" 
                           size="sm" 
                           onClick={() => setPriceVariations([])}
-                          className="h-8 px-2 text-red-600 hover:text-red-700"
+                          className="group h-8 px-2 text-red-600 hover:bg-red-50"
                         >
-                          Clear All
+                          <span className="group-hover:text-red-700">Clear All</span>
                         </Button>
                       )}
                       <Button 
@@ -1062,7 +1062,7 @@ const MenuBuilder = () => {
                         variant="outline" 
                         size="sm" 
                         onClick={handleAddVariation}
-                        className="h-8 px-2"
+                        className="h-8 px-2 [&:hover]:bg-gray-50 [&:hover]:text-gray-700"
                       >
                         <Plus className="h-4 w-4 mr-2" />
                         Add Variation
@@ -1091,9 +1091,9 @@ const MenuBuilder = () => {
                         variant="ghost"
                         size="sm"
                         onClick={() => handleRemoveVariation(index)}
-                        className="px-3"
+                        className="group px-3 hover:bg-red-50"
                       >
-                        <XCircle className="h-4 w-4 text-red-500" />
+                        <XCircle className="h-4 w-4 text-red-500 group-hover:text-red-700" />
                       </Button>
                     </div>
                   ))}
@@ -1107,6 +1107,7 @@ const MenuBuilder = () => {
                   id="itemDisabled"
                   checked={itemIsDisabled}
                   onCheckedChange={setItemIsDisabled}
+                  className="data-[state=checked]:bg-accent"
                 />
                 <Label htmlFor="itemDisabled">Disabled</Label>
               </div>
@@ -1115,6 +1116,7 @@ const MenuBuilder = () => {
                   id="itemOutOfStock"
                   checked={itemOutOfStock}
                   onCheckedChange={setItemOutOfStock}
+                  className="data-[state=checked]:bg-accent"
                 />
                 <Label htmlFor="itemOutOfStock">Out of Stock</Label>
               </div>
@@ -1153,8 +1155,9 @@ const MenuBuilder = () => {
             </Button>
             <Button 
               onClick={confirmDelete}
-              className="bg-red-600 text-white hover:bg-gray-50 hover:text-red-600"
+              className="group bg-red-600 text-white hover:bg-red-50"
             >
+              <Trash2 className="h-4 w-4 mr-2 group-hover:text-red-700" />
               Delete
             </Button>
           </DialogFooter>
