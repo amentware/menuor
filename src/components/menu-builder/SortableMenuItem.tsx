@@ -182,8 +182,8 @@ export const SortableMenuItem = ({
           >
             <Edit className="h-4 w-4 text-gray-700" />
           </Button>
-          <Button size="sm" variant="outline" onClick={() => onDelete(item.id)} className="h-10 w-10 sm:h-8 sm:w-8 p-0 border-red-200 text-red-600 rounded-lg hover:bg-red-50 hover:text-red-700 hover:border-red-300">
-            <Trash2 className="h-4 w-4" />
+          <Button size="sm" variant="outline" onClick={() => onDelete(item.id)} className="group h-10 w-10 sm:h-8 sm:w-8 p-0 border-red-200 text-red-600 rounded-lg hover:bg-red-50 hover:text-red-700 hover:border-red-300">
+            <Trash2 className="h-4 w-4 group-hover:text-red-700" />
           </Button>
           <div 
             {...listeners} 
