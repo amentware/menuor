@@ -138,9 +138,11 @@ export const SortableMenuSection = ({
         
         <div className="flex flex-wrap items-center gap-2 sm:gap-3 w-full sm:w-auto">
           <div className="flex items-center gap-2 mr-2 sm:mr-4 flex-1 sm:flex-none">
-            <Switch
-              checked={!section.isDisabled}
-              onCheckedChange={(checked) => onToggleSectionDisabled(section.id, !checked)}
+            <Switch 
+              id={`section-disabled-${section.id}`} 
+              checked={section.isDisabled || false}
+              onCheckedChange={(checked) => onToggleSectionDisabled(section.id, checked)}
+              className="data-[state=checked]:bg-accent"
             />
             <span className="text-sm text-gray-600 whitespace-nowrap">
               {section.isDisabled ? 'Disabled' : 'Active'}

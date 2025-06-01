@@ -1107,6 +1107,7 @@ const MenuBuilder = () => {
                   id="itemDisabled"
                   checked={itemIsDisabled}
                   onCheckedChange={setItemIsDisabled}
+                  className="data-[state=checked]:bg-accent"
                 />
                 <Label htmlFor="itemDisabled">Disabled</Label>
               </div>
@@ -1115,6 +1116,7 @@ const MenuBuilder = () => {
                   id="itemOutOfStock"
                   checked={itemOutOfStock}
                   onCheckedChange={setItemOutOfStock}
+                  className="data-[state=checked]:bg-accent"
                 />
                 <Label htmlFor="itemOutOfStock">Out of Stock</Label>
               </div>
