@@ -1,10 +1,10 @@
-
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, Navigate, useLocation } from "react-router-dom";
 import { AuthProvider } from "./contexts/AuthContext";
+import { useAuth } from "./contexts/AuthContext";
 
 // Pages
 import Home from "./pages/Home";
@@ -25,6 +25,27 @@ import ProtectedRoute from "./components/ProtectedRoute";
 
 const queryClient = new QueryClient();
 
+// Root redirect component
+const RootRedirect = () => {
+  const { isAuthenticated, userRole, loading } = useAuth();
+  const location = useLocation();
+
+  // Don't redirect if we're already going somewhere else (prevents redirect loops)
+  if (location.state?.from) {
+    return <Home />;
+  }
+
+  if (loading) {
+    return null;
+  }
+
+  if (isAuthenticated) {
+    return <Navigate to={userRole === 'admin' ? '/admin' : '/dashboard'} replace />;
+  }
+
+  return <Home />;
+};
+
 // Wrapper component to conditionally render Navigation
 const AppContent = () => {
   const location = useLocation();
@@ -37,7 +58,7 @@ const AppContent = () => {
       <div className="flex-grow">
         <Routes>
           {/* Public routes */}
-          <Route path="/" element={<Home />} />
+          <Route path="/" element={<RootRedirect />} />
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
           <Route path="/menu/:restaurantId" element={<Menu />} />
