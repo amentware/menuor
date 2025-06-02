@@ -1,4 +1,3 @@
-
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 
@@ -40,7 +39,7 @@ const MenuItemsChart = ({ data }: MenuItemsChartProps) => {
             />
             <Bar 
               dataKey="items" 
-              fill="#3b82f6" 
+              fill="hsl(44, 88%, 51%)" 
               radius={[4, 4, 0, 0]}
             />
           </BarChart>

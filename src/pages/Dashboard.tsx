@@ -78,33 +78,28 @@ const Dashboard = () => {
 
   // Generate QR scan data from restaurant's dailyScans
   const generateQRScanData = () => {
-    if (!restaurant?.dailyScans) {
-      // If no data, return empty data for last 7 days
-      const data = [];
-      const today = new Date();
+    // Create an array of the last 7 days
+    const data = [];
+    const today = new Date();
+    const dateFormat = { month: 'short', day: 'numeric' };
+    
+    // Generate dates for last 7 days
+    for (let i = 6; i >= 0; i--) {
+      const date = new Date(today);
+      date.setDate(date.getDate() - i);
+      const dateStr = date.toISOString().split('T')[0];
+      const formattedDate = date.toLocaleDateString('en-US', dateFormat);
       
-      for (let i = 6; i >= 0; i--) {
-        const date = new Date(today);
-        date.setDate(date.getDate() - i);
-        data.push({
-          date: date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }),
-          scans: 0
-        });
-      }
+      // Find if we have data for this date
+      const scanData = restaurant?.dailyScans?.find(scan => scan.date === dateStr);
       
-      return data;
+      data.push({
+        date: formattedDate,
+        scans: scanData?.count || 0
+      });
     }
-
-    // Sort dailyScans by date in ascending order
-    const sortedScans = [...restaurant.dailyScans].sort((a, b) => 
-      a.date.localeCompare(b.date)
-    );
-
-    // Format the data for the chart
-    return sortedScans.map(scan => ({
-      date: new Date(scan.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }),
-      scans: scan.count
-    }));
+    
+    return data;
   };
 
   const qrScanData = generateQRScanData();

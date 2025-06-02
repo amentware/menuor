@@ -20,7 +20,12 @@ const Menu = () => {
   const [menuFullyLoaded, setMenuFullyLoaded] = useState(false);
 
   // Check if this is a preview view
-  const isPreview = searchParams.get('preview') === 'true' || document.referrer.includes('/dashboard') || document.referrer.includes('/menu-builder');
+  const isPreview = searchParams.get('preview') === 'true' || 
+    document.referrer.includes('/dashboard') || 
+    document.referrer.includes('/menu-builder') ||
+    document.referrer.includes('/qr-code') ||
+    window.location.href.includes('localhost') ||
+    window.location.href.includes('127.0.0.1');
 
   // Memoize the fetch function to prevent recreating it on every render
   const fetchRestaurant = useCallback(async () => {
@@ -227,16 +232,16 @@ const Menu = () => {
       </div>
 
       {/* Search Bar */}
-      <div className="sticky top-0 z-40 bg-[hsl(50,75%,98%)]/80 backdrop-blur-xl border-b border-[hsl(109,22%,75%)] shadow-sm">
+      <div className="sticky top-0 z-40 bg-[hsl(170,94%,27%)]/95 backdrop-blur-xl border-b border-[hsl(109,22%,75%)] shadow-sm">
         <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
           <div className="relative max-w-md mx-auto">
-            <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-[hsl(0,1%,15%)] opacity-50" />
+            <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-[hsl(50,75%,98%)] opacity-70" />
             <input
               type="text"
               placeholder="Search dishes..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full pl-12 pr-4 py-3 bg-[hsl(150,13%,94%)] border border-[hsl(109,22%,75%)] rounded-2xl focus:outline-none focus:ring-2 focus:ring-[hsl(170,94%,27%)] focus:border-transparent text-[hsl(0,1%,15%)] placeholder-[hsl(0,1%,15%)]/50 font-medium"
+              className="w-full pl-12 pr-4 py-3 bg-white/10 border border-white/20 rounded-2xl focus:outline-none focus:ring-2 focus:ring-[hsl(44,88%,51%)] focus:border-transparent text-[hsl(50,75%,98%)] placeholder-[hsl(50,75%,98%)]/70 font-medium"
             />
           </div>
         </div>
@@ -289,9 +294,9 @@ const Menu = () => {
       )}
 
       {/* Menu Content */}
-      <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+      <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
         {filteredSections.length === 0 ? (
-          <div className="text-center py-20">
+          <div className="text-center py-12">
             <div className="bg-[hsl(150,13%,94%)] backdrop-blur-lg rounded-3xl shadow-2xl p-12 max-w-lg mx-auto border border-[hsl(109,22%,75%)]">
               <div className="w-24 h-24 bg-gradient-to-r from-[hsl(170,94%,27%)] to-[hsl(44,88%,51%)] rounded-3xl flex items-center justify-center mx-auto mb-8 shadow-lg">
                 <MenuIcon className="w-12 h-12 text-[hsl(50,75%,98%)]" />
@@ -308,7 +313,7 @@ const Menu = () => {
             </div>
           </div>
         ) : (
-          <div className="space-y-12">
+          <div className="space-y-6">
             {filteredSections.map((section, index) => {
               const activeItems = section.items.filter(item => !item.isDisabled);
               const isOpen = openSections.has(section.id);
@@ -375,7 +380,7 @@ const Menu = () => {
                       {activeItems.map((item, itemIndex) => (
                         <div 
                           key={item.id} 
-                          className="group bg-gradient-to-r from-[hsl(50,75%,98%)] to-[hsl(150,13%,94%)] rounded-2xl p-6 border border-[hsl(109,22%,75%)] hover:shadow-xl hover:border-[hsl(44,88%,51%)] transition-all duration-300 hover:scale-[1.02]"
+                          className="group bg-[hsl(50,75%,98%)] rounded-2xl p-6 border border-[hsl(109,22%,75%)] hover:shadow-xl hover:border-[hsl(44,88%,51%)] transition-all duration-300 hover:scale-[1.02]"
                           style={{
                             animationDelay: isOpen ? `${itemIndex * 100}ms` : '0ms'
                           }}
@@ -400,7 +405,7 @@ const Menu = () => {
                               <div className="flex items-start justify-between gap-4 mb-4">
                                 <div className="flex-1">
                                   <div className="flex items-center gap-3 mb-2 flex-wrap">
-                                    <h3 className="text-xl font-bold text-[hsl(0,1%,15%)] group-hover:text-[hsl(170,94%,27%)] transition-colors">
+                                    <h3 className="text-xl font-bold text-[hsl(170,94%,27%)] group-hover:text-[hsl(44,88%,51%)] transition-colors">
                                       {item.name}
                                     </h3>
                                     {item.outOfStock && (
@@ -412,8 +417,8 @@ const Menu = () => {
                                       onClick={() => toggleFavorite(item.id)}
                                       className={`p-2 rounded-full transition-all duration-200 ${
                                         favoriteItems.has(item.id)
-                                          ? 'bg-red-100 text-red-600'
-                                          : 'bg-gray-100 text-gray-400 hover:bg-red-100 hover:text-red-600'
+                                          ? 'bg-[hsl(44,88%,51%)]/20 text-[hsl(44,88%,51%)]'
+                                          : 'bg-[hsl(170,94%,27%)]/10 text-[hsl(170,94%,27%)] hover:bg-[hsl(44,88%,51%)]/20 hover:text-[hsl(44,88%,51%)]'
                                       }`}
                                     >
                                       <Heart className={`w-4 h-4 ${favoriteItems.has(item.id) ? 'fill-current' : ''}`} />
@@ -421,7 +426,7 @@ const Menu = () => {
                                   </div>
                                   
                                   {item.description && (
-                                    <p className="text-[hsl(0,1%,15%)] opacity-70 leading-relaxed mb-4">
+                                    <p className="text-[hsl(170,94%,27%)]/70 leading-relaxed mb-4">
                                       {item.description}
                                     </p>
                                   )}
@@ -433,10 +438,10 @@ const Menu = () => {
                                     <div className="space-y-2">
                                       {item.priceVariations.map((variation, index) => (
                                         <div key={index} className="flex items-center gap-3">
-                                          <span className="text-sm text-[hsl(0,1%,15%)] opacity-70 bg-[hsl(109,22%,75%)] px-3 py-1 rounded-full">
+                                          <span className="text-sm text-[hsl(170,94%,27%)] bg-[hsl(170,94%,27%)]/10 px-3 py-1 rounded-full">
                                             {variation.name}
                                           </span>
-                                          <span className="font-bold text-xl text-[hsl(170,94%,27%)]">
+                                          <span className="font-bold text-xl text-[hsl(44,88%,51%)]">
                                             {currencySymbol}{variation.price.toFixed(2)}
                                           </span>
                                         </div>
@@ -444,7 +449,7 @@ const Menu = () => {
                                     </div>
                                   ) : (
                                     item.price && item.price > 0 && (
-                                      <span className="font-bold text-2xl text-[hsl(170,94%,27%)]">
+                                      <span className="font-bold text-2xl text-[hsl(44,88%,51%)]">
                                         {currencySymbol}{item.price.toFixed(2)}
                                       </span>
                                     )

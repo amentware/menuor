@@ -739,14 +739,14 @@ const MenuBuilder = () => {
 
   return (
     <div className="page-container">
-      <div className="flex items-center justify-between mb-8">
+      <div className="flex flex-col md:flex-row justify-between mb-8">
         <div>
           <h1 className="text-4xl font-bold font-display text-black">Menu Builder</h1>
           <p className="text-gray-600 mt-2">
             Organize your menu sections and items. Drag to reorder.
           </p>
         </div>
-        <div className="flex items-center gap-3">
+        <div className="flex flex-col md:flex-row items-end md:items-center gap-3 mt-4 md:mt-0">
           {menuChanged && (
             <Card className="bg-amber-50 border-amber-200">
               <CardContent className="py-3 px-4 flex items-center gap-2">
