@@ -81,7 +81,7 @@ const Dashboard = () => {
     // Create an array of the last 7 days
     const data = [];
     const today = new Date();
-    const dateFormat = { month: 'short', day: 'numeric' };
+    const dateFormat: Intl.DateTimeFormatOptions = { month: 'short', day: 'numeric' };
     
     // Generate dates for last 7 days
     for (let i = 6; i >= 0; i--) {
@@ -220,7 +220,7 @@ const Dashboard = () => {
                   <Button
                     variant="outline"
                     className="flex items-center w-full sm:w-auto border-gray-300 bg-white hover:bg-gray-50 text-black gap-2"
-                    onClick={() => navigate(`/menu/${restaurant.id}`)}
+                    onClick={() => navigate(`/menu/${restaurant.id}?preview=true`)}
                   >
                     <Eye className="h-4 w-4" />
                     Preview Menu
