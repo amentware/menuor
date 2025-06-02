@@ -4,6 +4,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import { Button } from '@/components/ui/button';
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
 import { Menu, Home, LayoutDashboard, Menu as MenuIcon, QrCode, Settings, LogOut, User, X } from 'lucide-react';
+import logo from '../assets/logo512.png';
 
 const MobileDrawer = () => {
   const { isAuthenticated, isAdmin, isOwner, logout } = useAuth();
@@ -40,7 +41,9 @@ const MobileDrawer = () => {
       </SheetTrigger>
       <SheetContent side="right" className="w-80 bg-white">
         <SheetHeader className="text-left">
-          <SheetTitle className="text-xl font-bold text-primary">Menuor</SheetTitle>
+          <SheetTitle className="flex items-center">
+            <img src={logo} alt="Menuor" className="h-12 w-auto" />
+          </SheetTitle>
         </SheetHeader>
         
         <div className="flex flex-col justify-between h-[calc(100vh-80px)] pt-6 pb-8">

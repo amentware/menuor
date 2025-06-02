@@ -18,13 +18,36 @@ const Menu = () => {
   const { trackQRScan } = useQRTracking();
   const [menuFullyLoaded, setMenuFullyLoaded] = useState(false);
 
-  // Check if this is a preview view
-  const isPreview = searchParams.get('preview') === 'true' || 
-    document.referrer.includes('/dashboard') || 
-    document.referrer.includes('/menu-builder') ||
-    document.referrer.includes('/qr-code') ||
-    window.location.href.includes('localhost') ||
-    window.location.href.includes('127.0.0.1');
+  // Check if this is a preview view - only check preview parameter
+  const isPreview = React.useMemo(() => {
+    const isPreview = searchParams.get('preview') === 'true';
+    console.log('Preview check:', isPreview);
+    return isPreview;
+  }, [searchParams]);
+
+  // Track QR scan only after menu is fully loaded and not in preview mode
+  useEffect(() => {
+    if (menuFullyLoaded && !isPreview && restaurantId) {
+      console.log('Tracking QR scan');
+      trackQRScan(restaurantId)
+        .catch(error => {
+          console.error('Error tracking QR scan:', error);
+        });
+    }
+  }, [menuFullyLoaded, isPreview, restaurantId, trackQRScan]);
+
+  // Set menu as fully loaded when restaurant data is available
+  useEffect(() => {
+    if (restaurant && !menuFullyLoaded) {
+      console.log('📱 Menu content loaded, setting menuFullyLoaded flag');
+      // Small delay to ensure all content is rendered
+      const timer = setTimeout(() => {
+        setMenuFullyLoaded(true);
+        console.log('✅ Menu fully loaded flag set to true');
+      }, 1000);
+      return () => clearTimeout(timer);
+    }
+  }, [restaurant, menuFullyLoaded]);
 
   // Memoize the fetch function to prevent recreating it on every render
   const fetchRestaurant = useCallback(async () => {
@@ -64,15 +87,6 @@ const Menu = () => {
       setLoading(false);
     }
   }, [restaurantId]);
-
-  // Track QR scan only after menu is fully loaded and not in preview mode
-  useEffect(() => {
-    if (menuFullyLoaded && !isPreview && restaurantId) {
-      trackQRScan(restaurantId).catch(error => {
-        console.error('Error tracking QR scan:', error);
-      });
-    }
-  }, [menuFullyLoaded, isPreview, restaurantId]);
 
   // Use effect with only fetchRestaurant as dependency
   useEffect(() => {
