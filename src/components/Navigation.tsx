@@ -3,18 +3,41 @@ import { useAuth } from '@/contexts/AuthContext';
 import { Button } from '@/components/ui/button';
 import { Home, LayoutDashboard, Menu as MenuIcon, QrCode, Settings, LogOut, User } from 'lucide-react';
 import MobileDrawer from './MobileDrawer';
+import { useEffect, useState } from 'react';
 
 const Navigation = () => {
   const { isAuthenticated, isAdmin, isOwner, logout } = useAuth();
   const location = useLocation();
+  const [isVisible, setIsVisible] = useState(false);
   
   const isActive = (path: string) => location.pathname === path;
+  const isMenuPage = location.pathname.includes('/menu/');
+
+  useEffect(() => {
+    // Hide navigation immediately if it's a menu page
+    if (isMenuPage) {
+      setIsVisible(false);
+    } else {
+      // Small delay to ensure smooth transition when navigating back
+      const timer = setTimeout(() => {
+        setIsVisible(true);
+      }, 50);
+      return () => clearTimeout(timer);
+    }
+  }, [location.pathname, isMenuPage]);
+
+  // Don't render anything if it's a menu page
+  if (isMenuPage) {
+    return null;
+  }
 
   // Determine where logo should link to
   const logoDestination = isAuthenticated ? "/dashboard" : "/";
 
   return (
-    <nav className="bg-white text-black shadow-md z-50 sticky top-0">
+    <nav className={`fixed w-full bg-white text-black shadow-md z-50 transition-all duration-300 ease-in-out ${
+      isVisible ? 'translate-y-0 opacity-100' : '-translate-y-full opacity-0'
+    }`}>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between h-16">
           <div className="flex">
@@ -117,7 +140,6 @@ const Navigation = () => {
             
             {isAuthenticated && (
               <Button 
-                //variant="outline" 
                 className="group bg-primary text-primary-foreground hover:bg-secondary hover:text-secondary-foreground flex items-center gap-2 transition-colors" 
                 onClick={logout}
               >

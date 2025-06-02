@@ -1,4 +1,3 @@
-
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 
@@ -41,10 +40,10 @@ const QRScanChart = ({ data }: QRScanChartProps) => {
             <Line 
               type="monotone" 
               dataKey="scans" 
-              stroke="#10b981" 
+              stroke="hsl(44, 88%, 51%)" 
               strokeWidth={2}
-              dot={{ fill: '#10b981', strokeWidth: 2, r: 3 }}
-              activeDot={{ r: 5, stroke: '#10b981', strokeWidth: 2 }}
+              dot={{ fill: "hsl(170 94% 27%)", strokeWidth: 2, r: 3  }}
+              activeDot={{ r: 5, stroke: "hsl(170 94% 27%)", strokeWidth: 2 }}
             />
           </LineChart>
         </ResponsiveContainer>

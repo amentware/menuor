@@ -49,13 +49,12 @@ const RootRedirect = () => {
 // Wrapper component to conditionally render Navigation
 const AppContent = () => {
   const location = useLocation();
-  // Don't show navigation on menu pages
-  const isMenuPage = location.pathname.includes('/menu/');
+  const isMenuPage = location.pathname.startsWith('/menu/');
 
   return (
     <div className="min-h-screen flex flex-col">
       {!isMenuPage && <Navigation />}
-      <div className="flex-grow">
+      <div className={`flex-grow ${!isMenuPage ? 'pt-16' : ''}`}>
         <Routes>
           {/* Public routes */}
           <Route path="/" element={<RootRedirect />} />
