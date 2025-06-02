@@ -4,7 +4,7 @@ import { useParams, useSearchParams } from 'react-router-dom';
 import { db, doc, getDoc } from '@/lib/firebase';
 import { Restaurant, MenuSection } from '@/types';
 import { useQRTracking } from '@/hooks/useQRTracking';
-import { Clock, MapPin, Phone, Globe, Star, ChevronDown, ChevronUp, Menu as MenuIcon, Search, Filter, Heart, Share2 } from 'lucide-react';
+import { Clock, MapPin, Phone, Globe, Star, ChevronDown, ChevronUp, Menu as MenuIcon, Search, Filter, Share2 } from 'lucide-react';
 
 const Menu = () => {
   const { restaurantId } = useParams();
@@ -15,7 +15,6 @@ const Menu = () => {
   const [openSections, setOpenSections] = useState(new Set());
   const [showCategoryNav, setShowCategoryNav] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
-  const [favoriteItems, setFavoriteItems] = useState(new Set());
   const { trackQRScan } = useQRTracking();
   const [menuFullyLoaded, setMenuFullyLoaded] = useState(false);
 
@@ -96,16 +95,6 @@ const Menu = () => {
       element.scrollIntoView({ behavior: 'smooth', block: 'start' });
       setOpenSections(prev => new Set([...prev, sectionId]));
     }
-  };
-
-  const toggleFavorite = (itemId) => {
-    const newFavorites = new Set(favoriteItems);
-    if (newFavorites.has(itemId)) {
-      newFavorites.delete(itemId);
-    } else {
-      newFavorites.add(itemId);
-    }
-    setFavoriteItems(newFavorites);
   };
 
   const handleShare = () => {
@@ -402,7 +391,7 @@ const Menu = () => {
                             
                             {/* Item Details */}
                             <div className="flex-1 min-w-0">
-                              <div className="flex items-start justify-between gap-4 mb-4">
+                              <div className="flex items-start justify-between gap-4">
                                 <div className="flex-1">
                                   <div className="flex items-center gap-3 mb-2 flex-wrap">
                                     <h3 className="text-xl font-bold text-[hsl(170,94%,27%)] group-hover:text-[hsl(44,88%,51%)] transition-colors">
@@ -413,16 +402,6 @@ const Menu = () => {
                                         Out of Stock
                                       </span>
                                     )}
-                                    <button
-                                      onClick={() => toggleFavorite(item.id)}
-                                      className={`p-2 rounded-full transition-all duration-200 ${
-                                        favoriteItems.has(item.id)
-                                          ? 'bg-[hsl(44,88%,51%)]/20 text-[hsl(44,88%,51%)]'
-                                          : 'bg-[hsl(170,94%,27%)]/10 text-[hsl(170,94%,27%)] hover:bg-[hsl(44,88%,51%)]/20 hover:text-[hsl(44,88%,51%)]'
-                                      }`}
-                                    >
-                                      <Heart className={`w-4 h-4 ${favoriteItems.has(item.id) ? 'fill-current' : ''}`} />
-                                    </button>
                                   </div>
                                   
                                   {item.description && (
