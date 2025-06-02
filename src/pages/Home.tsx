@@ -116,7 +116,7 @@ const Home = () => {
           </p>
           {!isAuthenticated && (
             <Link to="/register">
-              <Button size="lg" className="bg-primary text-primary-foreground hover:bg-primary/90 shadow-lg px-8 py-6 text-lg relative overflow-hidden transition-all duration-300 ease-out hover:scale-105 hover:shadow-xl before:absolute before:inset-0 before:bg-gradient-to-r before:from-transparent before:via-white/10 before:to-transparent before:translate-x-[-200%] hover:before:translate-x-[200%] before:transition-transform before:duration-700">
+              <Button size="lg" className="bg-primary text-primary-foreground hover:bg-primary/90 hover:text-white shadow-lg px-8 py-6 text-lg relative overflow-hidden transition-all duration-300 ease-out hover:scale-105 hover:shadow-xl before:absolute before:inset-0 before:bg-gradient-to-r before:from-transparent before:via-white/10 before:to-transparent before:translate-x-[-200%] hover:before:translate-x-[200%] before:transition-transform before:duration-700">
                 Create Your Menu Now
               </Button>
             </Link>
