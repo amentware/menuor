@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import { Button } from '@/components/ui/button';
-import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
+import { Drawer, DrawerContent, DrawerTrigger } from '@/components/ui/drawer';
 import { Menu, Home, LayoutDashboard, Menu as MenuIcon, QrCode, Settings, LogOut, User, LogIn, UserPlus } from 'lucide-react';
 import logo from '../assets/navicon.png';
 
@@ -31,71 +31,74 @@ const MobileDrawer = () => {
     ...(isAdmin ? [
       { to: "/admin", label: "Admin Panel", icon: Settings },
     ] : []),
+    ...(isAuthenticated ? [
+      {
+        to: "#",
+        label: "Logout",
+        icon: LogOut,
+        onClick: () => {
+          logout();
+          closeDrawer();
+        },
+        className: "mt-4 text-red-600 hover:bg-red-50 hover:text-red-700"
+      }
+    ] : [])
   ];
 
   return (
-    <Sheet open={isOpen} onOpenChange={setIsOpen}>
-      <SheetTrigger asChild>
+    <Drawer open={isOpen} onOpenChange={setIsOpen}>
+      <DrawerTrigger asChild>
         <Button variant="ghost" size="icon" className="md:hidden">
-          <Menu className="h-6 w-6" />
+          <Menu className="h-4 w-6" />
         </Button>
-      </SheetTrigger>
-      <SheetContent 
-        side="right" 
-        className="w-80 bg-white touch-none select-none [touch-action:pan-y]" 
-        onPointerDownCapture={(e) => {
-          // Prevent gesture handling if it starts from the edge
-          if (e.clientX > window.innerWidth - 20) {
-            e.stopPropagation();
-          }
-        }}
-      >
-        <SheetHeader className="text-left">
-          <SheetTitle className="flex items-center">
+      </DrawerTrigger>
+      <DrawerContent className="px-6 pb-10">
+        <div className="flex flex-col h-full pt-2">
+          {/* <div className="mb-6">
             <img src={logo} alt="Menuor" className="h-6 w-auto" />
-          </SheetTitle>
-        </SheetHeader>
-        
-        <div className="flex flex-col justify-between h-[calc(100vh-80px)] pt-6 pb-8">
-          <nav className="flex-1 space-y-2">
-            {navigationItems.map((item) => {
-              const Icon = item.icon;
-              return (
-                <Link
-                  key={item.to}
-                  to={item.to}
-                  onClick={closeDrawer}
-                  className={`flex items-center gap-3 px-4 py-3 rounded-lg ${
-                    isActive(item.to)
-                      ? 'bg-gray-50 text-primary'
-                      : 'text-gray-600 hover:bg-gray-50 hover:text-gray-700'
-                  }`}
-                >
-                  <Icon className="h-5 w-5" />
-                  {item.label}
-                </Link>
-              );
-            })}
-          </nav>
+          </div> */}
           
-          {isAuthenticated && (
-            <div className="border-t pt-4">
-              <Button
-                variant="ghost"
-                onClick={() => {
-                  logout();
-                  closeDrawer();
-                }}
-                className="w-full justify-start border-red-300 text-red-600 hover:bg-red-50 hover:text-red-700 hover:border-red-400 flex items-center gap-2 transition-colors"
-              >
-                <LogOut className="h-5 w-5 mr-3" />
-                Logout
-              </Button>
-            </div>
-          )}
+          <div className="flex flex-col justify-between flex-1 pt-2">
+            <nav className="flex-1 space-y-2">
+              {navigationItems.map((item) => {
+                const Icon = item.icon;
+                if (item.onClick) {
+                  return (
+                    <button
+                      key={item.to}
+                      onClick={item.onClick}
+                      className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg ${item.className || ''} ${
+                        isActive(item.to)
+                          ? 'bg-gray-50'
+                          : 'hover:bg-gray-50'
+                      }`}
+                    >
+                      <Icon className="h-5 w-5" />
+                      {item.label}
+                    </button>
+                  );
+                }
+                return (
+                  <Link
+                    key={item.to}
+                    to={item.to}
+                    onClick={closeDrawer}
+                    className={`flex items-center gap-3 px-4 py-3 rounded-lg ${item.className || ''} ${
+                      isActive(item.to)
+                        ? 'bg-gray-50 text-primary'
+                        : 'text-gray-600 hover:bg-gray-50 hover:text-gray-700'
+                    }`}
+                  >
+                    <Icon className="h-5 w-5" />
+                    {item.label}
+                  </Link>
+                );
+              })}
+            </nav>
+          </div>
         </div>
-      </SheetContent>
-    </Sheet>
+      </DrawerContent>
+    </Drawer>
   );
 };
 
