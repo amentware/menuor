@@ -1,121 +1,99 @@
-
 // Service Worker for PWA support
 const CACHE_NAME = 'menubuilder-cache-v2';
 const STATIC_CACHE_NAME = 'menubuilder-static-v2';
 const DYNAMIC_CACHE_NAME = 'menubuilder-dynamic-v2';
 
+// Assets that need to be available offline
 const staticAssets = [
   '/',
   '/index.html',
   '/favicon.ico',
   '/manifest.json',
   '/static/css/main.css',
-  '/static/js/main.js'
-];
-
-const urlsToCache = [
-  '/',
-  '/index.html',
-  '/favicon.ico',
-  '/manifest.json',
+  '/static/js/main.js',
   '/dashboard',
   '/menu-builder',
   '/qr-code'
 ];
 
-// Install service worker
+// Install event - precache static assets
 self.addEventListener('install', event => {
   console.log('Service Worker installing...');
   event.waitUntil(
     Promise.all([
       caches.open(STATIC_CACHE_NAME).then(cache => {
         console.log('Caching static assets');
-        return cache.addAll(staticAssets.filter(url => url !== '/'));
-      }),
-      caches.open(CACHE_NAME).then(cache => {
-        console.log('Caching app shell');
-        return cache.addAll(urlsToCache);
+        return cache.addAll(staticAssets);
       })
-    ])
+    ]).then(() => self.skipWaiting())
   );
-  self.skipWaiting();
 });
 
-// Activate service worker
+// Activate event - clean up old caches
 self.addEventListener('activate', event => {
   console.log('Service Worker activating...');
   event.waitUntil(
     caches.keys().then(cacheNames => {
       return Promise.all(
-        cacheNames.map(cacheName => {
-          if (cacheName !== CACHE_NAME && cacheName !== STATIC_CACHE_NAME && cacheName !== DYNAMIC_CACHE_NAME) {
+        cacheNames
+          .filter(cacheName => {
+            return cacheName.startsWith('menubuilder-') &&
+                   cacheName !== STATIC_CACHE_NAME &&
+                   cacheName !== DYNAMIC_CACHE_NAME;
+          })
+          .map(cacheName => {
             console.log('Deleting old cache:', cacheName);
             return caches.delete(cacheName);
-          }
-        })
+          })
       );
-    })
+    }).then(() => self.clients.claim())
   );
-  self.clients.claim();
 });
 
-// Fetch event with network-first strategy for API calls and cache-first for static assets
+// Fetch event - serve from cache, falling back to network
 self.addEventListener('fetch', event => {
-  const { request } = event;
-  const url = new URL(request.url);
-
-  // Skip non-GET requests
-  if (request.method !== 'GET') {
-    return;
-  }
-
-  // Network first for API calls
-  if (url.pathname.includes('/api/') || url.hostname.includes('firebase')) {
+  // Skip cross-origin requests
+  if (!event.request.url.startsWith(self.location.origin)) return;
+  
+  // Handle HTML navigation requests
+  if (event.request.mode === 'navigate') {
     event.respondWith(
-      fetch(request)
-        .then(response => {
-          if (response.status === 200) {
-            const responseClone = response.clone();
-            caches.open(DYNAMIC_CACHE_NAME).then(cache => {
-              cache.put(request, responseClone);
-            });
-          }
-          return response;
-        })
-        .catch(() => {
-          return caches.match(request);
-        })
+      caches.match(event.request).then(response => {
+        return response || fetch(event.request).then(fetchResponse => {
+          return caches.open(DYNAMIC_CACHE_NAME).then(cache => {
+            cache.put(event.request, fetchResponse.clone());
+            return fetchResponse;
+          });
+        });
+      })
     );
     return;
   }
 
-  // Cache first for static assets
+  // Handle other requests with stale-while-revalidate strategy
   event.respondWith(
-    caches.match(request)
-      .then(response => {
-        if (response) {
-          return response;
-        }
-        
-        return fetch(request).then(response => {
-          if (!response || response.status !== 200 || response.type !== 'basic') {
-            return response;
-          }
-
-          const responseToCache = response.clone();
-          caches.open(CACHE_NAME).then(cache => {
-            cache.put(request, responseToCache);
+    caches.match(event.request).then(response => {
+      const fetchPromise = fetch(event.request).then(networkResponse => {
+        // Cache new responses for next time
+        if (networkResponse.ok) {
+          const cacheName = event.request.url.includes('/static/') 
+            ? STATIC_CACHE_NAME 
+            : DYNAMIC_CACHE_NAME;
+          
+          caches.open(cacheName).then(cache => {
+            cache.put(event.request, networkResponse.clone());
           });
-
-          return response;
-        });
-      })
-      .catch(() => {
-        // Return offline page or default response
-        if (request.destination === 'document') {
-          return caches.match('/index.html');
         }
-      })
+        return networkResponse;
+      }).catch(() => {
+        // Return offline fallback if network fails and we don't have a cached response
+        if (!response) {
+          return caches.match('/offline.html');
+        }
+      });
+
+      return response || fetchPromise;
+    })
   );
 });
 

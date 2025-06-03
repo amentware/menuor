@@ -5,6 +5,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, Navigate, useLocation } from "react-router-dom";
 import { AuthProvider } from "./contexts/AuthContext";
 import { useAuth } from "./contexts/AuthContext";
+import { useEffect } from "react";
 
 // Pages
 import Home from "./pages/Home";
@@ -50,7 +51,25 @@ const RootRedirect = () => {
 // Wrapper component to conditionally render Navigation
 const AppContent = () => {
   const location = useLocation();
+  const { loading } = useAuth();
   const isMenuPage = location.pathname.startsWith('/menu/');
+
+  useEffect(() => {
+    // Remove the root loader once the auth state is determined
+    if (!loading) {
+      const rootLoader = document.getElementById('root-loader');
+      if (rootLoader) {
+        rootLoader.classList.add('fade-out');
+        setTimeout(() => {
+          rootLoader.remove();
+        }, 300);
+      }
+    }
+  }, [loading]);
+
+  if (loading) {
+    return null; // Let the root loader handle the initial loading state
+  }
 
   return (
     <div className="min-h-screen flex flex-col">
