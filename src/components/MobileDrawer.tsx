@@ -1,4 +1,3 @@
-import { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import { Button } from '@/components/ui/button';
@@ -6,15 +5,19 @@ import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/co
 import { Menu, Home, LayoutDashboard, Menu as MenuIcon, QrCode, Settings, LogOut, User, LogIn, UserPlus } from 'lucide-react';
 import logo from '../assets/navicon.png';
 
-const MobileDrawer = () => {
+interface MobileDrawerProps {
+  isOpen: boolean;
+  onOpenChange: (open: boolean) => void;
+}
+
+const MobileDrawer = ({ isOpen, onOpenChange }: MobileDrawerProps) => {
   const { isAuthenticated, isAdmin, isOwner, logout } = useAuth();
-  const [isOpen, setIsOpen] = useState(false);
   const location = useLocation();
   
   const isActive = (path: string) => location.pathname === path;
-  const closeDrawer = () => setIsOpen(false);
+  const closeDrawer = () => onOpenChange(false);
 
-  const logoDestination = isAuthenticated ? "/dashboard" : "/";
+  const logoDestination = isAuthenticated ? (isAdmin ? '/admin' : '/dashboard') : '/';
 
   const navigationItems = [
     ...(isAuthenticated ? [] : [
@@ -34,55 +37,48 @@ const MobileDrawer = () => {
   ];
 
   return (
-    <Sheet open={isOpen} onOpenChange={setIsOpen}>
+    <Sheet open={isOpen} onOpenChange={onOpenChange}>
       <SheetTrigger asChild>
         <Button variant="ghost" size="icon" className="md:hidden">
           <Menu className="h-6 w-6" />
+          <span className="sr-only">Toggle menu</span>
         </Button>
       </SheetTrigger>
-      <SheetContent side="right" className="w-80 bg-white">
-        <SheetHeader className="text-left">
-          <SheetTitle className="flex items-center">
-            <img src={logo} alt="Menuor" className="h-6 w-auto" />
+      <SheetContent side="left" className="w-[300px] sm:w-[400px]">
+        <SheetHeader>
+          <SheetTitle>
+            <Link to={logoDestination} onClick={closeDrawer} className="flex items-center gap-2">
+              <img src={logo} alt="Menuor" className="h-6 w-auto" />
+            </Link>
           </SheetTitle>
         </SheetHeader>
-        
-        <div className="flex flex-col justify-between h-[calc(100vh-80px)] pt-6 pb-8">
-          <nav className="flex-1 space-y-2">
-            {navigationItems.map((item) => {
-              const Icon = item.icon;
-              return (
-                <Link
-                  key={item.to}
-                  to={item.to}
-                  onClick={closeDrawer}
-                  className={`flex items-center gap-3 px-4 py-3 rounded-lg ${
-                    isActive(item.to)
-                      ? 'bg-gray-50 text-primary'
-                      : 'text-gray-600 hover:bg-gray-50 hover:text-gray-700'
-                  }`}
-                >
-                  <Icon className="h-5 w-5" />
-                  {item.label}
-                </Link>
-              );
-            })}
-          </nav>
-          
+        <div className="mt-8 flex flex-col gap-4">
+          {navigationItems.map((item) => (
+            <Link
+              key={item.to}
+              to={item.to}
+              onClick={closeDrawer}
+              className={`flex items-center gap-3 px-4 py-2 rounded-lg transition-colors ${
+                isActive(item.to)
+                  ? 'bg-primary/10 text-primary'
+                  : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
+              }`}
+            >
+              <item.icon className="h-5 w-5" />
+              {item.label}
+            </Link>
+          ))}
           {isAuthenticated && (
-            <div className="border-t pt-4">
-              <Button
-                variant="ghost"
-                onClick={() => {
-                  logout();
-                  closeDrawer();
-                }}
-                className="w-full justify-start border-red-300 text-red-600 hover:bg-red-50 hover:text-red-700 hover:border-red-400 flex items-center gap-2 transition-colors"
-              >
-                <LogOut className="h-5 w-5 mr-3" />
-                Logout
-              </Button>
-            </div>
+            <Button
+              onClick={() => {
+                logout();
+                closeDrawer();
+              }}
+              className="logout-btn mt-4 w-full justify-start gap-3"
+            >
+              <LogOut className="h-5 w-5" />
+              Logout
+            </Button>
           )}
         </div>
       </SheetContent>

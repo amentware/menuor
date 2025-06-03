@@ -10,6 +10,7 @@ const Navigation = () => {
   const { isAuthenticated, isAdmin, isOwner, logout } = useAuth();
   const location = useLocation();
   const [isVisible, setIsVisible] = useState(false);
+  const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   
   const isActive = (path: string) => location.pathname === path;
   const isMenuPage = location.pathname.includes('/menu/');
@@ -18,11 +19,15 @@ const Navigation = () => {
     // Hide navigation immediately if it's a menu page
     if (isMenuPage) {
       setIsVisible(false);
+      setIsDrawerOpen(false);
       return;
     }
 
     // For non-menu pages, show navigation immediately
     setIsVisible(true);
+
+    // Close drawer when location changes
+    setIsDrawerOpen(false);
 
     // Cleanup function to hide navigation when component unmounts
     return () => {
@@ -35,8 +40,7 @@ const Navigation = () => {
     return null;
   }
 
-  // Determine where logo should link to
-  const logoDestination = isAuthenticated ? "/dashboard" : "/";
+  const logoDestination = isAuthenticated ? (isAdmin ? '/admin' : '/dashboard') : '/';
 
   return (
     <nav className={`fixed w-full bg-white text-black shadow-md z-50 transition-transform duration-200 ease-out ${
@@ -154,19 +158,22 @@ const Navigation = () => {
             )}
             
             {isAuthenticated && (
-              <Button 
-                className="group bg-primary text-primary-foreground hover:bg-secondary hover:text-secondary-foreground flex items-center gap-2 transition-colors" 
+              <Button
                 onClick={logout}
+                className="logout-btn flex items-center gap-2"
               >
-                <LogOut className="h-4 w-4 text-primary-foreground group-hover:text-secondary-foreground" />
+                <LogOut className="h-5 w-5" />
                 Logout
               </Button>
             )}
           </div>
-          
-          {/* Mobile menu button */}
-          <div className="flex items-center md:hidden">
-            <MobileDrawer />
+
+          {/* Mobile Navigation */}
+          <div className="md:hidden">
+            <MobileDrawer 
+              isOpen={isDrawerOpen}
+              onOpenChange={setIsDrawerOpen}
+            />
           </div>
         </div>
       </div>
