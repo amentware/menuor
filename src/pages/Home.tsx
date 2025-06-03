@@ -34,7 +34,7 @@ const Home = () => {
                     </Button>
                   </Link>
                   <Link to="/login">
-                    <Button size="lg" variant="outline" className="border-2 border-primary-foreground text-primary-foreground hover:bg-primary-foreground/10 px-8 py-6 text-lg backdrop-blur-sm transition-all duration-300 hover:scale-105">
+                    <Button size="lg" className="bg-primary-foreground border-primary-foreground text-primary hover:bg-primary-foreground/10 hover:text-primary-foreground px-8 py-6 text-lg backdrop-blur-sm transition-all duration-300 hover:scale-105">
                       Sign In
                     </Button>
                   </Link>
