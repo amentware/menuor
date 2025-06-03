@@ -44,7 +44,7 @@ const StatusButton = ({ status, className }: { status: 'active' | 'disabled' | '
       iconClass: 'group-hover:text-gray-700'
     },
   };
-
+/* Check if the status is active, outOfStock, or disabled */
   const config = statusConfig[status];
 
   return (
