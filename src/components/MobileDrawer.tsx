@@ -40,7 +40,16 @@ const MobileDrawer = () => {
           <Menu className="h-6 w-6" />
         </Button>
       </SheetTrigger>
-      <SheetContent side="right" className="w-80 bg-white">
+      <SheetContent 
+        side="right" 
+        className="w-80 bg-white touch-none select-none [touch-action:pan-y]" 
+        onPointerDownCapture={(e) => {
+          // Prevent gesture handling if it starts from the edge
+          if (e.clientX > window.innerWidth - 20) {
+            e.stopPropagation();
+          }
+        }}
+      >
         <SheetHeader className="text-left">
           <SheetTitle className="flex items-center">
             <img src={logo} alt="Menuor" className="h-6 w-auto" />
