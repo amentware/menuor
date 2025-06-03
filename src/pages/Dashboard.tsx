@@ -133,7 +133,7 @@ const Dashboard = () => {
       {restaurant ? (
         <div className="space-y-8">
           {/* Stats Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+          <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
             <StatsCard
               title="Menu Sections"
               value={sectionsCount}
@@ -163,10 +163,10 @@ const Dashboard = () => {
           {/* Main Content Grid */}
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
             {/* Restaurant Info Card */}
-            <div className="lg:col-span-2">
+            <div className="lg:col-span-1">
               <Card className="bg-white border border-gray-200 h-full">
                 <CardHeader className="pb-2">
-                  <CardTitle className="text-2xl flex items-center gap-2 text-black">
+                  <CardTitle className="text-2xl flex items-center gap-2 text-primary">
                     <Users className="h-6 w-6" />
                     {restaurant.name}
                   </CardTitle>
@@ -175,16 +175,16 @@ const Dashboard = () => {
                   </CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-4">
-                  <div className="grid grid-cols-2 gap-4">
+                  <div className="space-y-4">
                     <div className="space-y-2">
                       <p className="font-medium text-sm text-gray-600">Description</p>
-                      <p className="text-sm text-black">
+                      <p className="text-sm text-primary">
                         {restaurant.description || "No description available."}
                       </p>
                     </div>
                     <div className="space-y-2">
                       <p className="font-medium text-sm text-gray-600">Contact</p>
-                      <p className="text-sm text-black">
+                      <p className="text-sm text-primary">
                         {restaurant.contact || "No contact information provided."}
                       </p>
                     </div>
@@ -208,10 +208,10 @@ const Dashboard = () => {
                     </div>
                   </div>
                 </CardContent>
-                <CardFooter className="flex flex-col sm:flex-row justify-between gap-2 pt-4">
+                <CardFooter className="flex flex-row justify-between gap-2 pt-4">
                   <Button 
                     variant="outline"
-                    className="hover:bg-gray-50 hover:text-black transition-colors duration-200"
+                    className="hover:bg-gray-50 hover:text-black transition-colors duration-200 flex-1"
                     onClick={() => navigate('/edit-profile')}
                   >
                     <Edit className="h-4 w-4 mr-2" />
@@ -219,7 +219,7 @@ const Dashboard = () => {
                   </Button>
                   <Button
                     variant="outline"
-                    className="hover:bg-gray-50 hover:text-black transition-colors duration-200"
+                    className="hover:bg-gray-50 hover:text-black transition-colors duration-200 flex-1"
                     onClick={() => navigate(`/menu/${restaurant.id}?preview=true`)}
                   >
                     <Eye className="h-4 w-4 mr-2" />
@@ -229,66 +229,18 @@ const Dashboard = () => {
               </Card>
             </div>
 
-            {/* Quick Actions */}
-            <div className="space-y-6">
+            {/* Charts Section */}
+            <div className="lg:col-span-2 grid grid-cols-1 lg:grid-cols-2 gap-6">
+              {/* QR Scan Chart */}
               <Card className="bg-white border border-gray-200">
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2 text-black">
-                    <Star className="h-5 w-5" />
-                    Quick Actions
-                  </CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-3">
-                  <Button 
-                    className="w-full bg-primary text-primary-foreground hover:bg-secondary hover:text-secondary-foreground transition-colors duration-200"
-                    onClick={() => navigate('/menu-builder')}
-                  >
-                    <MenuIcon className="h-4 w-4 mr-2" />
-                    Edit Menu
-                  </Button>
-                  <Button 
-                    className="w-full hover:bg-gray-50 hover:text-black transition-colors duration-200" 
-                    variant="outline"
-                    onClick={() => navigate('/qr-code')}
-                  >
-                    <QrCode className="h-4 w-4 mr-2" />
-                    Generate QR Code
-                  </Button>
-                  <Button 
-                    className="w-full hover:bg-gray-50 hover:text-black transition-colors duration-200" 
-                    variant="outline"
-                    onClick={() => navigate('/edit-profile')}
-                  >
-                    <Edit className="h-4 w-4 mr-2" />
-                    Edit Profile
-                  </Button>
-                </CardContent>
+                <QRScanChart data={qrScanData} />
               </Card>
               
+              {/* Menu Items Chart */}
               <Card className="bg-white border border-gray-200">
-                <CardHeader>
-                  <CardTitle className="text-black">Getting Started</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <ol className="list-decimal list-inside space-y-2 text-sm text-black">
-                    <li>Complete your restaurant profile</li>
-                    <li>Create menu sections for categories</li>
-                    <li>Add items with descriptions & prices</li>
-                    <li>Generate QR code for customers</li>
-                    <li>Set menu as public when ready</li>
-                  </ol>
-                </CardContent>
+                <MenuItemsChart data={chartData} />
               </Card>
             </div>
-          </div>
-
-          {/* Charts Section */}
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            {/* QR Scan Chart */}
-            <QRScanChart data={qrScanData} />
-            
-            {/* Menu Items Chart */}
-            <MenuItemsChart data={chartData} />
           </div>
         </div>
       ) : (
