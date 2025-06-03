@@ -5,6 +5,7 @@ import {
   createUserWithEmailAndPassword,
   signOut as firebaseSignOut,
   onAuthStateChanged,
+  sendPasswordResetEmail as firebaseSendPasswordResetEmail,
   type User
 } from 'firebase/auth';
 import { 
@@ -79,6 +80,7 @@ export {
   getDocs,
   Timestamp,
   increment,
+  firebaseSendPasswordResetEmail as sendPasswordResetEmail,
 };
 
 // Export the User type correctly using 'export type'

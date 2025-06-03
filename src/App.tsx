@@ -20,6 +20,7 @@ import Menu from "./pages/Menu";
 import Admin from "./pages/Admin";
 import AdminEdit from "./pages/AdminEdit";
 import NotFound from "./pages/NotFound";
+import ForgotPassword from "./pages/ForgotPassword";
 
 // Components
 import Navigation from "./components/Navigation";
@@ -80,6 +81,7 @@ const AppContent = () => {
           <Route path="/" element={<RootRedirect />} />
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
+          <Route path="/forgot-password" element={<ForgotPassword />} />
           <Route path="/menu/:restaurantId" element={<Menu />} />
           
           {/* Restaurant owner routes */}
