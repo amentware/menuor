@@ -5,6 +5,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, Navigate, useLocation } from "react-router-dom";
 import { AuthProvider } from "./contexts/AuthContext";
 import { useAuth } from "./contexts/AuthContext";
+import { useEffect } from "react";
 
 // Pages
 import Home from "./pages/Home";
@@ -19,6 +20,7 @@ import Menu from "./pages/Menu";
 import Admin from "./pages/Admin";
 import AdminEdit from "./pages/AdminEdit";
 import NotFound from "./pages/NotFound";
+import ForgotPassword from "./pages/ForgotPassword";
 
 // Components
 import Navigation from "./components/Navigation";
@@ -50,7 +52,25 @@ const RootRedirect = () => {
 // Wrapper component to conditionally render Navigation
 const AppContent = () => {
   const location = useLocation();
+  const { loading } = useAuth();
   const isMenuPage = location.pathname.startsWith('/menu/');
+
+  useEffect(() => {
+    // Remove the root loader once the auth state is determined
+    if (!loading) {
+      const rootLoader = document.getElementById('root-loader');
+      if (rootLoader) {
+        rootLoader.classList.add('fade-out');
+        setTimeout(() => {
+          rootLoader.remove();
+        }, 300);
+      }
+    }
+  }, [loading]);
+
+  if (loading) {
+    return null; // Let the root loader handle the initial loading state
+  }
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -61,6 +81,7 @@ const AppContent = () => {
           <Route path="/" element={<RootRedirect />} />
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
+          <Route path="/forgot-password" element={<ForgotPassword />} />
           <Route path="/menu/:restaurantId" element={<Menu />} />
           
           {/* Restaurant owner routes */}

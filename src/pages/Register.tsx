@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
@@ -106,11 +105,11 @@ const Register = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-restaurant-cream/20 py-12 px-4 sm:px-6 lg:px-8">
-      <Card className="w-full max-w-md">
+    <div className="min-h-screen flex items-center justify-center">
+      <Card className="w-full max-w-md mx-4">
         <CardHeader>
           <CardTitle className="text-3xl font-display text-center text-primary">Register</CardTitle>
-          <CardDescription className="text-center ">
+          <CardDescription className="text-center">
             Create a Menuor account for your restaurant
           </CardDescription>
         </CardHeader>
