@@ -18,13 +18,16 @@ const Navigation = () => {
     // Hide navigation immediately if it's a menu page
     if (isMenuPage) {
       setIsVisible(false);
-    } else {
-      // Small delay to ensure smooth transition when navigating back
-      const timer = setTimeout(() => {
-        setIsVisible(true);
-      }, 50);
-      return () => clearTimeout(timer);
+      return;
     }
+
+    // For non-menu pages, show navigation immediately
+    setIsVisible(true);
+
+    // Cleanup function to hide navigation when component unmounts
+    return () => {
+      setIsVisible(false);
+    };
   }, [location.pathname, isMenuPage]);
 
   // Don't render anything if it's a menu page
@@ -36,8 +39,8 @@ const Navigation = () => {
   const logoDestination = isAuthenticated ? "/dashboard" : "/";
 
   return (
-    <nav className={`fixed w-full bg-white text-black shadow-md z-50 transition-all duration-300 ease-in-out ${
-      isVisible ? 'translate-y-0 opacity-100' : '-translate-y-full opacity-0'
+    <nav className={`fixed w-full bg-white text-black shadow-md z-50 transition-transform duration-200 ease-out ${
+      isVisible ? 'translate-y-0' : '-translate-y-full'
     }`}>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between h-16">

@@ -40,7 +40,7 @@ const QRScanChart = ({ data }: QRScanChartProps) => {
             <Line 
               type="monotone" 
               dataKey="scans" 
-              stroke="hsl(44, 88%, 51%)" 
+              stroke="hsl(170 94% 27%)" 
               strokeWidth={2}
               dot={{ fill: "hsl(170 94% 27%)", strokeWidth: 2, r: 3  }}
               activeDot={{ r: 5, stroke: "hsl(170 94% 27%)", strokeWidth: 2 }}
