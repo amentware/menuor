@@ -12,7 +12,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import { Edit, MoreVertical, MoveVertical, Trash2 } from "lucide-react";
+import { Edit, MoveVertical, Trash2, CheckCircle2, AlertCircle, XCircle } from "lucide-react";
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import { useIsMobile } from "@/hooks/use-mobile";
@@ -25,6 +25,34 @@ interface SortableMenuItemProps {
   onStatusChange: (id: string, status: 'active' | 'disabled' | 'outOfStock') => void;
   currencySymbol: string;
 }
+
+const StatusButton = ({ status, className }: { status: 'active' | 'disabled' | 'outOfStock', className?: string }) => {
+  const statusConfig = {
+    active: {
+      text: 'Active',
+      className: 'bg-green-50 text-green-700 border-green-200 group-hover:bg-green-100',
+      iconClass: 'group-hover:text-green-700'
+    },
+    outOfStock: {
+      text: 'Out of Stock',
+      className: 'bg-orange-50/50 text-orange-700 border-orange-200/70 group-hover:bg-orange-100/50',
+      iconClass: 'group-hover:text-orange-700'
+    },
+    disabled: {
+      text: 'Disabled',
+      className: 'bg-gray-50 text-gray-700 border-gray-200 group-hover:bg-gray-100',
+      iconClass: 'group-hover:text-gray-700'
+    },
+  };
+
+  const config = statusConfig[status];
+
+  return (
+    <div className={`flex items-center gap-2 px-3 py-1.5 rounded-lg border transition-all duration-200 ${config.className} ${className}`}>
+      <span className="text-sm font-medium whitespace-nowrap">{config.text}</span>
+    </div>
+  );
+};
 
 export const SortableMenuItem = ({ 
   item, 
@@ -62,18 +90,12 @@ export const SortableMenuItem = ({
       ref={setNodeRef}
       style={style}
       {...attributes}
-      className={`bg-white rounded-lg border border-gray-200 mb-3 p-3 ${item.isDisabled ? 'opacity-60' : ''} ${isDragging ? 'rotate-2' : ''}`}
+      className={`group bg-white rounded-lg border border-gray-200 mb-3 p-3 ${item.isDisabled ? 'opacity-60' : ''} ${isDragging ? 'rotate-2' : ''}`}
     >
       <div className="flex flex-col sm:flex-row sm:items-center gap-3">
         <div className="flex-1 min-w-0">
-          <div className="font-semibold truncate flex items-center gap-2 text-gray-900">
+          <div className="font-semibold truncate text-gray-900">
             {item.name}
-            {item.outOfStock && (
-              <span className="text-xs px-2 py-1 bg-orange-100 text-orange-700 rounded-full font-medium">Out of Stock</span>
-            )}
-            {item.isDisabled && (
-              <span className="text-xs px-2 py-1 bg-gray-100 text-gray-600 rounded-full font-medium">Disabled</span>
-            )}
           </div>
           {item.description && (
             <div className="text-sm text-gray-500 truncate mt-1">{item.description}</div>
@@ -130,44 +152,33 @@ export const SortableMenuItem = ({
             )}
           </div>
 
-          <DropdownMenu>
+          <DropdownMenu modal={false}>
             <DropdownMenuTrigger asChild>
               <Button 
                 size="sm" 
-                variant="outline"
-                className="h-10 w-10 sm:h-8 sm:w-8 p-0 border-gray-200 hover:bg-gray-50 hover:text-gray-700 rounded-lg"
+                variant="ghost"
+                className="group h-8 p-0 hover:bg-transparent focus:bg-transparent active:bg-transparent"
               >
-                <MoreVertical className="h-4 w-4 text-gray-700" />
+                <StatusButton status={getItemStatus()} />
               </Button>
             </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="w-40">
+            <DropdownMenuContent align="end" className="w-40" sideOffset={4}>
               <DropdownMenuItem 
                 onClick={() => onStatusChange(item.id, 'active')}
-                className={`cursor-pointer !text-gray-600 focus:!bg-gray-50 focus:!text-gray-700 ${
-                  getItemStatus() === 'active' 
-                    ? '!bg-green-50 !text-green-700 font-medium' 
-                    : 'hover:!bg-gray-50 hover:!text-gray-700'
-                }`}
+                className="cursor-pointer flex items-center gap-2 text-green-700 hover:bg-green-50 hover:text-green-700 focus:bg-green-50 focus:text-green-700"
               >
                 Active
               </DropdownMenuItem>
               <DropdownMenuItem 
                 onClick={() => onStatusChange(item.id, 'outOfStock')}
-                className={`cursor-pointer !text-gray-600 focus:!bg-gray-50 focus:!text-gray-700 ${
-                  getItemStatus() === 'outOfStock' 
-                    ? '!bg-orange-50 !text-orange-700 font-medium' 
-                    : 'hover:!bg-gray-50 hover:!text-gray-700'
-                }`}
+                className="cursor-pointer flex items-center gap-2 text-orange-600 hover:bg-orange-50 hover:text-orange-700 focus:bg-orange-50 focus:text-orange-700"
               >
+    
                 Out of Stock
               </DropdownMenuItem>
               <DropdownMenuItem 
                 onClick={() => onStatusChange(item.id, 'disabled')}
-                className={`cursor-pointer !text-gray-600 focus:!bg-gray-50 focus:!text-gray-700 ${
-                  getItemStatus() === 'disabled' 
-                    ? '!bg-gray-100 !text-gray-700 font-medium' 
-                    : 'hover:!bg-gray-50 hover:!text-gray-700'
-                }`}
+                className="cursor-pointer flex items-center gap-2 text-gray-700 hover:bg-gray-50 hover:text-gray-700 focus:bg-gray-50 focus:text-gray-700"
               >
                 Disabled
               </DropdownMenuItem>

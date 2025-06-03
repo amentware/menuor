@@ -14,6 +14,7 @@ import Dashboard from "./pages/Dashboard";
 import MenuBuilder from "./pages/MenuBuilder";
 import QRCodePage from "./pages/QRCode";
 import EditProfile from "./pages/EditProfile";
+import Profile from "./pages/Profile";
 import Menu from "./pages/Menu";
 import Admin from "./pages/Admin";
 import AdminEdit from "./pages/AdminEdit";
@@ -68,6 +69,7 @@ const AppContent = () => {
             <Route path="/menu-builder" element={<MenuBuilder />} />
             <Route path="/qr-code" element={<QRCodePage />} />
             <Route path="/edit-profile" element={<EditProfile />} />
+            <Route path="/profile" element={<Profile />} />
           </Route>
           
           {/* Admin routes */}

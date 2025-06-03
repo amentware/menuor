@@ -1,7 +1,7 @@
 import { Link, useLocation } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import { Button } from '@/components/ui/button';
-import { Home, LayoutDashboard, Menu as MenuIcon, QrCode, Settings, LogOut, User } from 'lucide-react';
+import { Home, LayoutDashboard, Menu as MenuIcon, QrCode, Settings, LogOut, User, LogIn, UserPlus } from 'lucide-react';
 import MobileDrawer from './MobileDrawer';
 import { useEffect, useState } from 'react';
 import logo from '../assets/navicon.png';
@@ -18,13 +18,16 @@ const Navigation = () => {
     // Hide navigation immediately if it's a menu page
     if (isMenuPage) {
       setIsVisible(false);
-    } else {
-      // Small delay to ensure smooth transition when navigating back
-      const timer = setTimeout(() => {
-        setIsVisible(true);
-      }, 50);
-      return () => clearTimeout(timer);
+      return;
     }
+
+    // For non-menu pages, show navigation immediately
+    setIsVisible(true);
+
+    // Cleanup function to hide navigation when component unmounts
+    return () => {
+      setIsVisible(false);
+    };
   }, [location.pathname, isMenuPage]);
 
   // Don't render anything if it's a menu page
@@ -36,8 +39,8 @@ const Navigation = () => {
   const logoDestination = isAuthenticated ? "/dashboard" : "/";
 
   return (
-    <nav className={`fixed w-full bg-white text-black shadow-md z-50 transition-all duration-300 ease-in-out ${
-      isVisible ? 'translate-y-0 opacity-100' : '-translate-y-full opacity-0'
+    <nav className={`fixed w-full bg-white text-black shadow-md z-50 transition-transform duration-200 ease-out ${
+      isVisible ? 'translate-y-0' : '-translate-y-full'
     }`}>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between h-16">
@@ -70,7 +73,7 @@ const Navigation = () => {
                       : 'text-gray-600 hover:bg-gray-50 hover:text-gray-700'
                   }`}
                 >
-                  <User className="h-5 w-5" />
+                  <LogIn className="h-5 w-5" />
                   Login
                 </Link>
                 <Link 
@@ -81,7 +84,7 @@ const Navigation = () => {
                       : 'text-gray-600 hover:bg-gray-50 hover:text-gray-700'
                   }`}
                 >
-                  <User className="h-5 w-5" />
+                  <UserPlus className="h-5 w-5" />
                   Register
                 </Link>
               </>
@@ -121,6 +124,17 @@ const Navigation = () => {
                 >
                   <QrCode className="h-5 w-5" />
                   QR Code
+                </Link>
+                <Link
+                  to="/profile"
+                  className={`flex items-center gap-2 px-4 py-2 rounded-lg ${
+                    location.pathname === '/profile' 
+                      ? 'bg-gray-50 text-primary' 
+                      : 'text-gray-600 hover:bg-gray-50 hover:text-gray-700'
+                  }`}
+                >
+                  <User className="h-5 w-5" />
+                  Profile
                 </Link>
               </>
             )}
