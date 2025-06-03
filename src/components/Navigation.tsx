@@ -23,7 +23,7 @@ const Navigation = () => {
       return;
     }
 
-    // For non-menu pages, show navigation immediately
+    // For non-menu pages, show navigation immediately ok
     setIsVisible(true);
 
     // Close drawer when location changes
