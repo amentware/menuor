@@ -73,7 +73,7 @@ const Menu = () => {
         setRestaurant(restaurantData);
         setLoading(false);
         
-        // Set menu as fully loaded after a short delay to ensure all content is rendered
+        // Set menu as fully loaded after a short delayto ensure all content is rendered
         setTimeout(() => {
           setMenuFullyLoaded(true);
         }, 1000);
