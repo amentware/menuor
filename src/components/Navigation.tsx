@@ -4,7 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Home, LayoutDashboard, Menu as MenuIcon, QrCode, Settings, LogOut, User } from 'lucide-react';
 import MobileDrawer from './MobileDrawer';
 import { useEffect, useState } from 'react';
-import logo from '../assets/logo512.png';
+import logo from '../assets/navicon.png';
 
 const Navigation = () => {
   const { isAuthenticated, isAdmin, isOwner, logout } = useAuth();
@@ -43,7 +43,7 @@ const Navigation = () => {
         <div className="flex justify-between h-16">
           <div className="flex">
             <Link to={logoDestination} className="flex-shrink-0 flex items-center">
-              <img src={logo} alt="Menuor" className="h-12 w-auto" />
+              <img src={logo} alt="Menuor" className="h-6 w-auto" />
             </Link>
           </div>
           
