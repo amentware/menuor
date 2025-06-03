@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -16,9 +16,9 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { Alert, AlertDescription } from "@/components/ui/alert";
-import { Loader2 } from "lucide-react";
+import { RefreshCcw } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
 const formSchema = z.object({
@@ -37,7 +37,11 @@ const EditProfile = () => {
   const [error, setError] = useState<string | null>(null);
   const { currentUser } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
   const { toast } = useToast();
+
+  // Get the return path from state, default to dashboard
+  const returnPath = location.state?.from || "/dashboard";
 
   const form = useForm<FormData>({
     resolver: zodResolver(formSchema),
@@ -107,7 +111,7 @@ const EditProfile = () => {
         description: "Your restaurant profile has been saved successfully.",
       });
       
-      navigate("/dashboard");
+      navigate(returnPath);
     } catch (error) {
       console.error("Error updating restaurant profile:", error);
       setError("Failed to update profile. Please try again.");
@@ -118,24 +122,24 @@ const EditProfile = () => {
   if (loading) {
     return (
       <div className="page-container flex items-center justify-center min-h-[60vh]">
-        <Loader2 className="h-8 w-8 animate-spin text-primary" />
-        <span className="ml-2 text-primary">Loading profile...</span>
+        <div className="flex flex-col items-center">
+          <RefreshCcw className="h-8 w-8 animate-spin text-black" />
+          <p className="mt-4 text-lg text-black">Loading your restaurant profile...</p>
+        </div>
       </div>
     );
   }
 
   return (
     <div className="page-container">
-      <div className="max-w-3xl mx-auto">
-        <h1 className="text-4xl font-bold font-display mb-8 text-primary">
+      <div className="max-w-3xl mx-auto space-y-6">
+        {/* Page Heading */}
+        <h1 className="text-4xl font-bold font-display text-black">
           {restaurant ? "Edit Restaurant Profile" : "Create Restaurant Profile"}
         </h1>
         
-        <Card>
-          <CardHeader>
-            <CardTitle>Restaurant Information</CardTitle>
-          </CardHeader>
-          <CardContent>
+        <Card className="bg-white border border-gray-200">
+          <CardContent className="p-6">
             {error && (
               <Alert variant="destructive" className="mb-6">
                 <AlertDescription>{error}</AlertDescription>
@@ -144,84 +148,88 @@ const EditProfile = () => {
             
             <Form {...form}>
               <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-                <FormField
-                  control={form.control}
-                  name="name"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Restaurant Name</FormLabel>
-                      <FormControl>
-                        <Input 
-                          placeholder="The Tasty Fork" 
-                          {...field} 
-                          disabled={saving}
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                
-                <FormField
-                  control={form.control}
-                  name="location"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Location</FormLabel>
-                      <FormControl>
-                        <Input 
-                          placeholder="123 Main St, Anytown, USA" 
-                          {...field} 
-                          disabled={saving}
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                
-                <FormField
-                  control={form.control}
-                  name="contact"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Contact Information</FormLabel>
-                      <FormControl>
-                        <Input 
-                          placeholder="Phone: (123) 456-7890, Email: info@example.com" 
-                          {...field} 
-                          disabled={saving}
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                
-                <FormField
-                  control={form.control}
-                  name="description"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Restaurant Description</FormLabel>
-                      <FormControl>
-                        <Textarea 
-                          placeholder="Tell customers about your restaurant, cuisine, and specialties..." 
-                          {...field} 
-                          disabled={saving}
-                          rows={5}
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <FormField
+                    control={form.control}
+                    name="name"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Restaurant Name</FormLabel>
+                        <FormControl>
+                          <Input 
+                            placeholder="The Tasty Fork" 
+                            {...field} 
+                            disabled={saving}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  
+                  <FormField
+                    control={form.control}
+                    name="location"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Location</FormLabel>
+                        <FormControl>
+                          <Input 
+                            placeholder="123 Main St, Anytown, USA" 
+                            {...field} 
+                            disabled={saving}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <FormField
+                    control={form.control}
+                    name="contact"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Contact Information</FormLabel>
+                        <FormControl>
+                          <Input 
+                            placeholder="Phone: (123) 456-7890, Email: info@example.com" 
+                            {...field} 
+                            disabled={saving}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  
+                  <FormField
+                    control={form.control}
+                    name="description"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Restaurant Description</FormLabel>
+                        <FormControl>
+                          <Textarea 
+                            placeholder="Tell customers about your restaurant, cuisine, and specialties..." 
+                            {...field} 
+                            disabled={saving}
+                            rows={5}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
                 
                 <div className="flex justify-end space-x-4 pt-4">
                   <Button 
                     type="button" 
                     variant="outline" 
-                    onClick={() => navigate("/dashboard")}
+                    onClick={() => navigate(returnPath)}
                     disabled={saving}
                     className="hover:bg-gray-50 hover:text-black transition-colors duration-200"
                   >
@@ -234,7 +242,7 @@ const EditProfile = () => {
                   >
                     {saving ? (
                       <>
-                        <Loader2 className="mr-2 h-4 w-4 animate-spin" /> 
+                        <RefreshCcw className="mr-2 h-4 w-4 animate-spin" /> 
                         Saving...
                       </>
                     ) : (

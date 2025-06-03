@@ -3,7 +3,7 @@ import { Link, useLocation } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import { Button } from '@/components/ui/button';
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
-import { Menu, Home, LayoutDashboard, Menu as MenuIcon, QrCode, Settings, LogOut, User, X } from 'lucide-react';
+import { Menu, Home, LayoutDashboard, Menu as MenuIcon, QrCode, Settings, LogOut, User, LogIn, UserPlus } from 'lucide-react';
 import logo from '../assets/navicon.png';
 
 const MobileDrawer = () => {
@@ -19,13 +19,14 @@ const MobileDrawer = () => {
   const navigationItems = [
     ...(isAuthenticated ? [] : [
       { to: "/", label: "Home", icon: Home },
-      { to: "/login", label: "Login", icon: User },
-      { to: "/register", label: "Register", icon: User },
+      { to: "/login", label: "Login", icon: LogIn },
+      { to: "/register", label: "Register", icon: UserPlus },
     ]),
     ...(isOwner ? [
       { to: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
       { to: "/menu-builder", label: "Menu Builder", icon: MenuIcon },
       { to: "/qr-code", label: "QR Code", icon: QrCode },
+      { to: "/profile", label: "Profile", icon: User },
     ] : []),
     ...(isAdmin ? [
       { to: "/admin", label: "Admin Panel", icon: Settings },

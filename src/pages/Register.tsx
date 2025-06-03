@@ -111,7 +111,7 @@ const Register = () => {
         <CardHeader>
           <CardTitle className="text-3xl font-display text-center text-primary">Register</CardTitle>
           <CardDescription className="text-center ">
-            Create a MenuBuilder account for your restaurant
+            Create a Menuor account for your restaurant
           </CardDescription>
         </CardHeader>
         

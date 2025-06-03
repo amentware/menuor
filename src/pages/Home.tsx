@@ -112,7 +112,7 @@ const Home = () => {
             </span>
           </h2>
           <p className="text-xl mb-10 text-muted-foreground max-w-2xl mx-auto leading-relaxed">
-            Join thousands of restaurants that have already simplified their menu management with MenuBuilder.
+            Join thousands of restaurants that have already simplified their menu management with Menuor.
           </p>
           {!isAuthenticated && (
             <Link to="/register">

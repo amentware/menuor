@@ -472,7 +472,7 @@ const Menu = () => {
               <div className="w-2 h-2 bg-[hsl(44,88%,51%)] rounded-full animate-pulse" style={{animationDelay: '1s'}}></div>
             </div>
             <span className="text-lg font-semibold text-[hsl(50,75%,98%)]">
-              Crafted with MenuBuilder
+              Crafted with Menuor
             </span>
           </div>
         </div>

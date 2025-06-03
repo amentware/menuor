@@ -1,7 +1,7 @@
 import { Link, useLocation } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import { Button } from '@/components/ui/button';
-import { Home, LayoutDashboard, Menu as MenuIcon, QrCode, Settings, LogOut, User } from 'lucide-react';
+import { Home, LayoutDashboard, Menu as MenuIcon, QrCode, Settings, LogOut, User, LogIn, UserPlus } from 'lucide-react';
 import MobileDrawer from './MobileDrawer';
 import { useEffect, useState } from 'react';
 import logo from '../assets/navicon.png';
@@ -73,7 +73,7 @@ const Navigation = () => {
                       : 'text-gray-600 hover:bg-gray-50 hover:text-gray-700'
                   }`}
                 >
-                  <User className="h-5 w-5" />
+                  <LogIn className="h-5 w-5" />
                   Login
                 </Link>
                 <Link 
@@ -84,7 +84,7 @@ const Navigation = () => {
                       : 'text-gray-600 hover:bg-gray-50 hover:text-gray-700'
                   }`}
                 >
-                  <User className="h-5 w-5" />
+                  <UserPlus className="h-5 w-5" />
                   Register
                 </Link>
               </>
@@ -124,6 +124,17 @@ const Navigation = () => {
                 >
                   <QrCode className="h-5 w-5" />
                   QR Code
+                </Link>
+                <Link
+                  to="/profile"
+                  className={`flex items-center gap-2 px-4 py-2 rounded-lg ${
+                    location.pathname === '/profile' 
+                      ? 'bg-gray-50 text-primary' 
+                      : 'text-gray-600 hover:bg-gray-50 hover:text-gray-700'
+                  }`}
+                >
+                  <User className="h-5 w-5" />
+                  Profile
                 </Link>
               </>
             )}
