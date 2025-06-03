@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
@@ -119,8 +118,8 @@ const EditProfile = () => {
   if (loading) {
     return (
       <div className="page-container flex items-center justify-center min-h-[60vh]">
-        <Loader2 className="h-8 w-8 animate-spin text-restaurant-burgundy" />
-        <span className="ml-2">Loading profile...</span>
+        <Loader2 className="h-8 w-8 animate-spin text-primary" />
+        <span className="ml-2 text-primary">Loading profile...</span>
       </div>
     );
   }
@@ -128,7 +127,7 @@ const EditProfile = () => {
   return (
     <div className="page-container">
       <div className="max-w-3xl mx-auto">
-        <h1 className="text-4xl font-bold font-display mb-8 text-restaurant-burgundy">
+        <h1 className="text-4xl font-bold font-display mb-8 text-primary">
           {restaurant ? "Edit Restaurant Profile" : "Create Restaurant Profile"}
         </h1>
         
@@ -224,12 +223,13 @@ const EditProfile = () => {
                     variant="outline" 
                     onClick={() => navigate("/dashboard")}
                     disabled={saving}
+                    className="hover:bg-gray-50 hover:text-black transition-colors duration-200"
                   >
                     Cancel
                   </Button>
                   <Button 
                     type="submit"
-                    className="bg-restaurant-burgundy hover:bg-restaurant-burgundy/90"
+                    className="bg-primary text-primary-foreground hover:bg-secondary hover:text-secondary-foreground transition-colors duration-200"
                     disabled={saving}
                   >
                     {saving ? (
