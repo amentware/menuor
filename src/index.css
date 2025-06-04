@@ -111,10 +111,15 @@
     @apply text-foreground;
     font-family: var(--body-font, 'Lato'), sans-serif;
     color: black;
+    -webkit-user-select: none;  /* Safari, Chrome (iOS & Android) */
+    -moz-user-select: none;     /* Firefox */
+    -ms-user-select: none;      /* Internet Explorer */
+    user-select: none;          /* Standard */
+    -webkit-touch-callout: none; /* Disable long press menu on iOS */
   }
 
   h1, h2, h3, h4, h5, h6 {
-    font-family: var(--heading-font, 'Playfair Display'), serif;
+    font-family: var(--heading-font, 'Playfair sDisplay'), serif;
     color: black;
   }
 }
