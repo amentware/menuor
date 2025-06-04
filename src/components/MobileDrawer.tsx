@@ -1,25 +1,74 @@
-import { useState, useEffect } from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import { useState, useEffect, useCallback, useRef } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import { Button } from '@/components/ui/button';
-import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
-import { Menu, Home, LayoutDashboard, Menu as MenuIcon, QrCode, Settings, LogOut, User, LogIn, UserPlus } from 'lucide-react';
+import { Menu, Home, LayoutDashboard, Menu as MenuIcon, QrCode, Settings, LogOut, User, LogIn, UserPlus, X } from 'lucide-react';
 import logo from '../assets/navicon.png';
 
 const MobileDrawer = () => {
   const { isAuthenticated, isAdmin, isOwner, logout } = useAuth();
   const [isOpen, setIsOpen] = useState(false);
+  const [isRendered, setIsRendered] = useState(false);
   const location = useLocation();
+  const navigate = useNavigate();
+  const touchStartX = useRef(0);
+  const isNavigating = useRef(false);
   
   const isActive = (path: string) => location.pathname === path;
-  const closeDrawer = () => setIsOpen(false);
-
-  const logoDestination = isAuthenticated ? "/dashboard" : "/";
-
-  // Close drawer on route change to prevent conflicts with browser navigation
-  useEffect(() => {
+  
+  const closeDrawer = useCallback(() => {
     setIsOpen(false);
-  }, [location.pathname]);
+    // Remove drawer from DOM after animation
+    setTimeout(() => {
+      setIsRendered(false);
+    }, 200);
+  }, []);
+
+  const openDrawer = useCallback(() => {
+    setIsRendered(true);
+    // Small delay to ensure DOM is ready before animation
+    requestAnimationFrame(() => {
+      setIsOpen(true);
+    });
+  }, []);
+
+  // Handle navigation with delay to prevent drawer flash
+  const handleNavigation = useCallback((to: string) => {
+    if (isNavigating.current) return;
+    isNavigating.current = true;
+    closeDrawer();
+    
+    setTimeout(() => {
+      navigate(to);
+      isNavigating.current = false;
+    }, 200);
+  }, [navigate, closeDrawer]);
+
+  // Handle touch events to detect back gesture
+  useEffect(() => {
+    if (!isRendered) return;
+
+    const handleTouchStart = (e: TouchEvent) => {
+      touchStartX.current = e.touches[0].clientX;
+    };
+
+    const handleTouchMove = (e: TouchEvent) => {
+      const touchX = e.touches[0].clientX;
+      const deltaX = touchX - touchStartX.current;
+
+      if (touchStartX.current < 20 && deltaX > 0) {
+        closeDrawer();
+      }
+    };
+
+    document.addEventListener('touchstart', handleTouchStart);
+    document.addEventListener('touchmove', handleTouchMove);
+
+    return () => {
+      document.removeEventListener('touchstart', handleTouchStart);
+      document.removeEventListener('touchmove', handleTouchMove);
+    };
+  }, [closeDrawer, isRendered]);
 
   // Prevent body scroll when drawer is open
   useEffect(() => {
@@ -53,75 +102,102 @@ const MobileDrawer = () => {
 
   return (
     <>
-      {/* Backdrop overlay */}
-      {isOpen && (
-        <div 
-          className="fixed inset-0 bg-black/20 z-40 md:hidden"
-          onClick={closeDrawer}
-        />
-      )}
-      
-      <Sheet open={isOpen} onOpenChange={setIsOpen}>
-        <SheetTrigger asChild>
-          <Button variant="ghost" size="icon" className="md:hidden">
-            <Menu className="h-6 w-6" />
-          </Button>
-        </SheetTrigger>
-        <SheetContent 
-          side="right"
-          className="w-80 bg-white z-50"
-          onEscapeKeyDown={closeDrawer}
-        >
+      <Button 
+        variant="ghost" 
+        size="icon" 
+        className="md:hidden"
+        onClick={openDrawer}
+        style={{ WebkitTapHighlightColor: 'transparent' }}
+      >
+        <Menu className="h-6 w-6" />
+      </Button>
+
+      {isRendered && (
+        <>
           <div 
-            className="h-full overflow-hidden"
+            className={`fixed inset-0 h-[100dvh] bg-black/50 z-40 md:hidden transition-opacity duration-200 ${
+              isOpen ? 'opacity-100' : 'opacity-0'
+            }`}
+            onClick={closeDrawer}
+            style={{ 
+              WebkitTapHighlightColor: 'transparent',
+              position: 'fixed',
+              top: 0,
+              left: 0,
+              right: 0,
+              bottom: 0
+            }}
+          />
+          
+          <div 
+            className={`fixed right-0 top-0 z-50 h-[100dvh] w-80 bg-white transform transition-transform duration-200 ease-out shadow-lg ${
+              isOpen ? 'translate-x-0' : 'translate-x-full'
+            }`}
+            style={{
+              backgroundColor: 'white',
+              boxShadow: '-4px 0 6px -1px rgba(0, 0, 0, 0.1), -2px 0 4px -1px rgba(0, 0, 0, 0.06)'
+            }}
           >
-            <SheetHeader className="text-left border-b pb-4">
-              <SheetTitle className="flex items-center">
-                <img src={logo} alt="Menuor" className="h-6 w-auto" />
-              </SheetTitle>
-            </SheetHeader>
-            
-            <div className="flex flex-col justify-between h-[calc(100vh-120px)] pt-6 pb-8">
-              <nav className="flex-1 space-y-2 overflow-y-auto">
-                {navigationItems.map((item) => {
-                  const Icon = item.icon;
-                  return (
-                    <Link
-                      key={item.to}
-                      to={item.to}
-                      onClick={closeDrawer}
-                      className={`flex items-center gap-3 px-4 py-3 rounded-lg transition-colors ${
-                        isActive(item.to)
-                          ? 'bg-gray-50 text-primary'
-                          : 'text-gray-600 hover:bg-gray-50 hover:text-gray-700'
-                      }`}
-                    >
-                      <Icon className="h-5 w-5" />
-                      {item.label}
-                    </Link>
-                  );
-                })}
-              </nav>
-              
-              {isAuthenticated && (
-                <div className="border-t pt-4">
+            <div className="h-full flex flex-col bg-white">
+              <div className="p-4 border-b bg-white">
+                <div className="flex items-center justify-between">
+                  <img src={logo} alt="Menuor" className="h-6 w-auto" />
                   <Button
                     variant="ghost"
-                    onClick={() => {
-                      logout();
-                      closeDrawer();
-                    }}
-                    className="w-full justify-start border-red-300 text-red-600 hover:bg-red-50 hover:text-red-700 hover:border-red-400 flex items-center gap-2 transition-colors"
+                    size="icon"
+                    onClick={closeDrawer}
+                    className="h-8 w-8 rounded-full hover:bg-gray-100"
+                    style={{ WebkitTapHighlightColor: 'transparent' }}
                   >
-                    <LogOut className="h-5 w-5 mr-3" />
-                    Logout
+                    <X className="h-5 w-5" />
+                    <span className="sr-only">Close</span>
                   </Button>
                 </div>
-              )}
+              </div>
+              
+              <div className="flex flex-col justify-between flex-1 h-[calc(100dvh-64px)] bg-white">
+                <nav className="flex-1 px-4 py-6 space-y-2 overflow-y-auto bg-white">
+                  {navigationItems.map((item) => {
+                    const Icon = item.icon;
+                    return (
+                      <button
+                        key={item.to}
+                        onClick={() => handleNavigation(item.to)}
+                        className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-colors ${
+                          isActive(item.to)
+                            ? 'bg-gray-50 text-primary'
+                            : 'text-gray-600 hover:bg-gray-50 hover:text-gray-700'
+                        }`}
+                        style={{ WebkitTapHighlightColor: 'transparent' }}
+                      >
+                        <Icon className="h-5 w-5" />
+                        {item.label}
+                      </button>
+                    );
+                  })}
+                </nav>
+                
+                {isAuthenticated && (
+                  <div className="px-4 py-4 pb-10 border-t bg-white">
+                    <Button
+                      variant="ghost"
+                      onClick={() => {
+                        logout();
+                        closeDrawer();
+                      }}
+                      className="group w-full bg-primary justify-start border-red-300 text-primary-foreground hover:bg-secondary hover:text-secondary-foreground flex items-center gap-2 transition-colors"
+                      style={{ WebkitTapHighlightColor: 'transparent' }}
+                    >
+                      <LogOut className="h-5 w-5 mr-3 group-hover:text-secondary-foreground" />
+                      Logout
+                    </Button>
+                  </div>
+                )}
+              </div>
             </div>
           </div>
-        </SheetContent>
-      </Sheet>
+        </>
+      )}
     </>
   );
 };
