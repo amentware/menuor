@@ -25,15 +25,12 @@ const MobileDrawer = () => {
   useEffect(() => {
     if (isOpen) {
       document.body.style.overflow = 'hidden';
-      document.body.style.touchAction = 'none';
     } else {
       document.body.style.overflow = '';
-      document.body.style.touchAction = '';
     }
 
     return () => {
       document.body.style.overflow = '';
-      document.body.style.touchAction = '';
     };
   }, [isOpen]);
 
@@ -56,12 +53,11 @@ const MobileDrawer = () => {
 
   return (
     <>
-      {/* Backdrop overlay to prevent gesture conflicts */}
+      {/* Backdrop overlay */}
       {isOpen && (
         <div 
           className="fixed inset-0 bg-black/20 z-40 md:hidden"
           onClick={closeDrawer}
-          style={{ touchAction: 'none' }}
         />
       )}
       
@@ -74,23 +70,7 @@ const MobileDrawer = () => {
         <SheetContent 
           side="right"
           className="w-80 bg-white z-50"
-          style={{
-            touchAction: 'pan-y',
-            overscrollBehavior: 'contain',
-            WebkitOverflowScrolling: 'touch'
-          }}
-          onInteractOutside={(e) => {
-            // Prevent closing when interacting outside if it's a swipe gesture
-            const target = e.target as HTMLElement;
-            if (target.closest('[data-radix-collection-item]')) {
-              e.preventDefault();
-            }
-          }}
           onEscapeKeyDown={closeDrawer}
-          onPointerDownOutside={() => {
-            // Let the backdrop handle closing instead of this event
-            // This prevents conflicts with swipe gestures
-          }}
         >
           <div 
             className="h-full overflow-hidden"

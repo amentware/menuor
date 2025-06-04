@@ -8,7 +8,6 @@
     -moz-user-select: none;
     -ms-user-select: none;
     user-select: none;
-    touch-action: pan-x pan-y pinch-zoom; /* Allow both horizontal and vertical touch actions */
   }
 
   /* Allow text selection in input fields and textareas */
@@ -17,15 +16,6 @@
     -moz-user-select: text;
     -ms-user-select: text;
     user-select: text;
-  }
-
-  /* Specific handling for draggable elements */
-  [data-dnd-draggable="true"],
-  [role="button"],
-  [data-sortable="true"] {
-    touch-action: none !important; /* Enable all touch interactions for draggable elements */
-    user-select: none;
-    -webkit-user-drag: none;
   }
 
   /* Hide scrollbars while maintaining scroll functionality */
@@ -42,7 +32,6 @@
   html, body {
     scroll-behavior: smooth;
     -webkit-overflow-scrolling: touch;
-    overscroll-behavior: none;
     overflow-x: hidden;
     position: fixed;
     width: 100%;
@@ -54,6 +43,5 @@
     height: 100%;
     overflow-y: auto;
     -webkit-overflow-scrolling: touch;
-    overscroll-behavior: contain;
   }
 } 
