@@ -8,6 +8,7 @@
     -moz-user-select: none;
     -ms-user-select: none;
     user-select: none;
+    touch-action: manipulation; /* Allow pan/zoom but optimize for touch */
   }
 
   /* Allow text selection in input fields and textareas */
@@ -16,6 +17,12 @@
     -moz-user-select: text;
     -ms-user-select: text;
     user-select: text;
+  }
+
+  /* Allow drag interactions for specific elements */
+  [data-dnd-draggable="true"] {
+    touch-action: none; /* Enable drag for draggable elements */
+    user-select: none;
   }
 
   /* Hide scrollbars while maintaining scroll functionality */
@@ -32,9 +39,7 @@
   html, body {
     scroll-behavior: smooth;
     -webkit-overflow-scrolling: touch;
-    overscroll-behavior: none;
-    overscroll-behavior-x: none;
-    overscroll-behavior-y: none;
+    overscroll-behavior-y: contain;
     overflow-x: hidden;
     position: fixed;
     width: 100%;
