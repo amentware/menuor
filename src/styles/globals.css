@@ -8,8 +8,7 @@
     -moz-user-select: none;
     -ms-user-select: none;
     user-select: none;
-    touch-action: manipulation; /* Allow pan/zoom but optimize for touch */
-    overscroll-behavior-x: none; /* Prevent horizontal overscroll */
+    touch-action: pan-x pan-y pinch-zoom; /* Allow both horizontal and vertical touch actions */
   }
 
   /* Allow text selection in input fields and textareas */
@@ -20,10 +19,13 @@
     user-select: text;
   }
 
-  /* Allow drag interactions for specific elements */
-  [data-dnd-draggable="true"] {
-    touch-action: none; /* Enable drag for draggable elements */
+  /* Specific handling for draggable elements */
+  [data-dnd-draggable="true"],
+  [role="button"],
+  [data-sortable="true"] {
+    touch-action: none !important; /* Enable all touch interactions for draggable elements */
     user-select: none;
+    -webkit-user-drag: none;
   }
 
   /* Hide scrollbars while maintaining scroll functionality */
@@ -45,7 +47,6 @@
     position: fixed;
     width: 100%;
     height: 100%;
-    touch-action: pan-y pinch-zoom; /* Only allow vertical scrolling and pinch zoom */
   }
 
   /* Main content container for scrolling */
@@ -53,6 +54,6 @@
     height: 100%;
     overflow-y: auto;
     -webkit-overflow-scrolling: touch;
-    overscroll-behavior-x: none;
+    overscroll-behavior: contain;
   }
 } 
