@@ -208,8 +208,7 @@ const MenuBuilder = () => {
   const sensors = useSensors(
     useSensor(PointerSensor, {
       activationConstraint: {
-        distance: 3,
-        delay: 0,
+        distance: 8,
       },
     }),
     useSensor(KeyboardSensor, {

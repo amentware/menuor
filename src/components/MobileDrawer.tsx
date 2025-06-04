@@ -74,20 +74,6 @@ const MobileDrawer = () => {
         >
           <div 
             className="h-full overflow-hidden"
-            onTouchStart={(e) => {
-              // Prevent swipe gestures from propagating
-              e.stopPropagation();
-            }}
-            onTouchMove={(e) => {
-              // Allow vertical scrolling but prevent horizontal swipes
-              const touch = e.touches[0];
-              const startX = touch.clientX;
-              
-              // If swipe starts from the left edge, prevent it
-              if (startX < 20) {
-                e.preventDefault();
-              }
-            }}
           >
             <SheetHeader className="text-left border-b pb-4">
               <SheetTitle className="flex items-center">
