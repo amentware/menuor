@@ -25,6 +25,7 @@ import ForgotPassword from "./pages/ForgotPassword";
 // Components
 import Navigation from "./components/Navigation";
 import ProtectedRoute from "./components/ProtectedRoute";
+import { RefreshCcw } from "lucide-react";
 
 const queryClient = new QueryClient();
 
@@ -39,7 +40,14 @@ const RootRedirect = () => {
   }
 
   if (loading) {
-    return null;
+    return (
+      <div className="page-container flex items-center justify-center min-h-[60vh]">
+        <div className="flex flex-col items-center">
+          <RefreshCcw className="h-8 w-8 animate-spin text-black" />
+          <p className="mt-4 text-lg text-black">Loading...</p>
+        </div>
+      </div>
+    );
   }
 
   if (isAuthenticated) {
@@ -52,25 +60,7 @@ const RootRedirect = () => {
 // Wrapper component to conditionally render Navigation
 const AppContent = () => {
   const location = useLocation();
-  const { loading } = useAuth();
   const isMenuPage = location.pathname.startsWith('/menu/');
-
-  useEffect(() => {
-    // Remove the root loader once the auth state is determined
-    if (!loading) {
-      const rootLoader = document.getElementById('root-loader');
-      if (rootLoader) {
-        rootLoader.classList.add('fade-out');
-        setTimeout(() => {
-          rootLoader.remove();
-        }, 300);
-      }
-    }
-  }, [loading]);
-
-  if (loading) {
-    return null; // Let the root loader handle the initial loading state
-  }
 
   return (
     <div className="min-h-screen flex flex-col">
