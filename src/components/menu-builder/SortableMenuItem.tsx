@@ -90,6 +90,7 @@ export const SortableMenuItem = ({
       ref={setNodeRef}
       style={style}
       {...attributes}
+      data-sortable="true"
       className={`group bg-white rounded-lg border border-gray-200 mb-3 p-3 ${item.isDisabled ? 'opacity-60' : ''} ${isDragging ? 'rotate-2' : ''}`}
     >
       <div className="flex flex-col sm:flex-row sm:items-center gap-3">
