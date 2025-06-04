@@ -216,7 +216,6 @@ const MenuBuilder = () => {
     })
   );
 
-  
   const fetchRestaurantData = async () => {
     if (!currentUser) {
       setLoading(false);
