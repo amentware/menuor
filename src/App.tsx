@@ -25,6 +25,7 @@ import ForgotPassword from "./pages/ForgotPassword";
 // Components
 import Navigation from "./components/Navigation";
 import ProtectedRoute from "./components/ProtectedRoute";
+import { RefreshCcw } from "lucide-react";
 
 const queryClient = new QueryClient();
 
@@ -39,7 +40,14 @@ const RootRedirect = () => {
   }
 
   if (loading) {
-    return null;
+    return (
+      <div className="page-container flex items-center justify-center min-h-[60vh]">
+        <div className="flex flex-col items-center">
+          <RefreshCcw className="h-8 w-8 animate-spin text-black" />
+          <p className="mt-4 text-lg text-black">Loading...</p>
+        </div>
+      </div>
+    );
   }
 
   if (isAuthenticated) {
