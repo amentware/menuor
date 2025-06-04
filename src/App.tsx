@@ -52,25 +52,7 @@ const RootRedirect = () => {
 // Wrapper component to conditionally render Navigation
 const AppContent = () => {
   const location = useLocation();
-  const { loading } = useAuth();
   const isMenuPage = location.pathname.startsWith('/menu/');
-
-  useEffect(() => {
-    // Remove the root loader once the auth state is determined
-    if (!loading) {
-      const rootLoader = document.getElementById('root-loader');
-      if (rootLoader) {
-        rootLoader.classList.add('fade-out');
-        setTimeout(() => {
-          rootLoader.remove();
-        }, 300);
-      }
-    }
-  }, [loading]);
-
-  if (loading) {
-    return null; // Let the root loader handle the initial loading state
-  }
 
   return (
     <div className="min-h-screen flex flex-col">

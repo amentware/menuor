@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import { Button } from '@/components/ui/button';
@@ -15,6 +15,27 @@ const MobileDrawer = () => {
   const closeDrawer = () => setIsOpen(false);
 
   const logoDestination = isAuthenticated ? "/dashboard" : "/";
+
+  // Close drawer on route change to prevent conflicts with browser navigation
+  useEffect(() => {
+    setIsOpen(false);
+  }, [location.pathname]);
+
+  // Prevent body scroll when drawer is open
+  useEffect(() => {
+    if (isOpen) {
+      document.body.style.overflow = 'hidden';
+      document.body.style.touchAction = 'none';
+    } else {
+      document.body.style.overflow = '';
+      document.body.style.touchAction = '';
+    }
+
+    return () => {
+      document.body.style.overflow = '';
+      document.body.style.touchAction = '';
+    };
+  }, [isOpen]);
 
   const navigationItems = [
     ...(isAuthenticated ? [] : [
@@ -34,68 +55,108 @@ const MobileDrawer = () => {
   ];
 
   return (
-    <Sheet open={isOpen} onOpenChange={setIsOpen}>
-      <SheetTrigger asChild>
-        <Button variant="ghost" size="icon" className="md:hidden">
-          <Menu className="h-6 w-6" />
-        </Button>
-      </SheetTrigger>
-      <SheetContent 
-        side="right" 
-        className="w-80 bg-white touch-none select-none [touch-action:pan-y]" 
-        onPointerDownCapture={(e) => {
-          // Prevent gesture handling if it starts from the edge
-          if (e.clientX > window.innerWidth - 20) {
-            e.stopPropagation();
-          }
-        }}
-      >
-        <SheetHeader className="text-left">
-          <SheetTitle className="flex items-center">
-            <img src={logo} alt="Menuor" className="h-6 w-auto" />
-          </SheetTitle>
-        </SheetHeader>
-        
-        <div className="flex flex-col justify-between h-[calc(100vh-80px)] pt-6 pb-8">
-          <nav className="flex-1 space-y-2">
-            {navigationItems.map((item) => {
-              const Icon = item.icon;
-              return (
-                <Link
-                  key={item.to}
-                  to={item.to}
-                  onClick={closeDrawer}
-                  className={`flex items-center gap-3 px-4 py-3 rounded-lg ${
-                    isActive(item.to)
-                      ? 'bg-gray-50 text-primary'
-                      : 'text-gray-600 hover:bg-gray-50 hover:text-gray-700'
-                  }`}
-                >
-                  <Icon className="h-5 w-5" />
-                  {item.label}
-                </Link>
-              );
-            })}
-          </nav>
-          
-          {isAuthenticated && (
-            <div className="border-t pt-4">
-              <Button
-                variant="ghost"
-                onClick={() => {
-                  logout();
-                  closeDrawer();
-                }}
-                className="w-full justify-start border-red-300 text-red-600 hover:bg-red-50 hover:text-red-700 hover:border-red-400 flex items-center gap-2 transition-colors"
-              >
-                <LogOut className="h-5 w-5 mr-3" />
-                Logout
-              </Button>
+    <>
+      {/* Backdrop overlay to prevent gesture conflicts */}
+      {isOpen && (
+        <div 
+          className="fixed inset-0 bg-black/20 z-40 md:hidden"
+          onClick={closeDrawer}
+          style={{ touchAction: 'none' }}
+        />
+      )}
+      
+      <Sheet open={isOpen} onOpenChange={setIsOpen}>
+        <SheetTrigger asChild>
+          <Button variant="ghost" size="icon" className="md:hidden">
+            <Menu className="h-6 w-6" />
+          </Button>
+        </SheetTrigger>
+        <SheetContent 
+          side="right"
+          className="w-80 bg-white z-50"
+          style={{
+            touchAction: 'pan-y',
+            overscrollBehavior: 'contain',
+            WebkitOverflowScrolling: 'touch'
+          }}
+          onInteractOutside={(e) => {
+            // Prevent closing when interacting outside if it's a swipe gesture
+            const target = e.target as HTMLElement;
+            if (target.closest('[data-radix-collection-item]')) {
+              e.preventDefault();
+            }
+          }}
+          onEscapeKeyDown={closeDrawer}
+          onPointerDownOutside={() => {
+            // Let the backdrop handle closing instead of this event
+            // This prevents conflicts with swipe gestures
+          }}
+        >
+          <div 
+            className="h-full overflow-hidden"
+            onTouchStart={(e) => {
+              // Prevent swipe gestures from propagating
+              e.stopPropagation();
+            }}
+            onTouchMove={(e) => {
+              // Allow vertical scrolling but prevent horizontal swipes
+              const touch = e.touches[0];
+              const startX = touch.clientX;
+              
+              // If swipe starts from the left edge, prevent it
+              if (startX < 20) {
+                e.preventDefault();
+              }
+            }}
+          >
+            <SheetHeader className="text-left border-b pb-4">
+              <SheetTitle className="flex items-center">
+                <img src={logo} alt="Menuor" className="h-6 w-auto" />
+              </SheetTitle>
+            </SheetHeader>
+            
+            <div className="flex flex-col justify-between h-[calc(100vh-120px)] pt-6 pb-8">
+              <nav className="flex-1 space-y-2 overflow-y-auto">
+                {navigationItems.map((item) => {
+                  const Icon = item.icon;
+                  return (
+                    <Link
+                      key={item.to}
+                      to={item.to}
+                      onClick={closeDrawer}
+                      className={`flex items-center gap-3 px-4 py-3 rounded-lg transition-colors ${
+                        isActive(item.to)
+                          ? 'bg-gray-50 text-primary'
+                          : 'text-gray-600 hover:bg-gray-50 hover:text-gray-700'
+                      }`}
+                    >
+                      <Icon className="h-5 w-5" />
+                      {item.label}
+                    </Link>
+                  );
+                })}
+              </nav>
+              
+              {isAuthenticated && (
+                <div className="border-t pt-4">
+                  <Button
+                    variant="ghost"
+                    onClick={() => {
+                      logout();
+                      closeDrawer();
+                    }}
+                    className="w-full justify-start border-red-300 text-red-600 hover:bg-red-50 hover:text-red-700 hover:border-red-400 flex items-center gap-2 transition-colors"
+                  >
+                    <LogOut className="h-5 w-5 mr-3" />
+                    Logout
+                  </Button>
+                </div>
+              )}
             </div>
-          )}
-        </div>
-      </SheetContent>
-    </Sheet>
+          </div>
+        </SheetContent>
+      </Sheet>
+    </>
   );
 };
 
