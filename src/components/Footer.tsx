@@ -66,15 +66,17 @@ const Footer = () => {
             <ul className="space-y-3">
               <li className="flex items-center gap-2 text-primary-foreground/80">
                 <Mail className="h-4 w-4" />
-                <span>support@menuor.com</span>
+                <span>menuor.amentware@gmail.com</span>
               </li>
               <li className="flex items-center gap-2 text-primary-foreground/80">
                 <Phone className="h-4 w-4" />
-                <span>+1 (555) 123-4567</span>
+                <span>+91 9207624728</span>
               </li>
               <li className="flex items-start gap-2 text-primary-foreground/80">
                 <MapPin className="h-4 w-4 mt-1" />
-                <span>123 Tech Street<br />Innovation District<br />San Francisco, CA 94105</span>
+                <span>4th floor,695<br />
+                      14th cross,29th main road<br />
+                      Bangalore,560076</span>
               </li>
             </ul>
           </div>
