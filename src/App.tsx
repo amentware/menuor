@@ -29,6 +29,7 @@ import UserMessages from "./pages/UserMessages";
 // Components
 import Navigation from "./components/Navigation";
 import ProtectedRoute from "./components/ProtectedRoute";
+import ScrollToTop from "./components/ScrollToTop";
 import { RefreshCcw } from "lucide-react";
 
 const queryClient = new QueryClient();
@@ -69,6 +70,7 @@ const AppContent = () => {
 
   return (
     <div className="min-h-screen flex flex-col">
+      <ScrollToTop />
       {!isMenuPage && <Navigation />}
       <div className={`flex-grow ${!isMenuPage ? 'pt-16' : ''}`}>
         <Routes>

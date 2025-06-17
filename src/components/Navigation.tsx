@@ -62,17 +62,6 @@ const Navigation = () => {
             {!isAuthenticated && (
               <>
                 <Link
-                  to="/"
-                  className={`flex items-center gap-2 px-4 py-2 rounded-lg ${
-                    location.pathname === '/'
-                      ? 'bg-gray-50 text-primary'
-                      : 'text-gray-600 hover:bg-gray-50 hover:text-gray-700'
-                  }`}
-                >
-                  <Home className="h-5 w-5" />
-                  Home
-                </Link>
-                <Link
                   to="/about-us"
                   className={`flex items-center gap-2 px-4 py-2 rounded-lg ${
                     location.pathname === '/about-us'

@@ -8,6 +8,7 @@ import { useUnreadMessages } from '@/hooks/useUnreadMessages';
 import { Link } from 'react-router-dom';
 import { cn } from '@/lib/utils';
 import { buttonVariants } from '@/components/ui/button';
+import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 
 const MobileDrawer = () => {
   const { isAuthenticated, isAdmin, isOwner, logout } = useAuth();
@@ -88,28 +89,65 @@ const MobileDrawer = () => {
     };
   }, [isOpen]);
 
-  const navigationItems = [
-    // Public routes for non-authenticated users
-    ...(isAuthenticated ? [] : [
-      { to: "/", label: "Home", icon: Home },
-      { to: "/about-us", label: "About Us", icon: Info },
-      { to: "/contact-us", label: "Contact Us", icon: Mail },
-      { to: "/login", label: "Login", icon: LogIn },
-      { to: "/register", label: "Register", icon: UserPlus },
-    ]),
-    // Restaurant owner routes
-    ...(isOwner ? [
-      { to: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
-      { to: "/menu-builder", label: "Menu Builder", icon: MenuIcon },
-      { to: "/qr-code", label: "QR Code", icon: QrCode },
-      { to: "/settings", label: "Settings", icon: Settings },
-    ] : []),
-    // Admin routes
-    ...(isAdmin ? [
-      { to: "/admin", label: "Admin Panel", icon: Settings },
-      { to: "/admin/messages", label: "Messages", icon: Mail, badge: unreadMessages > 0 ? unreadMessages : null },
-    ] : []),
-  ];
+  const navigationItems = !isAuthenticated
+    ? [
+        {
+          to: '/about-us',
+          icon: Info,
+          label: 'About Us',
+        },
+        {
+          to: '/contact-us',
+          icon: Mail,
+          label: 'Contact Us',
+        },
+        {
+          to: '/login',
+          icon: LogIn,
+          label: 'Login',
+        },
+        {
+          to: '/register',
+          icon: UserPlus,
+          label: 'Register',
+        },
+      ]
+    : isAdmin
+    ? [
+        {
+          to: '/admin',
+          icon: Settings,
+          label: 'Admin Panel',
+        },
+        {
+          to: '/admin/messages',
+          icon: Mail,
+          label: 'Messages',
+          badge: unreadMessages > 0 ? unreadMessages : undefined,
+        },
+      ]
+    : [
+        {
+          to: '/dashboard',
+          icon: LayoutDashboard,
+          label: 'Dashboard',
+        },
+        {
+          to: '/menu-builder',
+          icon: MenuIcon,
+          label: 'Menu Builder',
+        },
+        {
+          to: '/qr-code',
+          icon: QrCode,
+          label: 'QR Code',
+        },
+        {
+          to: '/settings',
+          icon: Settings,
+          label: 'Settings',
+        },
+      ];
 
   return (
     <>
