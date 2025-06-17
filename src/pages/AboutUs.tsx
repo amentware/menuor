@@ -1,10 +1,10 @@
-import { Building2, Users, Award, Heart } from 'lucide-react';
+import { Building2, Users, Award, Heart, Info } from 'lucide-react';
 
 const AboutUs = () => {
   return (
     <div className="page-container py-12">
       <div className="max-w-4xl mx-auto">
-        <h1 className="text-4xl font-bold text-center mb-8">About MenuOR</h1>
+        <h1 className="text-4xl font-bold font-display text-black mb-8 text-center">About Menuor</h1>
         
         <div className="space-y-12">
           {/* Our Story Section */}
@@ -14,7 +14,7 @@ const AboutUs = () => {
               <h2 className="text-2xl font-semibold">Our Story</h2>
             </div>
             <p className="text-gray-600 leading-relaxed">
-              Founded in 2024, MenuOR emerged from a simple yet powerful idea: to revolutionize how restaurants connect with their customers. 
+              Founded in 2024, Menuor emerged from a simple yet powerful idea: to revolutionize how restaurants connect with their customers. 
               We noticed that traditional paper menus were becoming outdated in our digital world, and restaurants needed a modern solution 
               to showcase their offerings.
             </p>

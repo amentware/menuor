@@ -1,15 +1,19 @@
 import { Link, useLocation } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import { Button } from '@/components/ui/button';
-import { Home, LayoutDashboard, Menu as MenuIcon, QrCode, Settings, LogOut, User, LogIn, UserPlus } from 'lucide-react';
+import { Home, LayoutDashboard, Menu as MenuIcon, QrCode, Settings, LogOut, LogIn, UserPlus, Info, Mail, Store, MessageSquare } from 'lucide-react';
 import MobileDrawer from './MobileDrawer';
 import { useEffect, useState } from 'react';
 import logo from '../assets/navicon.png';
+import { useUnreadMessages } from '@/hooks/useUnreadMessages';
+import { cn } from '@/lib/utils';
+import { buttonVariants } from '@/components/ui/button';
 
 const Navigation = () => {
   const { isAuthenticated, isAdmin, isOwner, logout } = useAuth();
   const location = useLocation();
   const [isVisible, setIsVisible] = useState(false);
+  const unreadMessages = useUnreadMessages();
   
   const isActive = (path: string) => location.pathname === path;
   const isMenuPage = location.pathname.includes('/menu/');
@@ -39,57 +43,60 @@ const Navigation = () => {
   const logoDestination = isAuthenticated ? "/dashboard" : "/";
 
   return (
-    <nav className={`fixed w-full bg-white text-black shadow-md z-50 transition-transform duration-200 ease-out ${
-      isVisible ? 'translate-y-0' : '-translate-y-full'
-    }`}>
+    <nav
+      className={`fixed top-0 left-0 right-0 bg-white border-b border-gray-200 z-50 transition-opacity duration-300 ${
+        isVisible ? 'opacity-100' : 'opacity-0 pointer-events-none'
+      }`}
+    >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between h-16">
+          {/* Logo Section */}
           <div className="flex">
-            <Link to={logoDestination} className="flex-shrink-0 flex items-center">
-              <img src={logo} alt="Menuor" className="h-6 w-auto" />
+            <Link to={logoDestination} className="flex items-center">
+              <img src={logo} alt="MenuOR Logo" className="h-8 w-auto" />
             </Link>
           </div>
-          
-          {/* Desktop Navigation */}
-          <div className="hidden md:ml-6 md:flex md:items-center md:space-x-4">
+
+          {/* Navigation Links - Desktop */}
+          <div className="hidden md:flex md:items-center md:space-x-4">
             {!isAuthenticated && (
               <>
-                <Link 
-                  to="/" 
+                <Link
+                  to="/"
                   className={`flex items-center gap-2 px-4 py-2 rounded-lg ${
-                    location.pathname === '/' 
-                      ? 'bg-gray-50 text-primary' 
+                    location.pathname === '/'
+                      ? 'bg-gray-50 text-primary'
                       : 'text-gray-600 hover:bg-gray-50 hover:text-gray-700'
                   }`}
                 >
                   <Home className="h-5 w-5" />
                   Home
                 </Link>
-                <Link 
-                  to="/login" 
+                <Link
+                  to="/about-us"
                   className={`flex items-center gap-2 px-4 py-2 rounded-lg ${
-                    location.pathname === '/login' 
-                      ? 'bg-gray-50 text-primary' 
+                    location.pathname === '/about-us'
+                      ? 'bg-gray-50 text-primary'
                       : 'text-gray-600 hover:bg-gray-50 hover:text-gray-700'
                   }`}
                 >
-                  <LogIn className="h-5 w-5" />
-                  Login
+                  <Info className="h-5 w-5" />
+                  About Us
                 </Link>
-                <Link 
-                  to="/register" 
+                <Link
+                  to="/contact-us"
                   className={`flex items-center gap-2 px-4 py-2 rounded-lg ${
-                    location.pathname === '/register' 
-                      ? 'bg-gray-50 text-primary' 
+                    location.pathname === '/contact-us'
+                      ? 'bg-gray-50 text-primary'
                       : 'text-gray-600 hover:bg-gray-50 hover:text-gray-700'
                   }`}
                 >
-                  <UserPlus className="h-5 w-5" />
-                  Register
+                  <Mail className="h-5 w-5" />
+                  Contact Us
                 </Link>
               </>
             )}
-            
+
             {isOwner && (
               <>
                 <Link 
@@ -126,31 +133,49 @@ const Navigation = () => {
                   QR Code
                 </Link>
                 <Link
-                  to="/profile"
+                  to="/settings"
                   className={`flex items-center gap-2 px-4 py-2 rounded-lg ${
-                    location.pathname === '/profile' 
+                    location.pathname === '/settings' 
                       ? 'bg-gray-50 text-primary' 
                       : 'text-gray-600 hover:bg-gray-50 hover:text-gray-700'
                   }`}
                 >
-                  <User className="h-5 w-5" />
-                  Profile
+                  <Settings className="h-5 w-5" />
+                  Settings
                 </Link>
               </>
             )}
             
             {isAdmin && (
-              <Link 
-                to="/admin" 
-                className={`flex items-center gap-2 px-4 py-2 rounded-lg ${
-                  location.pathname === '/admin' 
-                    ? 'bg-gray-50 text-primary' 
-                    : 'text-gray-600 hover:bg-gray-50 hover:text-gray-700'
-                }`}
-              >
-                <Settings className="h-5 w-5" />
-                Admin Panel
-              </Link>
+              <>
+                <Link
+                  to="/admin"
+                  className={`flex items-center gap-2 px-4 py-2 rounded-lg ${
+                    location.pathname === '/admin'
+                      ? 'bg-gray-50 text-primary'
+                      : 'text-gray-600 hover:bg-gray-50 hover:text-gray-700'
+                  }`}
+                >
+                  <Settings className="h-5 w-5" />
+                  Admin Panel
+                </Link>
+                <Link
+                  to="/admin/messages"
+                  className={`flex items-center gap-2 px-4 py-2 rounded-lg relative ${
+                    location.pathname === '/admin/messages'
+                      ? 'bg-gray-50 text-primary'
+                      : 'text-gray-600 hover:bg-gray-50 hover:text-gray-700'
+                  }`}
+                >
+                  <Mail className="h-5 w-5" />
+                  Messages
+                  {unreadMessages > 0 && (
+                    <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
+                      {unreadMessages}
+                    </span>
+                  )}
+                </Link>
+              </>
             )}
             
             {isAuthenticated && (

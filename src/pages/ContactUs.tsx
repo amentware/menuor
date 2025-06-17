@@ -3,7 +3,11 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { useState } from 'react';
-import { toast } from 'sonner';
+import { useToast } from '@/hooks/use-toast';
+import { addDoc, collection } from 'firebase/firestore';
+import { db } from '@/lib/firebase';
+import { Alert, AlertDescription } from '@/components/ui/alert';
+import { Loader2 } from 'lucide-react';
 
 const ContactUs = () => {
   const [formData, setFormData] = useState({
@@ -12,13 +16,39 @@ const ContactUs = () => {
     subject: '',
     message: ''
   });
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const { toast } = useToast();
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // Here you would typically handle the form submission
-    // For now, we'll just show a success message
-    toast.success('Message sent successfully! We will get back to you soon.');
-    setFormData({ name: '', email: '', subject: '', message: '' });
+    setIsSubmitting(true);
+    setError(null);
+    
+    try {
+      // Add timestamp to the message
+      const messageData = {
+        ...formData,
+        createdAt: new Date().toISOString(),
+        status: 'unread'
+      };
+
+      // Store in Firebase
+      await addDoc(collection(db, 'contact_messages'), messageData);
+      
+      toast({
+        title: "Message sent!",
+        description: "We'll get back to you as soon as possible.",
+        variant: "default",
+      });
+
+      setFormData({ name: '', email: '', subject: '', message: '' });
+    } catch (error) {
+      console.error('Error sending message:', error);
+      setError("Failed to send message. Please try again.");
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -29,7 +59,7 @@ const ContactUs = () => {
   return (
     <div className="page-container py-12">
       <div className="max-w-4xl mx-auto">
-        <h1 className="text-4xl font-bold text-center mb-8">Contact Us</h1>
+        <h1 className="text-4xl font-bold font-display text-black mb-8 text-center">Contact Us</h1>
         
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
           {/* Contact Information */}
@@ -83,6 +113,11 @@ const ContactUs = () => {
           {/* Contact Form */}
           <div className="bg-white rounded-lg p-8 shadow-sm">
             <h2 className="text-2xl font-semibold mb-6">Send us a Message</h2>
+            {error && (
+              <Alert variant="destructive" className="mb-4">
+                <AlertDescription>{error}</AlertDescription>
+              </Alert>
+            )}
             <form onSubmit={handleSubmit} className="space-y-4">
               <div>
                 <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-1">
@@ -95,6 +130,7 @@ const ContactUs = () => {
                   onChange={handleChange}
                   required
                   placeholder="John Doe"
+                  disabled={isSubmitting}
                 />
               </div>
 
@@ -110,6 +146,7 @@ const ContactUs = () => {
                   onChange={handleChange}
                   required
                   placeholder="john@example.com"
+                  disabled={isSubmitting}
                 />
               </div>
 
@@ -124,6 +161,7 @@ const ContactUs = () => {
                   onChange={handleChange}
                   required
                   placeholder="How can we help?"
+                  disabled={isSubmitting}
                 />
               </div>
 
@@ -139,12 +177,22 @@ const ContactUs = () => {
                   required
                   placeholder="Your message here..."
                   className="min-h-[150px]"
+                  disabled={isSubmitting}
                 />
               </div>
 
-              <Button type="submit" className="w-full">
-                <Send className="h-4 w-4 mr-2" />
-                Send Message
+              <Button type="submit" className="w-full" disabled={isSubmitting}>
+                {isSubmitting ? (
+                  <>
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    Sending...
+                  </>
+                ) : (
+                  <>
+                    <Send className="h-4 w-4 mr-2" />
+                    Send Message
+                  </>
+                )}
               </Button>
             </form>
           </div>

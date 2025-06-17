@@ -1,4 +1,3 @@
-
 import { useEffect, useState } from 'react';
 import { db, collection, getDocs, doc, updateDoc } from '../lib/firebase';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -7,7 +6,7 @@ import { Input } from '@/components/ui/input';
 import { Switch } from '@/components/ui/switch';
 import { RestaurantSummary } from '@/types';
 import { Label } from '@/components/ui/label';
-import { Edit, ExternalLink, Search, RefreshCcw } from 'lucide-react';
+import { Edit, ExternalLink, Search, RefreshCcw, Mail } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { Link } from 'react-router-dom';
 
@@ -119,7 +118,15 @@ const Admin = () => {
 
   return (
     <div className="page-container">
-      <h1 className="text-4xl font-bold font-display mb-8 text-restaurant-burgundy">Admin Panel</h1>
+      <div className="flex justify-between items-center mb-8">
+        <h1 className="text-4xl font-bold font-display text-restaurant-burgundy">Admin Panel</h1>
+        <Button asChild variant="outline" className="flex items-center gap-2">
+          <Link to="/messages">
+            <Mail className="h-5 w-5" />
+            View Messages
+          </Link>
+        </Button>
+      </div>
       
       <Card className="mb-6">
         <CardHeader>
