@@ -23,7 +23,10 @@ import {
   increment,
   enableIndexedDbPersistence,
   connectFirestoreEmulator,
-  type FirestoreSettings
+  type FirestoreSettings,
+  orderBy,
+  addDoc,
+  onSnapshot,
 } from 'firebase/firestore';
 import { getStorage } from 'firebase/storage';
 import { getAnalytics } from 'firebase/analytics';
@@ -81,6 +84,9 @@ export {
   Timestamp,
   increment,
   firebaseSendPasswordResetEmail as sendPasswordResetEmail,
+  orderBy,
+  addDoc,
+  onSnapshot,
 };
 
 // Export the User type correctly using 'export type'

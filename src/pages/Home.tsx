@@ -2,6 +2,8 @@ import { Link, Navigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { useAuth } from '@/contexts/AuthContext';
+import Footer from '@/components/Footer';
+import { Star, Users, Zap, QrCode, Smartphone, Clock, Info, Mail } from 'lucide-react';
 
 const Home = () => {
   const { isAuthenticated, isAdmin, isOwner } = useAuth();
@@ -10,6 +12,27 @@ const Home = () => {
   if (isOwner) {
     return <Navigate to="/dashboard" replace />;
   }
+
+  const testimonials = [
+    {
+      name: "Sarah Johnson",
+      role: "Restaurant Owner",
+      content: "Menuor has transformed how we manage our menu. Our customers love the QR code feature!",
+      rating: 5
+    },
+    {
+      name: "Michael Chen",
+      role: "Café Manager",
+      content: "The ease of updating our menu in real-time has saved us countless hours and printing costs.",
+      rating: 5
+    },
+    {
+      name: "Lisa Martinez",
+      role: "Restaurant Manager",
+      content: "The customer support is exceptional, and the platform is so intuitive to use.",
+      rating: 5
+    }
+  ];
 
   return (
     <div className="min-h-screen bg-background">
@@ -53,6 +76,38 @@ const Home = () => {
         <div className="absolute bottom-0 left-0 right-0 h-24 bg-gradient-to-b from-transparent to-card opacity-40"></div>
       </section>
 
+      {/* Quick Access Section for Logged In Users */}
+      {isAuthenticated && !isOwner && (
+        <section className="relative py-12 px-4 sm:px-6 lg:px-8 bg-card">
+          <div className="max-w-7xl mx-auto">
+            <h2 className="text-3xl font-bold font-display text-center mb-8 text-card-foreground">
+              Quick Access
+            </h2>
+            <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
+              <Link to="/about">
+                <Card className="hover:shadow-lg transition-all duration-300 hover:-translate-y-1 cursor-pointer group">
+                  <CardContent className="p-8 flex flex-col items-center text-center">
+                    <Info className="h-12 w-12 mb-4 text-primary group-hover:scale-110 transition-transform duration-300" />
+                    <h3 className="text-2xl font-bold mb-2">About Us</h3>
+                    <p className="text-muted-foreground">Learn more about our mission and the team behind Menuor</p>
+                  </CardContent>
+                </Card>
+              </Link>
+
+              <Link to="/contact">
+                <Card className="hover:shadow-lg transition-all duration-300 hover:-translate-y-1 cursor-pointer group">
+                  <CardContent className="p-8 flex flex-col items-center text-center">
+                    <Mail className="h-12 w-12 mb-4 text-primary group-hover:scale-110 transition-transform duration-300" />
+                    <h3 className="text-2xl font-bold mb-2">Contact Us</h3>
+                    <p className="text-muted-foreground">Get in touch with our team for support or inquiries</p>
+                  </CardContent>
+                </Card>
+              </Link>
+            </div>
+          </div>
+        </section>
+      )}
+
       {/* Features Section */}
       <section className="relative py-24 px-4 sm:px-6 lg:px-8 bg-card overflow-hidden">
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_70%_70%,rgba(0,0,0,0.025),transparent_50%)]"></div>
@@ -68,10 +123,10 @@ const Home = () => {
             <Card className="restaurant-card border-border shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1 bg-background/80 backdrop-blur-sm group">
               <CardContent className="p-8 relative overflow-hidden">
                 <div className="absolute top-0 right-0 w-32 h-32 bg-accent/5 rounded-full transform translate-x-16 -translate-y-16 group-hover:scale-110 transition-transform duration-500"></div>
-                <div className="text-5xl mb-6 text-accent transform group-hover:scale-110 transition-transform duration-300">✨</div>
-                <h3 className="text-2xl font-bold mb-4 text-card-foreground">Easy Menu Builder</h3>
+                <QrCode className="h-12 w-12 mb-6 text-accent transform group-hover:scale-110 transition-transform duration-300" />
+                <h3 className="text-2xl font-bold mb-4 text-card-foreground">QR Code Menus</h3>
                 <p className="text-muted-foreground text-lg leading-relaxed">
-                  Create and organize your menu items into sections with our intuitive interface.
+                  Generate unique QR codes for easy menu access on any device.
                 </p>
               </CardContent>
             </Card>
@@ -79,7 +134,7 @@ const Home = () => {
             <Card className="restaurant-card border-border shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1 bg-background/80 backdrop-blur-sm group">
               <CardContent className="p-8 relative overflow-hidden">
                 <div className="absolute top-0 right-0 w-32 h-32 bg-accent/5 rounded-full transform translate-x-16 -translate-y-16 group-hover:scale-110 transition-transform duration-500"></div>
-                <div className="text-5xl mb-6 text-accent transform group-hover:scale-110 transition-transform duration-300">📱</div>
+                <Smartphone className="h-12 w-12 mb-6 text-accent transform group-hover:scale-110 transition-transform duration-300" />
                 <h3 className="text-2xl font-bold mb-4 text-card-foreground">Mobile Friendly</h3>
                 <p className="text-muted-foreground text-lg leading-relaxed">
                   Your customers can easily view your menu on any device.
@@ -90,13 +145,64 @@ const Home = () => {
             <Card className="restaurant-card border-border shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1 bg-background/80 backdrop-blur-sm group">
               <CardContent className="p-8 relative overflow-hidden">
                 <div className="absolute top-0 right-0 w-32 h-32 bg-accent/5 rounded-full transform translate-x-16 -translate-y-16 group-hover:scale-110 transition-transform duration-500"></div>
-                <div className="text-5xl mb-6 text-accent transform group-hover:scale-110 transition-transform duration-300">⚡</div>
+                <Clock className="h-12 w-12 mb-6 text-accent transform group-hover:scale-110 transition-transform duration-300" />
                 <h3 className="text-2xl font-bold mb-4 text-card-foreground">Real-time Updates</h3>
                 <p className="text-muted-foreground text-lg leading-relaxed">
                   Update your menu instantly without reprinting physical menus.
                 </p>
               </CardContent>
             </Card>
+          </div>
+        </div>
+      </section>
+
+      {/* Testimonials Section */}
+      <section className="relative py-24 px-4 sm:px-6 lg:px-8 bg-background border-t border-border">
+        <div className="max-w-7xl mx-auto">
+          <h2 className="text-4xl font-bold font-display text-center mb-16 text-foreground relative">
+            <span className="relative inline-block">
+              What Our Customers Say
+              <div className="absolute -bottom-4 left-1/2 transform -translate-x-1/2 w-24 h-1 bg-accent rounded-full"></div>
+            </span>
+          </h2>
+          
+          <div className="grid md:grid-cols-3 gap-8">
+            {testimonials.map((testimonial, index) => (
+              <Card key={index} className="bg-card border-border">
+                <CardContent className="p-8">
+                  <div className="flex mb-4">
+                    {[...Array(testimonial.rating)].map((_, i) => (
+                      <Star key={i} className="h-5 w-5 text-yellow-400 fill-current" />
+                    ))}
+                  </div>
+                  <p className="text-card-foreground mb-6">{testimonial.content}</p>
+                  <div>
+                    <p className="font-semibold text-card-foreground">{testimonial.name}</p>
+                    <p className="text-sm text-muted-foreground">{testimonial.role}</p>
+                  </div>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Stats Section */}
+      <section className="relative py-24 px-4 sm:px-6 lg:px-8 bg-primary text-primary-foreground">
+        <div className="max-w-7xl mx-auto">
+          <div className="grid md:grid-cols-3 gap-8 text-center">
+            <div>
+              <div className="text-4xl font-bold mb-2">100+</div>
+              <div className="text-lg text-primary-foreground/80">Restaurants</div>
+            </div>
+            <div>
+              <div className="text-4xl font-bold mb-2">5000+</div>
+              <div className="text-lg text-primary-foreground/80">Menu Views</div>
+            </div>
+            <div>
+              <div className="text-4xl font-bold mb-2">99%</div>
+              <div className="text-lg text-primary-foreground/80">Customer Satisfaction</div>
+            </div>
           </div>
         </div>
       </section>
@@ -123,6 +229,9 @@ const Home = () => {
           )}
         </div>
       </section>
+
+      {/* Footer */}
+      <Footer />
     </div>
   );
 };

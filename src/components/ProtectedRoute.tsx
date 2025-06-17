@@ -1,7 +1,7 @@
 
 import { Navigate, Outlet, useLocation } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
-import { Loader2 } from 'lucide-react';
+import { Loader2, RefreshCcw } from 'lucide-react';
 
 interface ProtectedRouteProps {
   requiredRole?: 'owner' | 'admin';
@@ -13,9 +13,11 @@ const ProtectedRoute = ({ requiredRole }: ProtectedRouteProps) => {
 
   if (loading) {
     return (
-      <div className="h-screen flex items-center justify-center">
-        <Loader2 className="h-8 w-8 animate-spin text-restaurant-burgundy" />
-        <span className="ml-2">Loading...</span>
+      <div className="page-container flex items-center justify-center min-h-[60vh]">
+        <div className="flex flex-col items-center">
+          <RefreshCcw className="h-8 w-8 animate-spin text-black" />
+          <p className="mt-4 text-lg text-black">Loading...</p>
+        </div>
       </div>
     );
   }

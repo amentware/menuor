@@ -2,8 +2,13 @@ import { useState, useEffect, useCallback, useRef } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import { Button } from '@/components/ui/button';
-import { Menu, Home, LayoutDashboard, Menu as MenuIcon, QrCode, Settings, LogOut, User, LogIn, UserPlus, X } from 'lucide-react';
+import { Menu, Home, LayoutDashboard, Menu as MenuIcon, QrCode, Settings, LogOut, User, LogIn, UserPlus, X, Info, Mail, Store, MessageSquare } from 'lucide-react';
 import logo from '../assets/navicon.png';
+import { useUnreadMessages } from '@/hooks/useUnreadMessages';
+import { Link } from 'react-router-dom';
+import { cn } from '@/lib/utils';
+import { buttonVariants } from '@/components/ui/button';
+import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 
 const MobileDrawer = () => {
   const { isAuthenticated, isAdmin, isOwner, logout } = useAuth();
@@ -13,6 +18,7 @@ const MobileDrawer = () => {
   const navigate = useNavigate();
   const touchStartX = useRef(0);
   const isNavigating = useRef(false);
+  const unreadMessages = useUnreadMessages();
   
   const isActive = (path: string) => location.pathname === path;
   
@@ -83,22 +89,65 @@ const MobileDrawer = () => {
     };
   }, [isOpen]);
 
-  const navigationItems = [
-    ...(isAuthenticated ? [] : [
-      { to: "/", label: "Home", icon: Home },
-      { to: "/login", label: "Login", icon: LogIn },
-      { to: "/register", label: "Register", icon: UserPlus },
-    ]),
-    ...(isOwner ? [
-      { to: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
-      { to: "/menu-builder", label: "Menu Builder", icon: MenuIcon },
-      { to: "/qr-code", label: "QR Code", icon: QrCode },
-      { to: "/profile", label: "Profile", icon: User },
-    ] : []),
-    ...(isAdmin ? [
-      { to: "/admin", label: "Admin Panel", icon: Settings },
-    ] : []),
-  ];
+  const navigationItems = !isAuthenticated
+    ? [
+        {
+          to: '/about-us',
+          icon: Info,
+          label: 'About Us',
+        },
+        {
+          to: '/contact-us',
+          icon: Mail,
+          label: 'Contact Us',
+        },
+        {
+          to: '/login',
+          icon: LogIn,
+          label: 'Login',
+        },
+        {
+          to: '/register',
+          icon: UserPlus,
+          label: 'Register',
+        },
+      ]
+    : isAdmin
+    ? [
+        {
+          to: '/admin',
+          icon: Settings,
+          label: 'Admin Panel',
+        },
+        {
+          to: '/admin/messages',
+          icon: Mail,
+          label: 'Messages',
+          badge: unreadMessages > 0 ? unreadMessages : undefined,
+        },
+      ]
+    : [
+        {
+          to: '/dashboard',
+          icon: LayoutDashboard,
+          label: 'Dashboard',
+        },
+        {
+          to: '/menu-builder',
+          icon: MenuIcon,
+          label: 'Menu Builder',
+        },
+        {
+          to: '/qr-code',
+          icon: QrCode,
+          label: 'QR Code',
+        },
+        {
+          to: '/settings',
+          icon: Settings,
+          label: 'Settings',
+        },
+      ];
 
   return (
     <>
@@ -163,7 +212,7 @@ const MobileDrawer = () => {
                       <button
                         key={item.to}
                         onClick={() => handleNavigation(item.to)}
-                        className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-colors ${
+                        className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-colors relative ${
                           isActive(item.to)
                             ? 'bg-gray-50 text-primary'
                             : 'text-gray-600 hover:bg-gray-50 hover:text-gray-700'
@@ -172,6 +221,11 @@ const MobileDrawer = () => {
                       >
                         <Icon className="h-5 w-5" />
                         {item.label}
+                        {item.badge && (
+                          <span className="absolute right-2 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
+                            {item.badge}
+                          </span>
+                        )}
                       </button>
                     );
                   })}
@@ -192,6 +246,38 @@ const MobileDrawer = () => {
                       Logout
                     </Button>
                   </div>
+                )}
+
+                {isAdmin && (
+                  <>
+                    <button
+                      onClick={() => handleNavigation('/admin')}
+                      className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-colors ${
+                        isActive('/admin')
+                          ? 'bg-gray-50 text-primary'
+                          : 'text-gray-600 hover:bg-gray-50 hover:text-gray-700'
+                      }`}
+                    >
+                      <Settings className="h-5 w-5" />
+                      Admin Panel
+                    </button>
+                    <button
+                      onClick={() => handleNavigation('/admin/messages')}
+                      className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-colors relative ${
+                        isActive('/admin/messages')
+                          ? 'bg-gray-50 text-primary'
+                          : 'text-gray-600 hover:bg-gray-50 hover:text-gray-700'
+                      }`}
+                    >
+                      <Mail className="h-5 w-5" />
+                      Messages
+                      {unreadMessages > 0 && (
+                        <span className="absolute right-2 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
+                          {unreadMessages}
+                        </span>
+                      )}
+                    </button>
+                  </>
                 )}
               </div>
             </div>

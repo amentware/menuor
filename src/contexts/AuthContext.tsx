@@ -1,7 +1,14 @@
 import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { auth, onAuthStateChanged } from '../lib/firebase';
-import type { User } from 'firebase/auth';
+import type { User as FirebaseUser } from 'firebase/auth';
 import { useToast } from '@/hooks/use-toast';
+
+export interface User extends FirebaseUser {
+  isAdmin?: boolean;
+  isOwner?: boolean;
+  restaurantId?: string;
+  displayName: string | null;
+}
 
 export type UserRole = 'owner' | 'admin' | 'none';
 

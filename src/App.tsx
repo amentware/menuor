@@ -15,16 +15,21 @@ import Dashboard from "./pages/Dashboard";
 import MenuBuilder from "./pages/MenuBuilder";
 import QRCodePage from "./pages/QRCode";
 import EditProfile from "./pages/EditProfile";
-import Profile from "./pages/Profile";
+import Settings from "./pages/Settings";
 import Menu from "./pages/Menu";
 import Admin from "./pages/Admin";
 import AdminEdit from "./pages/AdminEdit";
+import Messages from "./pages/Messages";
 import NotFound from "./pages/NotFound";
 import ForgotPassword from "./pages/ForgotPassword";
+import AboutUs from "./pages/AboutUs";
+import ContactUs from "./pages/ContactUs";
+import UserMessages from "./pages/UserMessages";
 
 // Components
 import Navigation from "./components/Navigation";
 import ProtectedRoute from "./components/ProtectedRoute";
+import ScrollToTop from "./components/ScrollToTop";
 import { RefreshCcw } from "lucide-react";
 
 const queryClient = new QueryClient();
@@ -60,10 +65,12 @@ const RootRedirect = () => {
 // Wrapper component to conditionally render Navigation
 const AppContent = () => {
   const location = useLocation();
+  const { isAuthenticated } = useAuth();
   const isMenuPage = location.pathname.startsWith('/menu/');
 
   return (
     <div className="min-h-screen flex flex-col">
+      <ScrollToTop />
       {!isMenuPage && <Navigation />}
       <div className={`flex-grow ${!isMenuPage ? 'pt-16' : ''}`}>
         <Routes>
@@ -73,6 +80,11 @@ const AppContent = () => {
           <Route path="/register" element={<Register />} />
           <Route path="/forgot-password" element={<ForgotPassword />} />
           <Route path="/menu/:restaurantId" element={<Menu />} />
+          <Route path="/about-us" element={<AboutUs />} />
+          <Route 
+            path="/contact-us" 
+            element={isAuthenticated ? <Navigate to="/messages" replace /> : <ContactUs />} 
+          />
           
           {/* Restaurant owner routes */}
           <Route element={<ProtectedRoute requiredRole="owner" />}>
@@ -80,16 +92,18 @@ const AppContent = () => {
             <Route path="/menu-builder" element={<MenuBuilder />} />
             <Route path="/qr-code" element={<QRCodePage />} />
             <Route path="/edit-profile" element={<EditProfile />} />
-            <Route path="/profile" element={<Profile />} />
+            <Route path="/settings" element={<Settings />} />
+            <Route path="/messages" element={<UserMessages />} />
           </Route>
           
           {/* Admin routes */}
           <Route element={<ProtectedRoute requiredRole="admin" />}>
             <Route path="/admin" element={<Admin />} />
             <Route path="/admin/edit/:restaurantId" element={<AdminEdit />} />
+            <Route path="/admin/messages" element={<Messages />} />
           </Route>
           
-          {/* 404 Page */}
+          {/* 404 Page - This should be the last route */}
           <Route path="*" element={<NotFound />} />
         </Routes>
       </div>
