@@ -167,7 +167,7 @@ const Settings = () => {
                   <Info className="h-5 w-5 text-accent" />
                   About Us
                 </CardTitle>
-                <CardDescription>Learn more about MenuOR and our mission</CardDescription>
+                <CardDescription>Learn more about Menuor and our mission</CardDescription>
               </CardHeader>
               <CardContent>
                 <Button 

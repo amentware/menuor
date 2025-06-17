@@ -115,7 +115,7 @@ const UserMessages = () => {
         
         <Card className="bg-white border border-gray-200">
           <CardHeader>
-            <CardTitle>Chat with MenuOR Support</CardTitle>
+            <CardTitle>Chat with Menuor Support</CardTitle>
             <CardDescription>
               Send us a message and we'll get back to you as soon as possible. Messages are kept for 30 days.
             </CardDescription>
@@ -158,7 +158,7 @@ const UserMessages = () => {
                           {message.senderId === currentUser?.uid
                             ? 'You'
                             : message.isAdmin
-                            ? 'MenuOR Support'
+                            ? 'Menuor Support'
                             : message.senderName}
                         </p>
                         <p className="text-sm">{message.content}</p>

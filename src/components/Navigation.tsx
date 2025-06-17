@@ -53,7 +53,7 @@ const Navigation = () => {
           {/* Logo Section */}
           <div className="flex">
             <Link to={logoDestination} className="flex items-center">
-              <img src={logo} alt="MenuOR Logo" className="h-8 w-auto" />
+              <img src={logo} alt="Menuor Logo" className="h-8 w-auto" />
             </Link>
           </div>
 
@@ -93,6 +93,28 @@ const Navigation = () => {
                 >
                   <Mail className="h-5 w-5" />
                   Contact Us
+                </Link>
+                <Link
+                  to="/login"
+                  className={`flex items-center gap-2 px-4 py-2 rounded-lg ${
+                    location.pathname === '/login'
+                      ? 'bg-gray-50 text-primary'
+                      : 'text-gray-600 hover:bg-gray-50 hover:text-gray-700'
+                  }`}
+                >
+                  <LogIn className="h-5 w-5" />
+                  Login
+                </Link>
+                <Link
+                  to="/register"
+                  className={`flex items-center gap-2 px-4 py-2 rounded-lg ${
+                    location.pathname === '/register'
+                      ? 'bg-gray-50 text-primary'
+                      : 'text-gray-600 hover:bg-gray-50 hover:text-gray-700'
+                  }`}
+                >
+                  <UserPlus className="h-5 w-5" />
+                  Register
                 </Link>
               </>
             )}

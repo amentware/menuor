@@ -89,6 +89,7 @@ const MobileDrawer = () => {
   }, [isOpen]);
 
   const navigationItems = [
+    // Public routes for non-authenticated users
     ...(isAuthenticated ? [] : [
       { to: "/", label: "Home", icon: Home },
       { to: "/about-us", label: "About Us", icon: Info },
@@ -96,20 +97,17 @@ const MobileDrawer = () => {
       { to: "/login", label: "Login", icon: LogIn },
       { to: "/register", label: "Register", icon: UserPlus },
     ]),
+    // Restaurant owner routes
     ...(isOwner ? [
       { to: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
       { to: "/menu-builder", label: "Menu Builder", icon: MenuIcon },
       { to: "/qr-code", label: "QR Code", icon: QrCode },
       { to: "/settings", label: "Settings", icon: Settings },
     ] : []),
+    // Admin routes
     ...(isAdmin ? [
       { to: "/admin", label: "Admin Panel", icon: Settings },
-      { 
-        to: "/admin/messages", 
-        label: "Messages", 
-        icon: Mail,
-        badge: unreadMessages > 0 ? unreadMessages : null 
-      },
+      { to: "/admin/messages", label: "Messages", icon: Mail, badge: unreadMessages > 0 ? unreadMessages : null },
     ] : []),
   ];
 
