@@ -72,8 +72,8 @@ const ContactUs = () => {
                   <Mail className="h-6 w-6 text-primary mt-1" />
                   <div>
                     <h3 className="font-semibold mb-1">Email</h3>
-                    <p className="text-gray-600">support@menuor.com</p>
-                    <p className="text-gray-600">info@menuor.com</p>
+                    <p className="text-gray-600">menuor.amentware@gmail.com</p>
+                    <p className="text-gray-600">amentware@gmail.com</p>
                   </div>
                 </div>
 
@@ -81,8 +81,8 @@ const ContactUs = () => {
                   <Phone className="h-6 w-6 text-primary mt-1" />
                   <div>
                     <h3 className="font-semibold mb-1">Phone</h3>
-                    <p className="text-gray-600">+1 (555) 123-4567</p>
-                    <p className="text-gray-600">+1 (555) 987-6543</p>
+                    <p className="text-gray-600">+91 9207624728</p>
+                    <p className="text-gray-600">+91 7558832489</p>
                   </div>
                 </div>
 
@@ -91,9 +91,9 @@ const ContactUs = () => {
                   <div>
                     <h3 className="font-semibold mb-1">Address</h3>
                     <p className="text-gray-600">
-                      123 Tech Street<br />
-                      Innovation District<br />
-                      San Francisco, CA 94105
+                      4th floor,695<br />
+                      14th cross,29th main road<br />
+                      Bangalore,560076
                     </p>
                   </div>
                 </div>
