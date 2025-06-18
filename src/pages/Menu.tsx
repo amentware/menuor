@@ -131,16 +131,13 @@ const Menu = () => {
     }
   };
 
-  const handleShare = () => {
-    if (navigator.share) {
-      navigator.share({
-        title: restaurant.name,
-        text: restaurant.description,
-        url: window.location.href,
+  const handleShare = async () => {
+    try {
+      await navigator.share({
+        url: window.location.href
       });
-    } else {
-      navigator.clipboard.writeText(window.location.href);
-      // You could show a toast notification here
+    } catch (error) {
+      console.error('Error sharing:', error);
     }
   };
 
