@@ -91,6 +91,7 @@ const AppContent = () => {
           <Route element={<ProtectedRoute requiredRole="owner" />}>
             <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/menu-builder" element={<MenuBuilder />} />
+            <Route path="/theme-builder" element={<ThemeBuilder />} />
             <Route path="/qr-code" element={<QRCodePage />} />
             <Route path="/edit-profile" element={<EditProfile />} />
             <Route path="/settings" element={<Settings />} />
@@ -103,9 +104,6 @@ const AppContent = () => {
             <Route path="/admin/edit/:restaurantId" element={<AdminEdit />} />
             <Route path="/admin/messages" element={<Messages />} />
           </Route>
-          
-          {/* Theme builder route */}
-          <Route path="/theme-builder/:restaurantId" element={<ThemeBuilder />} />
           
           {/* 404 Page - This should be the last route */}
           <Route path="*" element={<NotFound />} />

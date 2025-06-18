@@ -181,14 +181,17 @@ useEffect(() => {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center" style={{ background: 'var(--menu-background)' }}>
+      <div className="min-h-screen bg-gradient-to-br from-[hsl(50,75%,98%)] to-[hsl(150,13%,94%)] flex items-center justify-center">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-20 w-20 border-4 border-t-transparent" style={{ borderColor: 'var(--menu-primary)' }}></div>
-          <p className="mt-8 text-lg font-semibold" style={{ color: 'var(--menu-text-primary)' }}>Preparing your culinary journey...</p>
+          <div className="relative">
+            <div className="animate-spin rounded-full h-20 w-20 border-4 border-[hsl(109,22%,75%)] border-t-[hsl(170,94%,27%)] mx-auto"></div>
+            <div className="absolute inset-0 rounded-full h-20 w-20 border-4 border-transparent border-t-[hsl(44,88%,51%)] mx-auto animate-ping"></div>
+          </div>
+          <p className="mt-8 text-[hsl(0,1%,15%)] font-semibold text-lg">Preparing your culinary journey...</p>
           <div className="mt-4 flex justify-center space-x-1">
-            <div className="w-2 h-2 rounded-full animate-bounce" style={{ background: 'var(--menu-accent)', animationDelay: '0ms' }}></div>
-            <div className="w-2 h-2 rounded-full animate-bounce" style={{ background: 'var(--menu-secondary)', animationDelay: '100ms' }}></div>
-            <div className="w-2 h-2 rounded-full animate-bounce" style={{ background: 'var(--menu-accent)', animationDelay: '200ms' }}></div>
+            <div className="w-2 h-2 bg-[hsl(170,94%,27%)] rounded-full animate-bounce" style={{animationDelay: '0ms'}}></div>
+            <div className="w-2 h-2 bg-[hsl(165,47%,43%)] rounded-full animate-bounce" style={{animationDelay: '100ms'}}></div>
+            <div className="w-2 h-2 bg-[hsl(44,88%,51%)] rounded-full animate-bounce" style={{animationDelay: '200ms'}}></div>
           </div>
         </div>
       </div>
@@ -433,7 +436,7 @@ useEffect(() => {
                   style={{
                     background: 'var(--menu-card)',
                     borderColor: 'var(--menu-border)',
-                    animationDelay: `${index * 100}ms`
+                    animationDelay: `${index * 50}ms`
                   }}
                 >
                   {/* Section Header */}
@@ -491,7 +494,7 @@ useEffect(() => {
                           style={{
                             background: 'var(--menu-background)',
                             borderColor: 'var(--menu-border)',
-                            animationDelay: isOpen ? `${itemIndex * 100}ms` : '0ms'
+                            animationDelay: isOpen ? `${itemIndex * 50}ms` : '0ms'
                           }}
                         >
                           <div className="flex gap-6">

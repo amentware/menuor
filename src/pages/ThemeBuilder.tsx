@@ -1,67 +1,52 @@
 import React, { useState, useEffect } from 'react';
-import { useParams } from 'react-router-dom';
+import { useAuth } from "@/contexts/AuthContext";
 import { db, doc, updateDoc, getDoc } from '@/lib/firebase';
 import { Restaurant, MenuTheme } from '@/types';
-import { Card } from '@/components/ui/card';
+import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Save } from 'lucide-react';
+import { Save, RotateCcw, Loader2, AlertCircle, RefreshCcw } from 'lucide-react';
 import { useToast } from '@/components/ui/use-toast';
 
-const defaultTheme: MenuTheme = {
-  // Primary teal color
-  primary: 'hsl(170, 94%, 27%)', // --primary: 170 94% 27%
-
-  // Secondary teal color
-  secondary: 'hsl(165, 47%, 43%)', // --secondary: 165 47% 43%
-  
-  // Accent yellow/gold color
-  accent: 'hsl(44, 88%, 51%)', // --accent: 44 88% 51%
-  
-  // Background cream color
-  background: 'hsl(50, 75%, 98%)', // --background: 50 75% 98%
-  
-  // Card background (slightly different from main background)
-  card: 'hsl(150, 13%, 94%)', // --card: 150 13% 94%
-  
-  // Border color (muted)
-  border: 'hsl(109, 22%, 75%)', // --border: 109 22% 75%
-  
-  text: {
-    // Primary text color (dark)
-    primary: 'hsl(0, 1%, 15%)', // --foreground: 0 1% 15%
-    
-    // Secondary text color (muted version of primary)
-    secondary: 'hsl(0, 1%, 45%)', // Slightly lighter than primary for secondary text
-    
-    // Accent text color (light for contrast on dark backgrounds)
-    accent: 'hsl(50, 75%, 98%)' // --primary-foreground: 50 75% 98%
-  },
-
-  // Price color using the accent color for emphasis
-  price: 'hsl(44, 88%, 51%)' // --accent: 44 88% 51% (same as accent for consistency)
-};
-
 const ThemeBuilder = () => {
-  const { restaurantId } = useParams();
+  const { currentUser } = useAuth();
   const [restaurant, setRestaurant] = useState<Restaurant | null>(null);
-  const [theme, setTheme] = useState<MenuTheme>(defaultTheme);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const { toast } = useToast();
-  const [previewScale, setPreviewScale] = useState(0.4);
+  const [hasChanges, setHasChanges] = useState(false);
+  const [originalTheme, setOriginalTheme] = useState<MenuTheme | null>(null);
+
+  const defaultTheme: MenuTheme = {
+    primary: '#0da98a',       // hsl(170, 94%, 27%) equivalent
+    secondary: '#3a9f86',     // hsl(170, 94%, 27%) equivalent
+    accent: '#f5c11a',        // hsl(44, 88%, 51%) equivalent
+    background: '#fefbf2',    // hsl(50, 75%, 98%) equivalent
+    card: '#f0f4f2',         // hsl(150, 13%, 94%) equivalent
+    border: '#b8d3ab',       // hsl(109, 22%, 75%) equivalent
+    text: {
+      primary: '#262626',     // hsl(0, 1%, 15%) equivalent
+      secondary: '#737373',   // hsl(0, 1%, 45%) equivalent
+      accent: '#fefbf2'       // hsl(50, 75%, 98%) equivalent
+    },
+    price: '#f5c11a'         // hsl(44, 88%, 51%) equivalent
+  };
+
+  const [theme, setTheme] = useState<MenuTheme>(defaultTheme);
 
   useEffect(() => {
     const fetchRestaurant = async () => {
-      if (!restaurantId) return;
+      if (!currentUser?.uid) return;
       
       try {
-        const restaurantDoc = await getDoc(doc(db, 'restaurants', restaurantId));
+        const restaurantDoc = await getDoc(doc(db, 'restaurants', currentUser.uid));
         if (restaurantDoc.exists()) {
           const data = restaurantDoc.data() as Restaurant;
           setRestaurant(data);
-          setTheme(data.theme || defaultTheme);
+          const savedTheme = data.theme || defaultTheme;
+          setTheme(savedTheme);
+          setOriginalTheme(savedTheme);
         }
       } catch (error) {
         console.error('Error fetching restaurant:', error);
@@ -76,16 +61,29 @@ const ThemeBuilder = () => {
     };
 
     fetchRestaurant();
-  }, [restaurantId]);
+  }, [currentUser?.uid]);
+
+  // Check for changes whenever theme is updated
+  useEffect(() => {
+    if (originalTheme) {
+      const themeChanged = JSON.stringify(theme) !== JSON.stringify(originalTheme);
+      setHasChanges(themeChanged);
+    }
+  }, [theme, originalTheme]);
 
   const handleSave = async () => {
-    if (!restaurantId) return;
+    if (!currentUser?.uid) return;
     
     setSaving(true);
     try {
-      await updateDoc(doc(db, 'restaurants', restaurantId), {
-        theme
+      const restaurantRef = doc(db, 'restaurants', currentUser.uid);
+      await updateDoc(restaurantRef, {
+        theme: theme,
+        lastUpdated: new Date().toISOString()
       });
+      
+      setOriginalTheme(theme);
+      setHasChanges(false);
       
       toast({
         title: 'Success',
@@ -101,6 +99,11 @@ const ThemeBuilder = () => {
     } finally {
       setSaving(false);
     }
+  };
+
+  const handleReset = () => {
+    setTheme(defaultTheme);
+    setHasChanges(true);
   };
 
   const handleColorChange = (key: string, value: string) => {
@@ -123,26 +126,63 @@ const ThemeBuilder = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-4 border-primary border-t-transparent"></div>
-          <p className="mt-4 text-lg">Loading theme builder...</p>
+      <div className="page-container flex items-center justify-center min-h-[60vh]">
+        <div className="flex flex-col items-center">
+          <RefreshCcw className="h-8 w-8 animate-spin text-black" />
+          <p className="mt-4 text-lg text-black">Loading theme builder...</p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="container mx-auto py-8 px-4">
-      <div className="flex justify-between items-center mb-8">
-        <div>
-          <h1 className="text-4xl font-bold">Theme Builder</h1>
-          <p className="text-gray-600 mt-2">Customize your menu's appearance</p>
+    <div className="page-container">
+      <div className="flex flex-col mb-8">
+        <div className="flex justify-between">
+          <div>
+            <h1 className="text-4xl font-bold font-display text-black">Theme Builder</h1>
+            <p className="text-gray-600 mt-2">
+              Customize your menu's appearance and colors
+            </p>
+          </div>
+          <div className="flex flex-col items-end gap-3">
+            <div className="flex flex-col md:flex-row items-end md:items-center gap-3">
+              {hasChanges && (
+                <Card className="bg-amber-50 border-amber-200">
+                  <CardContent className="py-3 px-4 flex items-center gap-2">
+                    <AlertCircle className="h-4 w-4 text-amber-500" />
+                    <p className="text-sm text-amber-700">You have unsaved changes</p>
+                  </CardContent>
+                </Card>
+              )}
+              <Button 
+                variant="outline" 
+                onClick={handleReset} 
+                className="flex items-center rounded-lg px-4 py-2 bg-white border-gray-200 hover:bg-gray-50 hover:text-black transition-all duration-200"
+              >
+                <RotateCcw className="h-4 w-4 mr-2" />
+                Reset to Default
+              </Button>
+              <Button
+                onClick={handleSave}
+                disabled={!hasChanges || saving}
+                className={`group bg-primary text-primary-foreground hover:bg-secondary hover:text-secondary-foreground transition-colors duration-200 ${saving ? '' : 'group bg-primary text-primary-foreground hover:bg-secondary hover:text-secondary-foreground transition-colors duration-200'}`}
+              >
+                {saving ? (
+                  <>
+                    <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                    Saving...
+                  </>
+                ) : (
+                  <>
+                    <Save className="h-4 w-4 mr-2 group-hover:text-secondary-foreground" />
+                    Save Changes
+                  </>
+                )}
+              </Button>
+            </div>
+          </div>
         </div>
-        <Button onClick={handleSave} disabled={saving} className="gap-2">
-          <Save className="h-4 w-4" />
-          {saving ? 'Saving...' : 'Save Changes'}
-        </Button>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
@@ -343,34 +383,228 @@ const ThemeBuilder = () => {
               </div>
             </div>
           </Card>
-
-          <Card className="p-6">
-            <h2 className="text-2xl font-semibold mb-6">Preview Scale</h2>
-            <Input
-              type="range"
-              min="0.2"
-              max="0.6"
-              step="0.1"
-              value={previewScale}
-              onChange={(e) => setPreviewScale(parseFloat(e.target.value))}
-              className="w-full"
-            />
-          </Card>
         </div>
 
         {/* Preview */}
-        <div className="sticky top-8">
-          <Card className="p-4 overflow-hidden">
-            <h2 className="text-2xl font-semibold mb-4">Live Preview</h2>
-            <div className="border rounded-lg overflow-hidden" style={{ height: '800px' }}>
-              <div style={{ transform: `scale(${previewScale})`, transformOrigin: 'top left', width: `${100/previewScale}%`, height: `${100/previewScale}%` }}>
-                <iframe
-                  src={`/menu/${restaurantId}?preview=true`}
-                  className="w-full h-full"
-                  style={{
-                    pointerEvents: 'none'
+        <div className="lg:sticky lg:top-8">
+          <Card className="p-6">
+            <h2 className="text-2xl font-semibold mb-6">Preview</h2>
+            <div 
+              className="rounded-lg overflow-hidden"
+              style={{ background: theme.background }}
+            >
+              {/* Sample Menu Preview */}
+              <div className="p-6" style={{ background: theme.background }}>
+                {/* Header */}
+                <div className="mb-8 text-center">
+                  <h1 
+                    className="text-4xl font-bold mb-2"
+                    style={{ color: theme.text.primary }}
+                  >
+                    Sample Restaurant
+                  </h1>
+                  <p 
+                    className="text-lg"
+                    style={{ color: theme.text.secondary }}
+                  >
+                    A preview of your menu's appearance
+                  </p>
+                </div>
+
+                {/* Search Bar */}
+                <div 
+                  className="mb-8 p-4 rounded-2xl"
+                  style={{ 
+                    background: theme.card,
+                    borderColor: theme.border,
+                    borderWidth: '1px',
+                    borderStyle: 'solid'
                   }}
-                />
+                >
+                  <div className="flex items-center justify-between gap-4">
+                    <div 
+                      className="flex-1 p-3 rounded-xl"
+                      style={{ 
+                        background: theme.background,
+                        borderColor: theme.border,
+                        borderWidth: '1px',
+                        borderStyle: 'solid'
+                      }}
+                    >
+                      <p style={{ color: theme.text.secondary }}>Search dishes...</p>
+                    </div>
+                    <div 
+                      className="w-10 h-10 rounded-xl flex items-center justify-center"
+                      style={{ background: theme.primary }}
+                    >
+                      <div style={{ color: theme.text.accent }}>🔍</div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Categories */}
+                <div 
+                  className="mb-8 p-4 rounded-2xl"
+                  style={{ 
+                    background: theme.card,
+                    borderColor: theme.border,
+                    borderWidth: '1px',
+                    borderStyle: 'solid'
+                  }}
+                >
+                  <h3 
+                    className="text-lg font-bold mb-4"
+                    style={{ color: theme.text.primary }}
+                  >
+                    Menu Categories
+                  </h3>
+                  <div className="space-y-2">
+                    {['Starters', 'Main Course', 'Desserts'].map((category, index) => (
+                      <div
+                        key={index}
+                        className="p-4 rounded-2xl transition-all duration-200"
+                        style={{
+                          background: index === 0 ? theme.primary : 'transparent',
+                          color: index === 0 ? theme.text.accent : theme.text.primary
+                        }}
+                      >
+                        <div className="flex items-center justify-between">
+                          <div>
+                            <div className="font-semibold">{category}</div>
+                            <div className="text-sm opacity-60">4 dishes</div>
+                          </div>
+                          <div 
+                            className="w-3 h-3 rounded-full"
+                            style={{ background: theme.accent }}
+                          />
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Menu Section */}
+                <div className="space-y-6">
+                  <div 
+                    className="rounded-3xl shadow-xl border overflow-hidden"
+                    style={{
+                      background: theme.card,
+                      borderColor: theme.border
+                    }}
+                  >
+                    {/* Section Header */}
+                    <div 
+                      className="p-8 flex items-center justify-between"
+                      style={{ 
+                        background: `linear-gradient(to right, ${theme.primary}, ${theme.secondary})`
+                      }}
+                    >
+                      <div className="flex items-center gap-6">
+                        <div 
+                          className="w-4 h-4 rounded-full shadow-lg"
+                          style={{ background: theme.accent }}
+                        />
+                        <h2 
+                          className="text-2xl md:text-3xl font-bold"
+                          style={{ color: theme.text.accent }}
+                        >
+                          Main Course
+                        </h2>
+                        <span 
+                          className="px-4 py-2 rounded-xl text-sm font-semibold shadow-lg"
+                          style={{ 
+                            background: theme.accent,
+                            color: theme.text.accent
+                          }}
+                        >
+                          4 dishes
+                        </span>
+                      </div>
+                    </div>
+
+                    {/* Menu Items */}
+                    <div className="p-6 space-y-4">
+                      {/* Regular Menu Item */}
+                      <div 
+                        className="rounded-2xl p-6 border transition-all duration-300"
+                        style={{
+                          background: theme.background,
+                          borderColor: theme.border
+                        }}
+                      >
+                        <div className="flex gap-6">
+                          <div 
+                            className="w-24 h-24 rounded-2xl overflow-hidden flex-shrink-0 shadow-lg"
+                            style={{ 
+                              background: theme.accent,
+                              border: `2px solid ${theme.border}`
+                            }}
+                          >
+                            <div 
+                              className="w-full h-full flex items-center justify-center"
+                              style={{ color: theme.text.accent }}
+                            >
+                              🍕
+                            </div>
+                          </div>
+                          <div className="flex-1">
+                            <div className="flex justify-between items-start">
+                              <div>
+                                <h4 
+                                  className="text-lg font-semibold"
+                                  style={{ color: theme.text.primary }}
+                                >
+                                  Margherita Pizza
+                                </h4>
+                                <p 
+                                  className="text-sm mt-1"
+                                  style={{ color: theme.text.secondary }}
+                                >
+                                  Fresh tomatoes, mozzarella, basil, and our special sauce
+                                </p>
+                              </div>
+                              <span 
+                                className="text-lg font-bold"
+                                style={{ color: theme.price }}
+                              >
+                                ₹299
+                              </span>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Featured Menu Item */}
+                      <div 
+                        className="rounded-2xl p-6"
+                        style={{ background: theme.accent }}
+                      >
+                        <div className="flex justify-between items-start">
+                          <div>
+                            <h4 
+                              className="text-lg font-semibold"
+                              style={{ color: theme.text.accent }}
+                            >
+                              Chef's Special Pasta
+                            </h4>
+                            <p 
+                              className="text-sm mt-1"
+                              style={{ color: theme.text.accent }}
+                            >
+                              Handmade pasta with truffle sauce and parmesan
+                            </p>
+                          </div>
+                          <span 
+                            className="text-lg font-bold"
+                            style={{ color: theme.text.accent }}
+                          >
+                            ₹399
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
           </Card>

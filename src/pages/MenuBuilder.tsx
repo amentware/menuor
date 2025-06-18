@@ -742,38 +742,43 @@ const MenuBuilder = () => {
 
   return (
     <div className="page-container">
-      <div className="flex justify-between items-center mb-8">
-        <div>
-          <h1 className="text-4xl font-bold font-display text-black">Menu Builder</h1>
-          <p className="text-gray-600 mt-2">
-            Create and manage your menu sections and items
-          </p>
-        </div>
-        <div className="flex items-center gap-4">
-          <Link
-            to={`/theme-builder/${restaurant.id}`}
-            className="flex items-center gap-2 px-4 py-2 rounded-xl border border-gray-200 hover:bg-gray-50 transition-colors"
-          >
-            <Palette className="h-4 w-4 text-gray-600" />
-            <span>Customize Theme</span>
-          </Link>
-          <Button
-            onClick={handleSaveMenu}
-            disabled={!menuChanged || saving}
-            className={`group bg-primary text-primary-foreground hover:bg-secondary hover:text-secondary-foreground transition-colors duration-200 ${saving ? '' : 'group bg-primary text-primary-foreground hover:bg-secondary hover:text-secondary-foreground transition-colors duration-200'}`}
-          >
-            {saving ? (
-              <>
-                <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                Saving...
-              </>
-            ) : (
-              <>
-                <Save className="h-4 w-4 mr-2 group-hover:text-secondary-foreground" />
-                Save Changes
-              </>
-            )}
-          </Button>
+      <div className="flex flex-col mb-8">
+        <div className="flex justify-between">
+          <div>
+            <h1 className="text-4xl font-bold font-display text-black">Menu Builder</h1>
+            <p className="text-gray-600 mt-2">
+              Create and manage your menu sections and items
+            </p>
+          </div>
+          <div className="flex flex-col items-end gap-3">
+            <div className="flex flex-col md:flex-row items-end md:items-center gap-3">
+              {menuChanged && (
+                <Card className="bg-amber-50 border-amber-200">
+                  <CardContent className="py-3 px-4 flex items-center gap-2">
+                    <AlertCircle className="h-4 w-4 text-amber-500" />
+                    <p className="text-sm text-amber-700">You have unsaved changes</p>
+                  </CardContent>
+                </Card>
+              )}
+              <Button
+                onClick={handleSaveMenu}
+                disabled={!menuChanged || saving}
+                className={`group bg-primary text-primary-foreground hover:bg-secondary hover:text-secondary-foreground transition-colors duration-200 ${saving ? '' : 'group bg-primary text-primary-foreground hover:bg-secondary hover:text-secondary-foreground transition-colors duration-200'}`}
+              >
+                {saving ? (
+                  <>
+                    <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                    Saving...
+                  </>
+                ) : (
+                  <>
+                    <Save className="h-4 w-4 mr-2 group-hover:text-secondary-foreground" />
+                    Save Changes
+                  </>
+                )}
+              </Button>
+            </div>
+          </div>
         </div>
       </div>
 
@@ -813,6 +818,15 @@ const MenuBuilder = () => {
                 </>
               )}
             </Button>
+            {restaurant && (
+              <Link
+                to="/theme-builder"
+                className="flex items-center gap-2 px-4 py-2 rounded-lg border border-gray-200 hover:bg-gray-50 transition-colors"
+              >
+                <Palette className="h-4 w-4 text-gray-600" />
+                <span>Theme</span>
+              </Link>
+            )}
             <Button 
               onClick={openAddSectionDialog} 
               variant="outline" 
