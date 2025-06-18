@@ -146,39 +146,38 @@ const Menu = () => {
        item.description?.toLowerCase().includes(searchTerm.toLowerCase()))
     )
   })).filter(section => section.items.length > 0);
+// Get theme from restaurant data or use default theme
+const theme = restaurant?.theme || {
+  primary: '#0da98a',       // hsl(170, 94%, 27%) equivalent
+  secondary: '#0da98a',     // hsl(170, 94%, 27%) equivalent
+  accent: '#f5c11a',        // hsl(44, 88%, 51%) equivalent
+  background: '#fefbf2',    // hsl(50, 75%, 98%) equivalent
+  card: '#f0f4f2',         // hsl(150, 13%, 94%) equivalent
+  border: '#b8d3ab',       // hsl(109, 22%, 75%) equivalent
+  text: {
+    primary: '#262626',     // hsl(0, 1%, 15%) equivalent
+    secondary: '#737373',   // hsl(0, 1%, 45%) equivalent
+    accent: '#fefbf2'       // hsl(50, 75%, 98%) equivalent
+  },
+  price: '#f5c11a'         // hsl(44, 88%, 51%) equivalent
+};
 
-  // Get theme from restaurant data or use default theme
-  const theme = restaurant?.theme || {
-    primary: 'hsl(170, 94%, 27%)',
-    secondary: 'hsl(170, 94%, 27%)',
-    accent: 'hsl(44, 88%, 51%)',
-    background: 'hsl(50, 75%, 98%)',
-    card: 'hsl(150, 13%, 94%)',
-    border: 'hsl(109, 22%, 75%)',
-    text: {
-      primary: 'hsl(0, 1%, 15%)',
-      secondary: 'hsl(0, 1%, 45%)',
-      accent: 'hsl(50, 75%, 98%)'
-    },
-    price: 'hsl(44, 88%, 51%)'
-  };
-
-  // Create CSS variables for theme colors
-  useEffect(() => {
-    if (theme) {
-      const root = document.documentElement;
-      Object.entries(theme).forEach(([key, value]) => {
-        if (typeof value === 'object') {
-          // Handle nested objects like text colors
-          Object.entries(value as Record<string, string>).forEach(([subKey, subValue]) => {
-            root.style.setProperty(`--menu-${key}-${subKey}`, subValue);
-          });
-        } else {
-          root.style.setProperty(`--menu-${key}`, value as string);
-        }
-      });
-    }
-  }, [theme]);
+// Create CSS variables for theme colors
+useEffect(() => {
+  if (theme) {
+    const root = document.documentElement;
+    Object.entries(theme).forEach(([key, value]) => {
+      if (typeof value === 'object') {
+        // Handle nested objects like text colors
+        Object.entries(value as Record<string, string>).forEach(([subKey, subValue]) => {
+          root.style.setProperty(`--menu-${key}-${subKey}`, subValue);
+        });
+      } else {
+        root.style.setProperty(`--menu-${key}`, value as string);
+      }
+    });
+  }
+}, [theme]);
 
   if (loading) {
     return (
