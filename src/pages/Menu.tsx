@@ -28,6 +28,16 @@ const Menu = () => {
   const { trackQRScan } = useQRTracking();
   const [menuFullyLoaded, setMenuFullyLoaded] = useState(false);
 
+  // Set all sections open by default when restaurant data is loaded
+  useEffect(() => {
+    if (restaurant?.menuSections) {
+      const allSectionIds = restaurant.menuSections
+        .filter(section => !section.isDisabled)
+        .map(section => section.id);
+      setOpenSections(new Set(allSectionIds));
+    }
+  }, [restaurant]);
+
   // Check if this is a preview view - only check preview parameter
   const isPreview = React.useMemo(() => {
     const isPreview = searchParams.get('preview') === 'true';
@@ -455,15 +465,6 @@ useEffect(() => {
                       >
                         {section.name}
                       </h2>
-                      <div 
-                        className="mt-2 inline-block px-4 py-1 rounded-lg text-sm font-semibold" 
-                        style={{ 
-                          background: isOpen ? 'var(--menu-accent)' : 'var(--menu-primary)',
-                          color: 'var(--menu-text-accent)'
-                        }}
-                      >
-                        {activeItems.length} dishes
-                      </div>
                     </div>
                     
                     <div className="flex items-center gap-4">
@@ -488,7 +489,7 @@ useEffect(() => {
                       {activeItems.map((item, itemIndex) => (
                         <div 
                           key={item.id} 
-                          className="group rounded-2xl p-6 border hover:shadow-xl transition-all duration-300 hover:scale-[1.02]"
+                          className="group rounded-2xl px-4 py-4 border hover:shadow-xl transition-all duration-300 hover:scale-[1.02]"
                           style={{
                             background: 'var(--menu-background)',
                             borderColor: 'var(--menu-border)',
