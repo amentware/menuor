@@ -449,31 +449,24 @@ useEffect(() => {
                         : 'var(--menu-card)'
                     }}
                   >
-                    <div className="flex items-center gap-6">
-                      <div className="w-4 h-4 rounded-full shadow-lg" 
-                        style={{ background: isOpen ? 'var(--menu-accent)' : 'var(--menu-primary)' }} 
-                      />
+                    <div>
                       <h2 className="text-2xl md:text-3xl font-bold" 
                         style={{ color: isOpen ? 'var(--menu-text-accent)' : 'var(--menu-text-primary)' }}
                       >
                         {section.name}
                       </h2>
-                      <span className="px-4 py-2 rounded-xl text-sm font-semibold shadow-lg" 
+                      <div 
+                        className="mt-2 inline-block px-4 py-1 rounded-lg text-sm font-semibold" 
                         style={{ 
                           background: isOpen ? 'var(--menu-accent)' : 'var(--menu-primary)',
                           color: 'var(--menu-text-accent)'
                         }}
                       >
                         {activeItems.length} dishes
-                      </span>
+                      </div>
                     </div>
                     
                     <div className="flex items-center gap-4">
-                      <span className="text-sm font-medium hidden sm:block" 
-                        style={{ color: isOpen ? 'var(--menu-text-accent)' : 'var(--menu-text-primary)' }}
-                      >
-                        {isOpen ? 'Collapse' : 'Expand'}
-                      </span>
                       {isOpen ? (
                         <ChevronUp className="w-6 h-6" style={{ color: 'var(--menu-text-accent)' }} />
                       ) : (
@@ -483,10 +476,15 @@ useEffect(() => {
                   </button>
                   
                   {/* Section Content */}
-                  <div className={`transition-all duration-500 ease-in-out ${
-                    isOpen ? 'max-h-[10000px] opacity-100' : 'max-h-0 opacity-0'
-                  } overflow-hidden`}>
-                    <div className="p-8 space-y-6">
+                  <div className={`transition-all duration-300 ease-in-out ${
+                    isOpen ? 'opacity-100' : 'opacity-0'
+                  }`}
+                    style={{
+                      maxHeight: isOpen ? 'none' : '0',
+                      overflow: 'hidden'
+                    }}
+                  >
+                    <div className="p-4 space-y-6">
                       {activeItems.map((item, itemIndex) => (
                         <div 
                           key={item.id} 
@@ -520,54 +518,50 @@ useEffect(() => {
                             
                             {/* Item Details */}
                             <div className="flex-1 min-w-0">
-                              <div className="flex items-start justify-between gap-4">
-                                <div className="flex-1">
-                                  <div className="flex items-center gap-3 mb-2 flex-wrap">
-                                    <h3 className="text-xl font-bold" style={{ color: 'var(--menu-text-primary)' }}>
-                                      {item.name}
-                                    </h3>
-                                    {item.outOfStock && (
-                                      <span className="bg-red-100 text-red-800 text-xs px-3 py-1 rounded-full font-semibold">
-                                        Out of Stock
-                                      </span>
-                                    )}
-                                  </div>
-                                  
-                                  {item.description && (
-                                    <p className="leading-relaxed mb-4" style={{ color: 'var(--menu-text-secondary)' }}>
-                                      {item.description}
-                                    </p>
+                              <div className="space-y-2">
+                                <div className="flex items-center gap-3">
+                                  <h3 className="text-xl font-bold" style={{ color: 'var(--menu-text-primary)' }}>
+                                    {item.name}
+                                  </h3>
+                                  {item.outOfStock && (
+                                    <span className="bg-red-100 text-red-800 text-xs px-3 py-1 rounded-full font-semibold">
+                                      Out of Stock
+                                    </span>
                                   )}
                                 </div>
-                                
+
+                                {item.description && (
+                                  <p className="leading-relaxed" style={{ color: 'var(--menu-text-secondary)' }}>
+                                    {item.description}
+                                  </p>
+                                )}
+
                                 {/* Pricing */}
-                                <div className="text-right flex-shrink-0">
-                                  {item.priceVariations && item.priceVariations.length > 0 ? (
-                                    <div className="space-y-2">
-                                      {item.priceVariations.map((variation, index) => (
-                                        <div key={index} className="flex items-center gap-3">
-                                          <span className="text-sm px-3 py-1 rounded-full" 
-                                            style={{ 
-                                              background: 'rgba(var(--menu-primary-rgb), 0.1)',
-                                              color: 'var(--menu-text-primary)'
-                                            }}
-                                          >
-                                            {variation.name}
-                                          </span>
-                                          <span className="font-bold text-xl" style={{ color: 'var(--menu-price)' }}>
-                                            {currencySymbol}{variation.price.toFixed(2)}
-                                          </span>
-                                        </div>
-                                      ))}
+                                {item.priceVariations && item.priceVariations.length > 0 ? (
+                                  <div className="flex flex-wrap items-center gap-3">
+                                    {item.priceVariations.map((variation, index) => (
+                                      <div key={index} className="flex items-center gap-2">
+                                        <span className="text-sm px-3 py-1 rounded-full" 
+                                          style={{ 
+                                            background: 'rgba(var(--menu-primary-rgb), 0.1)',
+                                            color: 'var(--menu-text-primary)'
+                                          }}
+                                        >
+                                          {variation.name}
+                                        </span>
+                                        <span className="font-bold text-xl" style={{ color: 'var(--menu-price)' }}>
+                                          {currencySymbol}{variation.price.toFixed(2)}
+                                        </span>
+                                      </div>
+                                    ))}
+                                  </div>
+                                ) : (
+                                  item.price && item.price > 0 && (
+                                    <div className="font-bold text-xl" style={{ color: 'var(--menu-price)' }}>
+                                      {currencySymbol}{item.price.toFixed(2)}
                                     </div>
-                                  ) : (
-                                    item.price && item.price > 0 && (
-                                      <span className="font-bold text-2xl" style={{ color: 'var(--menu-price)' }}>
-                                        {currencySymbol}{item.price.toFixed(2)}
-                                      </span>
-                                    )
-                                  )}
-                                </div>
+                                  )
+                                )}
                               </div>
                             </div>
                           </div>
@@ -621,7 +615,7 @@ useEffect(() => {
             }
           }
           .animate-slide-up {
-            animation: slide-up 0.4s ease-out;
+            animation: slide-up 0.2s ease-out;
           }
         `}
       </style>
