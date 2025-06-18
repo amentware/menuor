@@ -247,11 +247,11 @@ useEffect(() => {
           style={{ background: 'var(--menu-secondary)', opacity: 0.15, animationDelay: '6s' }} />
         
         {/* Content */}
-        <div className="relative py-16 px-4 sm:px-6 lg:px-8">
+        <div className="relative py-8 px-4 sm:px-6 lg:px-8">
           <div className="max-w-5xl mx-auto text-center">
             {/* Restaurant Name */}
-            <div className="mb-6">
-              <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold mb-4 leading-tight" 
+            <div className="mb-4">
+              <h1 className="text-5xl sm:text-6xl md:text-6xl font-bold mb-2 leading-tight" 
                 style={{ color: 'var(--menu-text-accent)' }}>
                 {restaurant.name}
               </h1>
@@ -261,48 +261,48 @@ useEffect(() => {
             
             {/* Description */}
             {restaurant.description && (
-              <p className="text-lg sm:text-xl opacity-95 mb-8 max-w-3xl mx-auto leading-relaxed font-light" style={{ color: 'var(--menu-text-accent)' }}>
+              <p className="text-base sm:text-lg opacity-95 mb-4 max-w-3xl mx-auto leading-relaxed font-light" style={{ color: 'var(--menu-text-accent)' }}>
                 {restaurant.description}
               </p>
             )}
             
             {/* Contact Info */}
-            <div className="flex flex-wrap justify-center gap-4 mb-8">
+            <div className="flex flex-wrap justify-center gap-3 mb-4">
               {restaurant.location && (
-                <div className="flex items-center gap-3 backdrop-blur-md rounded-2xl px-6 py-3 shadow-lg" 
+                <div className="flex items-center gap-2 backdrop-blur-md rounded-xl px-4 py-2 shadow-lg" 
                   style={{ 
                     background: 'rgba(255, 255, 255, 0.2)', 
                     border: '1px solid rgba(255, 255, 255, 0.3)' 
                   }}
                 >
-                  <MapPin className="h-5 w-5" style={{ color: 'var(--menu-accent)' }} />
+                  <MapPin className="h-4 w-4" style={{ color: 'var(--menu-accent)' }} />
                   <span style={{ color: 'var(--menu-text-accent)' }}>{restaurant.location}</span>
                 </div>
               )}
               {restaurant.contact && (
-                <div className="flex items-center gap-3 backdrop-blur-md rounded-2xl px-6 py-3 shadow-lg" 
+                <div className="flex items-center gap-2 backdrop-blur-md rounded-xl px-4 py-2 shadow-lg" 
                   style={{ 
                     background: 'rgba(255, 255, 255, 0.2)', 
                     border: '1px solid rgba(255, 255, 255, 0.3)' 
                   }}
                 >
-                  <Phone className="h-5 w-5" style={{ color: 'var(--menu-accent)' }} />
+                  <Phone className="h-4 w-4" style={{ color: 'var(--menu-accent)' }} />
                   <span style={{ color: 'var(--menu-text-accent)' }}>{restaurant.contact}</span>
                 </div>
               )}
             </div>
 
             {/* Action Buttons */}
-            <div className="flex justify-center gap-4">
+            <div className="flex justify-center gap-3">
               <button
                 onClick={handleShare}
-                className="flex items-center gap-2 px-6 py-3 rounded-2xl font-semibold transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-1"
+                className="flex items-center gap-2 px-4 py-2 rounded-xl font-semibold transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-1"
                 style={{ 
                   background: 'var(--menu-accent)',
                   color: 'var(--menu-text-primary)'
                 }}
               >
-                <Share2 className="w-5 h-5" />
+                <Share2 className="w-4 h-4" />
                 Share Menu
               </button>
             </div>
@@ -311,9 +311,9 @@ useEffect(() => {
       </div>
 
       {/* Search Bar */}
-      <div className="sticky top-0 z-40 backdrop-blur-xl border-b" 
+      <div className="sticky top-0 z-40 border-b" 
         style={{ 
-          background: 'var(--menu-primary)F5', 
+          background: 'var(--menu-primary)', 
           borderColor: 'var(--menu-border)' 
         }}
       >
@@ -329,8 +329,7 @@ useEffect(() => {
               onChange={(e) => setSearchTerm(e.target.value)}
               className="w-full pl-12 pr-4 py-3 rounded-2xl focus:outline-none focus:ring-2"
               style={{ 
-                background: 'rgba(255, 255, 255, 0.1)',
-                border: '1px solid rgba(255, 255, 255, 0.2)',
+                background: 'rgba(255, 255, 255, 0.2)',
                 color: 'var(--menu-text-accent)',
                 '--tw-ring-color': 'var(--menu-accent)'
               } as CSSProperties}
@@ -341,7 +340,7 @@ useEffect(() => {
 
       {/* Floating Category Navigation */}
       {activeMenuSections.length > 2 && (
-        <div className="fixed bottom-8 right-6 z-50">
+        <div className="fixed bottom-8 right-6 z-[60]">
           <button
             onClick={() => setShowCategoryNav(!showCategoryNav)}
             className="w-16 h-16 rounded-2xl shadow-2xl transition-all duration-300 flex items-center justify-center"
@@ -355,15 +354,16 @@ useEffect(() => {
           </button>
 
           {showCategoryNav && (
-            <div className="absolute bottom-20 right-0 w-72 max-h-80 backdrop-blur-xl rounded-3xl shadow-2xl border overflow-hidden animate-slide-up"
+            <div className="absolute bottom-20 right-0 w-72 backdrop-blur-xl rounded-3xl shadow-2xl border overflow-hidden animate-slide-up category-nav-dialog"
               style={{
                 background: 'var(--menu-card)',
-                borderColor: 'var(--menu-border)'
+                borderColor: 'var(--menu-border)',
+                maxHeight: '80vh'
               }}
             >
               <div className="p-6">
                 <h3 className="text-lg font-bold mb-4 text-center" style={{ color: 'var(--menu-text-primary)' }}>Menu Categories</h3>
-                <div className="space-y-2">
+                <div className="space-y-2 overflow-y-auto" style={{ maxHeight: 'calc(80vh - 100px)' }}>
                   {activeMenuSections.map((section) => (
                     <button
                       key={section.id}
@@ -373,14 +373,14 @@ useEffect(() => {
                       }}
                       className="w-full text-left p-4 rounded-2xl transition-all duration-200 group hover:shadow-md"
                       style={{
-                        background: 'transparent'
+                        background: 'var(--menu-background)'
                       }}
                       onMouseEnter={(e) => {
                         e.currentTarget.style.background = 'var(--menu-primary)';
                         e.currentTarget.style.color = 'var(--menu-text-accent)';
                       }}
                       onMouseLeave={(e) => {
-                        e.currentTarget.style.background = 'transparent';
+                        e.currentTarget.style.background = 'var(--menu-background)';
                         e.currentTarget.style.color = 'var(--menu-text-primary)';
                       }}
                     >
