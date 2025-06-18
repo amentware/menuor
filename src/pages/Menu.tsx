@@ -139,17 +139,17 @@ const Menu = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-[hsl(50,75%,98%)] to-[hsl(150,13%,94%)] flex items-center justify-center">
+      <div className="min-h-screen bg-gradient-to-br from-background to-card flex items-center justify-center">
         <div className="text-center">
           <div className="relative">
-            <div className="animate-spin rounded-full h-20 w-20 border-4 border-[hsl(109,22%,75%)] border-t-[hsl(170,94%,27%)] mx-auto"></div>
-            <div className="absolute inset-0 rounded-full h-20 w-20 border-4 border-transparent border-t-[hsl(44,88%,51%)] mx-auto animate-ping"></div>
+            <div className="animate-spin rounded-full h-20 w-20 border-4 border-muted border-t-primary mx-auto"></div>
+            <div className="absolute inset-0 rounded-full h-20 w-20 border-4 border-transparent border-t-accent mx-auto animate-ping"></div>
           </div>
-          <p className="mt-8 text-[hsl(0,1%,15%)] font-semibold text-lg">Preparing your culinary journey...</p>
+          <p className="mt-8 text-foreground font-semibold text-lg">Preparing your culinary journey...</p>
           <div className="mt-4 flex justify-center space-x-1">
-            <div className="w-2 h-2 bg-[hsl(170,94%,27%)] rounded-full animate-bounce" style={{animationDelay: '0ms'}}></div>
-            <div className="w-2 h-2 bg-[hsl(165,47%,43%)] rounded-full animate-bounce" style={{animationDelay: '100ms'}}></div>
-            <div className="w-2 h-2 bg-[hsl(44,88%,51%)] rounded-full animate-bounce" style={{animationDelay: '200ms'}}></div>
+            <div className="w-2 h-2 bg-primary rounded-full animate-bounce" style={{animationDelay: '0ms'}}></div>
+            <div className="w-2 h-2 bg-secondary rounded-full animate-bounce" style={{animationDelay: '100ms'}}></div>
+            <div className="w-2 h-2 bg-accent rounded-full animate-bounce" style={{animationDelay: '200ms'}}></div>
           </div>
         </div>
       </div>
@@ -158,14 +158,14 @@ const Menu = () => {
 
   if (error || !restaurant) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-[hsl(50,75%,98%)] to-[hsl(150,13%,94%)] flex items-center justify-center p-4">
+      <div className="min-h-screen bg-gradient-to-br from-background to-card flex items-center justify-center p-4">
         <div className="text-center max-w-md mx-auto">
-          <div className="bg-[hsl(150,13%,94%)] backdrop-blur-lg rounded-3xl shadow-2xl p-10 border border-[hsl(109,22%,75%)]">
-            <div className="w-20 h-20 bg-gradient-to-r from-[hsl(170,94%,27%)] to-[hsl(44,88%,51%)] rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-lg">
-              <MenuIcon className="w-10 h-10 text-[hsl(50,75%,98%)]" />
+          <div className="bg-card backdrop-blur-lg rounded-3xl shadow-2xl p-10 border border-border">
+            <div className="w-20 h-20 bg-gradient-to-r from-primary to-accent rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-lg">
+              <MenuIcon className="w-10 h-10 text-primary-foreground" />
             </div>
-            <h1 className="text-3xl font-bold text-[hsl(0,1%,15%)] mb-4">Menu Unavailable</h1>
-            <p className="text-[hsl(0,1%,15%)] text-lg opacity-80">{error || 'The requested menu could not be found.'}</p>
+            <h1 className="text-3xl font-bold text-foreground mb-4">Menu Unavailable</h1>
+            <p className="text-foreground text-lg opacity-80">{error || 'The requested menu could not be found.'}</p>
           </div>
         </div>
       </div>
@@ -175,31 +175,31 @@ const Menu = () => {
   const currencySymbol = "₹";
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-[hsl(50,75%,98%)] via-[hsl(150,13%,94%)] to-[hsl(50,75%,98%)]">
+    <div className="min-h-screen bg-gradient-to-br from-background via-card to-background">
       {/* Hero Header */}
       <div className="relative overflow-hidden">
         {/* Background Effects */}
-        <div className="absolute inset-0 bg-gradient-to-r from-[hsl(170,94%,27%)] via-[hsl(165,47%,43%)] to-[hsl(170,94%,27%)]" />
+        <div className="absolute inset-0 bg-gradient-to-r from-primary via-secondary to-primary" />
         <div className="absolute inset-0 bg-gradient-to-b from-transparent via-black/10 to-black/20" />
         
         {/* Floating Decorations */}
-        <div className="absolute top-10 left-10 w-32 h-32 bg-[hsl(44,88%,51%)] bg-opacity-20 rounded-full blur-xl animate-pulse" />
-        <div className="absolute bottom-10 right-10 w-40 h-40 bg-[hsl(50,75%,98%)] bg-opacity-10 rounded-full blur-2xl animate-pulse" style={{animationDelay: '1s'}} />
-        <div className="absolute top-1/2 left-1/4 w-24 h-24 bg-[hsl(165,47%,43%)] bg-opacity-15 rounded-full blur-xl animate-pulse" style={{animationDelay: '2s'}} />
+        <div className="absolute top-10 left-10 w-32 h-32 bg-accent bg-opacity-20 rounded-full blur-xl animate-pulse" />
+        <div className="absolute bottom-10 right-10 w-40 h-40 bg-primary-foreground bg-opacity-10 rounded-full blur-2xl animate-pulse" style={{animationDelay: '1s'}} />
+        <div className="absolute top-1/2 left-1/4 w-24 h-24 bg-secondary bg-opacity-15 rounded-full blur-xl animate-pulse" style={{animationDelay: '2s'}} />
         
         <div className="relative py-16 px-4 sm:px-6 lg:px-8">
           <div className="max-w-5xl mx-auto text-center">
             {/* Restaurant Name */}
             <div className="mb-6">
-              <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold text-[hsl(50,75%,98%)] mb-4 leading-tight">
+              <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold text-primary-foreground mb-4 leading-tight">
                 {restaurant.name}
               </h1>
-              <div className="w-24 h-1 bg-[hsl(44,88%,51%)] mx-auto rounded-full shadow-lg"></div>
+              <div className="w-24 h-1 bg-accent mx-auto rounded-full shadow-lg"></div>
             </div>
             
             {/* Description */}
             {restaurant.description && (
-              <p className="text-lg sm:text-xl text-[hsl(50,75%,98%)] opacity-95 mb-8 max-w-3xl mx-auto leading-relaxed font-light">
+              <p className="text-lg sm:text-xl text-primary-foreground opacity-95 mb-8 max-w-3xl mx-auto leading-relaxed font-light">
                 {restaurant.description}
               </p>
             )}
@@ -208,14 +208,14 @@ const Menu = () => {
             <div className="flex flex-wrap justify-center gap-4 mb-8">
               {restaurant.location && (
                 <div className="flex items-center gap-3 bg-white/20 backdrop-blur-md rounded-2xl px-6 py-3 border border-white/30 shadow-lg">
-                  <MapPin className="h-5 w-5 text-[hsl(44,88%,51%)]" />
-                  <span className="text-[hsl(50,75%,98%)] font-medium">{restaurant.location}</span>
+                  <MapPin className="h-5 w-5 text-accent" />
+                  <span className="text-primary-foreground font-medium">{restaurant.location}</span>
                 </div>
               )}
               {restaurant.contact && (
                 <div className="flex items-center gap-3 bg-white/20 backdrop-blur-md rounded-2xl px-6 py-3 border border-white/30 shadow-lg">
-                  <Phone className="h-5 w-5 text-[hsl(44,88%,51%)]" />
-                  <span className="text-[hsl(50,75%,98%)] font-medium">{restaurant.contact}</span>
+                  <Phone className="h-5 w-5 text-accent" />
+                  <span className="text-primary-foreground font-medium">{restaurant.contact}</span>
                 </div>
               )}
             </div>
@@ -224,7 +224,7 @@ const Menu = () => {
             <div className="flex justify-center gap-4">
               <button
                 onClick={handleShare}
-                className="flex items-center gap-2 bg-[hsl(44,88%,51%)] text-[hsl(0,1%,15%)] px-6 py-3 rounded-2xl font-semibold hover:bg-[hsl(44,88%,45%)] transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-1"
+                className="flex items-center gap-2 bg-accent text-accent-foreground px-6 py-3 rounded-2xl font-semibold hover:opacity-90 transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-1"
               >
                 <Share2 className="w-5 h-5" />
                 Share Menu
@@ -235,16 +235,16 @@ const Menu = () => {
       </div>
 
       {/* Search Bar */}
-      <div className="sticky top-0 z-40 bg-[hsl(170,94%,27%)]/95 backdrop-blur-xl border-b border-[hsl(109,22%,75%)] shadow-sm">
+      <div className="sticky top-0 z-40 bg-primary/95 backdrop-blur-xl border-b border-border shadow-sm">
         <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
           <div className="relative max-w-md mx-auto">
-            <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-[hsl(50,75%,98%)] opacity-70" />
+            <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-primary-foreground opacity-70" />
             <input
               type="text"
               placeholder="Search dishes..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full pl-12 pr-4 py-3 bg-white/10 border border-white/20 rounded-2xl focus:outline-none focus:ring-2 focus:ring-[hsl(44,88%,51%)] focus:border-transparent text-[hsl(50,75%,98%)] placeholder-[hsl(50,75%,98%)]/70 font-medium"
+              className="w-full pl-12 pr-4 py-3 bg-white/10 border border-white/20 rounded-2xl focus:outline-none focus:ring-2 focus:ring-accent focus:border-transparent text-primary-foreground placeholder-primary-foreground/70 font-medium"
             />
           </div>
         </div>
@@ -257,17 +257,17 @@ const Menu = () => {
             onClick={() => setShowCategoryNav(!showCategoryNav)}
             className={`w-16 h-16 rounded-2xl shadow-2xl transition-all duration-300 flex items-center justify-center ${
               showCategoryNav 
-                ? 'bg-[hsl(44,88%,51%)] text-[hsl(0,1%,15%)] rotate-90 scale-110' 
-                : 'bg-[hsl(170,94%,27%)] text-[hsl(50,75%,98%)] hover:bg-[hsl(170,94%,22%)] hover:scale-105'
+                ? 'bg-accent text-accent-foreground rotate-90 scale-110' 
+                : 'bg-primary text-primary-foreground hover:opacity-90 hover:scale-105'
             }`}
           >
             <MenuIcon className="w-7 h-7" />
           </button>
 
           {showCategoryNav && (
-            <div className="absolute bottom-20 right-0 w-72 max-h-80 bg-[hsl(150,13%,94%)] backdrop-blur-xl rounded-3xl shadow-2xl border border-[hsl(109,22%,75%)] overflow-hidden animate-slide-up">
+            <div className="absolute bottom-20 right-0 w-72 max-h-80 bg-card backdrop-blur-xl rounded-3xl shadow-2xl border border-border overflow-hidden animate-slide-up">
               <div className="p-6">
-                <h3 className="text-lg font-bold text-[hsl(0,1%,15%)] mb-4 text-center">Menu Categories</h3>
+                <h3 className="text-lg font-bold text-card-foreground mb-4 text-center">Menu Categories</h3>
                 <div className="space-y-2">
                   {activeMenuSections.map((section) => (
                     <button
@@ -276,16 +276,16 @@ const Menu = () => {
                         scrollToSection(section.id);
                         setShowCategoryNav(false);
                       }}
-                      className="w-full text-left p-4 rounded-2xl transition-all duration-200 hover:bg-[hsl(170,94%,27%)] hover:text-[hsl(50,75%,98%)] group"
+                      className="w-full text-left p-4 rounded-2xl transition-all duration-200 hover:bg-primary hover:text-primary-foreground group"
                     >
                       <div className="flex items-center justify-between">
                         <div>
-                          <div className="font-semibold text-[hsl(0,1%,15%)] group-hover:text-[hsl(50,75%,98%)]">{section.name}</div>
-                          <div className="text-sm text-[hsl(0,1%,15%)]/60 group-hover:text-[hsl(50,75%,98%)]/80">
+                          <div className="font-semibold text-card-foreground group-hover:text-primary-foreground">{section.name}</div>
+                          <div className="text-sm text-card-foreground/60 group-hover:text-primary-foreground/80">
                             {section.items?.filter(item => !item.isDisabled).length || 0} dishes
                           </div>
                         </div>
-                        <div className="w-3 h-3 rounded-full bg-[hsl(44,88%,51%)]"></div>
+                        <div className="w-3 h-3 rounded-full bg-accent"></div>
                       </div>
                     </button>
                   ))}
@@ -300,14 +300,14 @@ const Menu = () => {
       <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
         {filteredSections.length === 0 ? (
           <div className="text-center py-12">
-            <div className="bg-[hsl(150,13%,94%)] backdrop-blur-lg rounded-3xl shadow-2xl p-12 max-w-lg mx-auto border border-[hsl(109,22%,75%)]">
-              <div className="w-24 h-24 bg-gradient-to-r from-[hsl(170,94%,27%)] to-[hsl(44,88%,51%)] rounded-3xl flex items-center justify-center mx-auto mb-8 shadow-lg">
-                <MenuIcon className="w-12 h-12 text-[hsl(50,75%,98%)]" />
+            <div className="bg-card backdrop-blur-lg rounded-3xl shadow-2xl p-12 max-w-lg mx-auto border border-border">
+              <div className="w-24 h-24 bg-gradient-to-r from-primary to-accent rounded-3xl flex items-center justify-center mx-auto mb-8 shadow-lg">
+                <MenuIcon className="w-12 h-12 text-primary-foreground" />
               </div>
-              <h2 className="text-3xl font-bold text-[hsl(170,94%,27%)] mb-6">
+              <h2 className="text-3xl font-bold text-primary mb-6">
                 {searchTerm ? 'No dishes found' : 'Menu Coming Soon'}
               </h2>
-              <p className="text-[hsl(0,1%,15%)] text-lg opacity-80 leading-relaxed">
+              <p className="text-card-foreground text-lg opacity-80 leading-relaxed">
                 {searchTerm 
                   ? `No dishes match "${searchTerm}". Try a different search term.`
                   : "We're crafting something extraordinary. Please check back soon!"
@@ -327,7 +327,7 @@ const Menu = () => {
                 <div 
                   key={section.id} 
                   id={`section-${section.id}`}
-                  className="bg-[hsl(150,13%,94%)] backdrop-blur-lg rounded-3xl shadow-xl border border-[hsl(109,22%,75%)] overflow-hidden"
+                  className="bg-card backdrop-blur-lg rounded-3xl shadow-xl border border-border overflow-hidden"
                   style={{
                     animationDelay: `${index * 100}ms`
                   }}
@@ -337,23 +337,23 @@ const Menu = () => {
                     onClick={() => toggleSection(section.id)}
                     className={`w-full p-8 flex items-center justify-between transition-all duration-300 ${
                       isOpen 
-                        ? 'bg-gradient-to-r from-[hsl(170,94%,27%)] to-[hsl(165,47%,43%)]' 
-                        : 'bg-gradient-to-r from-[hsl(150,13%,94%)] to-[hsl(109,22%,75%)] hover:from-[hsl(170,94%,27%)] hover:to-[hsl(165,47%,43%)]'
+                        ? 'bg-gradient-to-r from-primary to-secondary' 
+                        : 'bg-gradient-to-r from-card to-muted hover:from-primary hover:to-secondary'
                     } group`}
                   >
                     <div className="flex items-center gap-6">
                       <div className={`w-4 h-4 rounded-full ${
-                        isOpen ? 'bg-[hsl(44,88%,51%)]' : 'bg-[hsl(170,94%,27%)] group-hover:bg-[hsl(44,88%,51%)]'
+                        isOpen ? 'bg-accent' : 'bg-primary group-hover:bg-accent'
                       } shadow-lg`} />
                       <h2 className={`text-2xl md:text-3xl font-bold ${
-                        isOpen ? 'text-[hsl(50,75%,98%)]' : 'text-[hsl(170,94%,27%)] group-hover:text-[hsl(50,75%,98%)]'
+                        isOpen ? 'text-primary-foreground' : 'text-primary group-hover:text-primary-foreground'
                       }`}>
                         {section.name}
                       </h2>
                       <span className={`px-4 py-2 rounded-xl text-sm font-semibold ${
                         isOpen 
-                          ? 'bg-[hsl(44,88%,51%)] text-[hsl(0,1%,15%)]' 
-                          : 'bg-[hsl(170,94%,27%)] text-[hsl(50,75%,98%)] group-hover:bg-[hsl(44,88%,51%)] group-hover:text-[hsl(0,1%,15%)]'
+                          ? 'bg-accent text-accent-foreground' 
+                          : 'bg-primary text-primary-foreground group-hover:bg-accent group-hover:text-accent-foreground'
                       } shadow-lg`}>
                         {activeItems.length} dishes
                       </span>
@@ -361,15 +361,15 @@ const Menu = () => {
                     
                     <div className="flex items-center gap-4">
                       <span className={`text-sm font-medium hidden sm:block ${
-                        isOpen ? 'text-[hsl(50,75%,98%)]' : 'text-[hsl(170,94%,27%)] group-hover:text-[hsl(50,75%,98%)]'
+                        isOpen ? 'text-primary-foreground' : 'text-primary group-hover:text-primary-foreground'
                       }`}>
                         {isOpen ? 'Collapse' : 'Expand'}
                       </span>
                       {isOpen ? (
-                        <ChevronUp className="w-6 h-6 text-[hsl(50,75%,98%)]" />
+                        <ChevronUp className="w-6 h-6 text-primary-foreground" />
                       ) : (
                         <ChevronDown className={`w-6 h-6 ${
-                          isOpen ? 'text-[hsl(50,75%,98%)]' : 'text-[hsl(170,94%,27%)] group-hover:text-[hsl(50,75%,98%)]'
+                          isOpen ? 'text-primary-foreground' : 'text-primary group-hover:text-primary-foreground'
                         }`} />
                       )}
                     </div>
@@ -383,7 +383,7 @@ const Menu = () => {
                       {activeItems.map((item, itemIndex) => (
                         <div 
                           key={item.id} 
-                          className="group bg-[hsl(50,75%,98%)] rounded-2xl p-6 border border-[hsl(109,22%,75%)] hover:shadow-xl hover:border-[hsl(44,88%,51%)] transition-all duration-300 hover:scale-[1.02]"
+                          className="group bg-background rounded-2xl p-6 border border-border hover:shadow-xl hover:border-accent transition-all duration-300 hover:scale-[1.02]"
                           style={{
                             animationDelay: isOpen ? `${itemIndex * 100}ms` : '0ms'
                           }}
@@ -391,7 +391,7 @@ const Menu = () => {
                           <div className="flex gap-6">
                             {/* Item Image */}
                             {item.imageUrl && (
-                              <div className="w-24 h-24 sm:w-32 sm:h-32 rounded-2xl overflow-hidden flex-shrink-0 shadow-lg ring-2 ring-[hsl(44,88%,51%)] ring-opacity-50">
+                              <div className="w-24 h-24 sm:w-32 sm:h-32 rounded-2xl overflow-hidden flex-shrink-0 shadow-lg ring-2 ring-accent ring-opacity-50">
                                 <img 
                                   src={item.imageUrl} 
                                   alt={item.name}
@@ -408,7 +408,7 @@ const Menu = () => {
                               <div className="flex items-start justify-between gap-4">
                                 <div className="flex-1">
                                   <div className="flex items-center gap-3 mb-2 flex-wrap">
-                                    <h3 className="text-xl font-bold text-[hsl(170,94%,27%)] group-hover:text-[hsl(44,88%,51%)] transition-colors">
+                                    <h3 className="text-xl font-bold text-primary group-hover:text-accent transition-colors">
                                       {item.name}
                                     </h3>
                                     {item.outOfStock && (
@@ -419,7 +419,7 @@ const Menu = () => {
                                   </div>
                                   
                                   {item.description && (
-                                    <p className="text-[hsl(170,94%,27%)]/70 leading-relaxed mb-4">
+                                    <p className="text-primary/70 leading-relaxed mb-4">
                                       {item.description}
                                     </p>
                                   )}
@@ -431,10 +431,10 @@ const Menu = () => {
                                     <div className="space-y-2">
                                       {item.priceVariations.map((variation, index) => (
                                         <div key={index} className="flex items-center gap-3">
-                                          <span className="text-sm text-[hsl(170,94%,27%)] bg-[hsl(170,94%,27%)]/10 px-3 py-1 rounded-full">
+                                          <span className="text-sm text-primary bg-primary/10 px-3 py-1 rounded-full">
                                             {variation.name}
                                           </span>
-                                          <span className="font-bold text-xl text-[hsl(44,88%,51%)]">
+                                          <span className="font-bold text-xl text-accent">
                                             {currencySymbol}{variation.price.toFixed(2)}
                                           </span>
                                         </div>
@@ -442,7 +442,7 @@ const Menu = () => {
                                     </div>
                                   ) : (
                                     item.price && item.price > 0 && (
-                                      <span className="font-bold text-2xl text-[hsl(44,88%,51%)]">
+                                      <span className="font-bold text-2xl text-accent">
                                         {currencySymbol}{item.price.toFixed(2)}
                                       </span>
                                     )
@@ -463,15 +463,15 @@ const Menu = () => {
       </div>
 
       {/* Footer */}
-      <div className="bg-gradient-to-r from-[hsl(170,94%,27%)] to-[hsl(165,47%,43%)] border-t border-[hsl(109,22%,75%]">
+      <div className="bg-gradient-to-r from-primary to-secondary border-t border-border">
         <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-12 text-center">
           <div className="inline-flex items-center gap-3 bg-white/20 backdrop-blur-md rounded-2xl px-6 py-4 shadow-lg border border-white/30">
             <div className="flex space-x-1">
-              <div className="w-2 h-2 bg-[hsl(44,88%,51%)] rounded-full animate-pulse"></div>
-              <div className="w-2 h-2 bg-[hsl(50,75%,98%)] rounded-full animate-pulse" style={{animationDelay: '0.5s'}}></div>
-              <div className="w-2 h-2 bg-[hsl(44,88%,51%)] rounded-full animate-pulse" style={{animationDelay: '1s'}}></div>
+              <div className="w-2 h-2 bg-accent rounded-full animate-pulse"></div>
+              <div className="w-2 h-2 bg-primary-foreground rounded-full animate-pulse" style={{animationDelay: '0.5s'}}></div>
+              <div className="w-2 h-2 bg-accent rounded-full animate-pulse" style={{animationDelay: '1s'}}></div>
             </div>
-            <span className="text-lg font-semibold text-[hsl(50,75%,98%)]">
+            <span className="text-lg font-semibold text-primary-foreground">
               Crafted with Menuor
             </span>
           </div>
