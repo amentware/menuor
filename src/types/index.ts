@@ -37,18 +37,20 @@ export type DailyScan = {
   count: number;
 };
 
-export type Restaurant = {
+export interface Restaurant {
   id: string;
-  ownerId: string;
   name: string;
-  location: string;
-  contact: string;
-  description: string;
-  email: string;
+  description?: string;
+  location?: string;
+  contact?: string;
+  website?: string;
   isPublic: boolean;
+  menuSections: MenuSection[];
+  theme?: MenuTheme;
+  ownerId: string;
+  email: string;
   isBlocked: boolean;
   createdAt: any; // Timestamp
-  menuSections: MenuSection[];
   currencySymbol?: string;
   qrScans?: number;
   viewCount?: number;
@@ -56,7 +58,7 @@ export type Restaurant = {
   dailyScans?: DailyScan[];  // Last 7 days of QR scan data
   lastScanDate?: any;  // Timestamp
   lastScanDay?: string;  // YYYY-MM-DD format
-};
+}
 
 export type RestaurantSummary = {
   id: string;
@@ -65,3 +67,18 @@ export type RestaurantSummary = {
   isPublic: boolean;
   isBlocked: boolean;
 };
+
+export interface MenuTheme {
+  primary: string;
+  secondary: string;
+  accent: string;
+  background: string;
+  card: string;
+  border: string;
+  text: {
+    primary: string;
+    secondary: string;
+    accent: string;
+  };
+  price: string;
+}

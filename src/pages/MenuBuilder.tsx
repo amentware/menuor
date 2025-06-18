@@ -52,6 +52,9 @@ import {
 import { CSS } from '@dnd-kit/utilities';
 import { useIsMobile } from "@/hooks/use-mobile";
 import { SortableMenuSection } from "@/components/menu-builder/SortableMenuSection";
+import { Link } from "react-router-dom";
+import { Palette } from "lucide-react";
+import { Loader2 } from "lucide-react";
 
 // Component for a draggable menu item
 const SortableMenuItem = ({ 
@@ -739,22 +742,21 @@ const MenuBuilder = () => {
 
   return (
     <div className="page-container">
-      <div className="flex flex-col md:flex-row justify-between mb-8">
+      <div className="flex justify-between items-center mb-8">
         <div>
           <h1 className="text-4xl font-bold font-display text-black">Menu Builder</h1>
           <p className="text-gray-600 mt-2">
-            Organize your menu sections and items. Drag to reorder.
+            Create and manage your menu sections and items
           </p>
         </div>
-        <div className="flex flex-col md:flex-row items-end md:items-center gap-3 mt-4 md:mt-0">
-          {menuChanged && (
-            <Card className="bg-amber-50 border-amber-200">
-              <CardContent className="py-3 px-4 flex items-center gap-2">
-                <AlertCircle className="h-4 w-4 text-amber-500" />
-                <p className="text-sm text-amber-700">You have unsaved changes</p>
-              </CardContent>
-            </Card>
-          )}
+        <div className="flex items-center gap-4">
+          <Link
+            to={`/theme-builder/${restaurant.id}`}
+            className="flex items-center gap-2 px-4 py-2 rounded-xl border border-gray-200 hover:bg-gray-50 transition-colors"
+          >
+            <Palette className="h-4 w-4 text-gray-600" />
+            <span>Customize Theme</span>
+          </Link>
           <Button
             onClick={handleSaveMenu}
             disabled={!menuChanged || saving}
@@ -762,7 +764,7 @@ const MenuBuilder = () => {
           >
             {saving ? (
               <>
-                <RefreshCcw className="h-4 w-4 mr-2 animate-spin" />
+                <Loader2 className="h-4 w-4 mr-2 animate-spin" />
                 Saving...
               </>
             ) : (

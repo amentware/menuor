@@ -25,6 +25,7 @@ import ForgotPassword from "./pages/ForgotPassword";
 import AboutUs from "./pages/AboutUs";
 import ContactUs from "./pages/ContactUs";
 import UserMessages from "./pages/UserMessages";
+import ThemeBuilder from "@/pages/ThemeBuilder";
 
 // Components
 import Navigation from "./components/Navigation";
@@ -102,6 +103,9 @@ const AppContent = () => {
             <Route path="/admin/edit/:restaurantId" element={<AdminEdit />} />
             <Route path="/admin/messages" element={<Messages />} />
           </Route>
+          
+          {/* Theme builder route */}
+          <Route path="/theme-builder/:restaurantId" element={<ThemeBuilder />} />
           
           {/* 404 Page - This should be the last route */}
           <Route path="*" element={<NotFound />} />
